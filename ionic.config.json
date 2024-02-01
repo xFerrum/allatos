@@ -1,0 +1,7 @@
+{
+  "name": "allatos",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
