@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { UserService } from 'src/services/user.service';
 
@@ -17,6 +17,7 @@ export class RegistrationPage implements OnInit
 { 
   form!: FormGroup;
   constructor(public formBuilder: FormBuilder, public userService: UserService) {}
+
   ngOnInit()
   {
     this.form = this.formBuilder.group({
@@ -34,10 +35,12 @@ export class RegistrationPage implements OnInit
 
   trySignUp()
   {
-    if (this.form.valid) {
-      console.log(this.form.value);
+    if (this.form.valid)
+    {
       this.userService.registerUser(this.form.get('username')!.value, this.form.get('email')!.value, this.form.get('password')!.value);
-    } else {
+    }
+    else
+    {
       return console.log('Please provide all the required values!');
     }
   };

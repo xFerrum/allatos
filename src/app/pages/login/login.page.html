@@ -5,22 +5,18 @@
 </ion-header>
 
 <ion-content  >
-  <form>
+  <form [formGroup]="form">
     <ion-item lines="full">
       <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" required></ion-input>
+      <ion-input formControlName="email" type="email" required></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" required></ion-input>
+      <ion-input formControlName="password" type="password" required></ion-input>
     </ion-item>
     <ion-row>
       <ion-col>
-        <ion-button type="submit" color="danger" expand="block">Log in</ion-button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
+        <ion-button type="submit" color="danger" expand="block" (click)="tryLogIn()">Log In</ion-button>
         <ion-button type="submit" color="danger" expand="block" [routerLink]="['/registration']">Sign up</ion-button>
       </ion-col>
     </ion-row>
