@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc } from 'firebase/firestore/lite';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc } from 'firebase/firestore/lite';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 
 const firebaseConfig =
 {
@@ -41,11 +41,12 @@ export class UserService
   }
 
   //returns firebase auth uid if successful
-  logUserIn(email: string, password: string)
+  async logUserIn(email: string, password: string)
   {
-    signInWithEmailAndPassword(auth, email, password)
+    let uid = await signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) =>
       {
+        localStorage.setItem("loggedInID", userCredential.user.uid);
         return userCredential.user.uid;
       })
       .catch((error) =>
@@ -53,5 +54,27 @@ export class UserService
         console.error(error.code + ": " + error.message);
         return false;
       }); 
+      return uid;
+  }
+
+  async signUserOut()
+  {
+    let result = await signOut(auth).then(() =>
+    {
+      localStorage.removeItem("loggedInID");
+      return true;
+    }).catch((error) =>
+    {
+      console.error(error.code + ": " + error.message);
+      return false;
+    });
+    
+    return result;
+  }
+
+  async getUserDetails(uid: string)
+  {
+    let data = await getDoc(doc(db, "users", uid));
+    return(data.data());
   }
 }
