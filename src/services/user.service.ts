@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc } from 'firebase/firestore/lite';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { Injectable } from "@angular/core";
 
 const firebaseConfig =
 {
@@ -16,7 +17,11 @@ const firebaseConfig =
   const fbase = initializeApp(firebaseConfig);
   const db = getFirestore(fbase);
   const auth = getAuth();
-  
+
+  @Injectable({
+    providedIn: 'root',
+  })
+
 export class UserService
 {
   //creates Firebase user auth, adds to users collection and returns true if succesful

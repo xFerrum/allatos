@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { UserService } from 'src/services/user.service';
+import { PopUpService } from 'src/services/popup.service';
 
 @Component({
   selector: 'app-registration',
@@ -10,13 +11,12 @@ import { UserService } from 'src/services/user.service';
   styleUrls: ['./registration.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule],
-  providers: [UserService]
 })
 
 export class RegistrationPage implements OnInit
 { 
   form!: FormGroup;
-  constructor(public formBuilder: FormBuilder, public userService: UserService) {}
+  constructor(public formBuilder: FormBuilder, public userService: UserService, public popUpService: PopUpService) {}
 
   ngOnInit()
   {
@@ -33,8 +33,10 @@ export class RegistrationPage implements OnInit
     });
   }
 
-  trySignUp()
+  async trySignUp()
   {
+    this.popUpService.loadingPopUp("Signing up");
+
     if (this.form.valid)
     {
       this.userService.registerUser(this.form.get('username')!.value, this.form.get('email')!.value, this.form.get('password')!.value);
@@ -43,5 +45,7 @@ export class RegistrationPage implements OnInit
     {
       return console.log('Please provide all the required values!');
     }
-  };
+    await this.popUpService.dismissPopUp();
+
+  }
 }

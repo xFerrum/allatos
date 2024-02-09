@@ -6,6 +6,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from 'src/services/user.service';
 import { Router } from '@angular/router';
+import { PopUpService } from 'src/services/popup.service';
 
 @Component({
   selector: 'app-login',
@@ -13,12 +14,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterLinkWithHref, ReactiveFormsModule],
-  providers: [UserService]
 })
 export class LoginPage
 {
   form!: FormGroup;
-  constructor(public formBuilder: FormBuilder, public userService: UserService, public router: Router)
+  constructor(public formBuilder: FormBuilder, public userService: UserService, public router: Router, public popUpService: PopUpService)
   {
     this.form = this.formBuilder.group({
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -34,6 +34,8 @@ export class LoginPage
 
   async tryLogIn()
   {
+    this.popUpService.loadingPopUp("Logging in");
+
     if (this.form.valid)
     {
       if (await this.userService.logUserIn(this.form.get('email')!.value, this.form.get('password')!.value))
@@ -49,5 +51,7 @@ export class LoginPage
     {
       return console.log('Please provide all the required values!');
     }
+
+    await this.popUpService.dismissPopUp();
   };
 }

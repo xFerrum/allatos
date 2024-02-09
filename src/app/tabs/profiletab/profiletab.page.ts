@@ -3,6 +3,7 @@ import { IonicModule } from '@ionic/angular';
 import { ExploreContainerComponent } from '../../explore-container/explore-container.component';
 import { UserService } from 'src/services/user.service';
 import { Router } from '@angular/router';
+import { PopUpService } from 'src/services/popup.service';
 
 @Component({ 
   selector: 'app-profile',
@@ -10,14 +11,13 @@ import { Router } from '@angular/router';
   styleUrls: ['profiletab.page.scss'],
   standalone: true,
   imports: [ExploreContainerComponent, IonicModule],
-  providers: [UserService]
 })
 
 export class ProfilePage implements OnInit{
   username!: string; 
   email!: string;
 
-  constructor(public userService: UserService, public router: Router)
+  constructor(public userService: UserService, public router: Router, public popUpService: PopUpService)
   {}
 
   async ngOnInit(): Promise<void>
@@ -30,9 +30,13 @@ export class ProfilePage implements OnInit{
 
   async signOut()
   {
+    this.popUpService.loadingPopUp("Logging out");
+  
     if (await this.userService.signUserOut())
     {
       this.router.navigate(['']);
     }
+
+    await this.popUpService.dismissPopUp();
   }
 }
