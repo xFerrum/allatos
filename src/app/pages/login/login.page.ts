@@ -44,7 +44,7 @@ export class LoginPage
       }
       else
       {
-        console.log("Login failed.")
+        console.error("Login failed.")
       }
     }
     else

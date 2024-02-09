@@ -9,6 +9,8 @@ import { LoadingController } from "@ionic/angular/standalone";
 export class PopUpService
 {
   popup!: any;
+  isLoading: boolean = true; //needed in case popup needs to be dismissed before it has loaded, might get stuck otherwise
+  
   constructor(public alertController: AlertController, public loadingController: LoadingController) {}
 
   async loadingPopUp(message: string)
@@ -18,11 +20,14 @@ export class PopUpService
       message: message,
     });
 
-    this.popup.present();
+    await this.popup.present();
+    if (!this.isLoading) this.popup.dismiss();
   }
 
   async dismissPopUp()
   {
+    this.isLoading = false;
+
     this.popup.dismiss();
   }
 }

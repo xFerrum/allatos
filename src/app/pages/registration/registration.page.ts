@@ -4,13 +4,14 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { IonicModule } from '@ionic/angular';
 import { UserService } from 'src/services/user.service';
 import { PopUpService } from 'src/services/popup.service';
+import { RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.page.html',
   styleUrls: ['./registration.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, RouterLinkWithHref],
 })
 
 export class RegistrationPage implements OnInit
@@ -43,9 +44,9 @@ export class RegistrationPage implements OnInit
     }
     else
     {
-      return console.log('Please provide all the required values!');
+      console.log('Please provide all the required values!');
     }
+    
     await this.popUpService.dismissPopUp();
-
   }
 }
