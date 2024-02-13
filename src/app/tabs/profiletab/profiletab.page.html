@@ -9,31 +9,29 @@
 <ion-content>
 
   <ion-card>
-    <ion-img src="assets/asd" alt="Profile Picture"></ion-img>
 
-    <ion-card-title>
+    <ion-img id="profilePic" src="assets/icons/placeholder.png" alt="Profile Picture"></ion-img>
+
+    <ion-card-title id="username">
       <h2>{{ username }}</h2>
     </ion-card-title>
 
     <ion-card-content>
+
       <ion-list lines="none">
         <ion-item>
+          <ion-img class="profileIcon" src="assets/icons/placeholder.png"></ion-img>
           <ion-icon name="mail-outline"></ion-icon>
           <ion-label>{{ email }}</ion-label>
         </ion-item>
-        <ion-item>
-          <ion-icon name="location-outline"></ion-icon>
-          <ion-label>asd</ion-label>
-        </ion-item>
       </ion-list>
-
-      <p>asd</p>
 
       <ion-row>
         <ion-col>
-          <ion-button type="submit" color="danger" expand="block" (click)="signOut()">Sign Out</ion-button>
+          <ion-button class="profileBut" type="submit" color="danger" expand="block" (click)="signOut()">Sign Out</ion-button>
         </ion-col>
       </ion-row>
+      
     </ion-card-content>
 
   </ion-card>

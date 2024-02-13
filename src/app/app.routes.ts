@@ -1,4 +1,6 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
+import { UserService } from 'src/services/user.service';
 
 export const routes: Routes = [
   {
@@ -8,6 +10,7 @@ export const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then(m => m.routes),
+    canActivate: [() => inject(UserService).isLoggedIn()]
   },
   {
     path: 'registration',

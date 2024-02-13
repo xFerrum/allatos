@@ -24,6 +24,7 @@ const firebaseConfig =
 
 export class UserService
 {
+
   //creates Firebase user auth, adds to users collection and returns true if succesful
   registerUser(username: string, email: string, password: string)
   {
@@ -75,6 +76,15 @@ export class UserService
     });
     
     return result;
+  }
+
+  isLoggedIn(): boolean
+  {
+    if (localStorage.getItem("loggedInID") == null)
+    {
+      return false;
+    }
+    else return true;
   }
 
   async getUserDetails(uid: string)
