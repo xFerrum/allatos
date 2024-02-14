@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { RouterLinkWithHref } from '@angular/router';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from 'src/services/user.service';
 import { Router } from '@angular/router';

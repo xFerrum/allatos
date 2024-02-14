@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { ExploreContainerComponent } from '../../explore-container/explore-container.component';
 import { UserService } from 'src/services/user.service';
 import { Router } from '@angular/router';
 import { PopUpService } from 'src/services/popup.service';
@@ -10,7 +9,7 @@ import { PopUpService } from 'src/services/popup.service';
   templateUrl: 'profiletab.page.html',
   styleUrls: ['profiletab.page.scss'],
   standalone: true,
-  imports: [ExploreContainerComponent, IonicModule],
+  imports: [IonicModule],
 })
 
 export class ProfilePage implements OnInit{
