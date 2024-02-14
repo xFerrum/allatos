@@ -3,19 +3,21 @@ import { IonicModule } from '@ionic/angular';
 import { Creature } from 'src/creature';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
-
-const creatures: Creature[] = [];
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-tab2',
-  templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss'],
+  selector: 'app-creatures',
+  templateUrl: 'creaturestab.page.html',
+  styleUrls: ['creaturestab.page.scss'],
   standalone: true,
-  imports: [IonicModule]
+  imports: [IonicModule, CommonModule]
 })
 
-export class Tab2Page implements OnInit
+export class CreaturesPage implements OnInit
 {
+  //TODO: handle array of creatures instead of a single one
+  creatures: Creature[] = [];
+  loadingDone = false;
   constructor(public creatureService: CreatureService, public userService: UserService)
   {}
 
@@ -28,9 +30,10 @@ export class Tab2Page implements OnInit
       {
         const crID = data["ownedCreatures"][0];
         await this.creatureService.getCreatureDetails(crID).then((crData: any) =>
-        creatures.push(new Creature(crData!["type"], crData!["str"], crData!["agi"], crData!["con"], crData!["ini"], crData!["ownedBy"])));      }
+        this.creatures.push(new Creature(crData!["type"], crData!["str"], crData!["agi"], crData!["con"], crData!["ini"], crData!["ownedBy"])));
+      }
     });
 
-    
+    this.loadingDone = true;
   }
 }

@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Creatures
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loadingDone">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Creatures</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card>
+
+    <ion-card-content>
+
+      <ion-row>
+        <ion-col>
+          <ion-img src="assets/creature_imgs/test.png"></ion-img>
+        </ion-col>
+        <ion-col>
+          <ion-list lines="none">
+
+            <ion-item>
+              <ion-chip>
+                <ion-avatar>
+                  <img src="assets/icons/placeholder.png" />
+                </ion-avatar>
+                <ion-label>STRENGTH</ion-label>
+              </ion-chip>
+              <ion-chip>
+                <ion-label>{{creatures.at(0)!.str}}</ion-label>
+              </ion-chip>
+            </ion-item>
+            
+            <ion-item>
+              <ion-chip>
+                <ion-avatar>
+                  <img src="assets/icons/placeholder.png" />
+                </ion-avatar>
+                <ion-label>AGILITY</ion-label>
+              </ion-chip>
+              <ion-chip>
+                <ion-label>{{creatures.at(0)!.agi}}</ion-label>
+              </ion-chip>
+            </ion-item>
+
+            <ion-item>
+              <ion-chip>
+                <ion-avatar>
+                  <img src="assets/icons/placeholder.png" />
+                </ion-avatar>
+                <ion-label>CONSTITUTION</ion-label>
+              </ion-chip>
+              <ion-chip>
+                <ion-label>{{creatures.at(0)!.con}}</ion-label>
+              </ion-chip>
+            </ion-item>
+
+            <ion-item>
+              <ion-chip>
+                <ion-avatar>
+                  <img src="assets/icons/placeholder.png" />
+                </ion-avatar>
+                <ion-label>INITIATIVE</ion-label>
+              </ion-chip>
+              <ion-chip>
+                <ion-label>{{creatures.at(0)!.ini}}</ion-label>
+              </ion-chip>
+            </ion-item>
+
+          </ion-list>          
+        </ion-col>
+      </ion-row>
+
+    </ion-card-content>
+
+  </ion-card>
+</ion-content>
