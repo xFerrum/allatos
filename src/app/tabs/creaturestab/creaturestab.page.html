@@ -14,69 +14,78 @@
   </ion-header>
 
   <ion-card>
-
     <ion-card-content>
+      <ion-grid>
 
-      <ion-row>
-        <ion-col>
-          <ion-img src="assets/creature_imgs/test.png"></ion-img>
-        </ion-col>
-        <ion-col>
-          <ion-list lines="none">
+        <ion-row>
 
-            <ion-item>
-              <ion-chip>
-                <ion-avatar>
-                  <img src="assets/icons/placeholder.png" />
-                </ion-avatar>
-                <ion-label>STRENGTH</ion-label>
-              </ion-chip>
-              <ion-chip>
-                <ion-label>{{creatures.at(0)!.str}}</ion-label>
-              </ion-chip>
-            </ion-item>
-            
-            <ion-item>
-              <ion-chip>
-                <ion-avatar>
-                  <img src="assets/icons/placeholder.png" />
-                </ion-avatar>
-                <ion-label>AGILITY</ion-label>
-              </ion-chip>
-              <ion-chip>
-                <ion-label>{{creatures.at(0)!.agi}}</ion-label>
-              </ion-chip>
-            </ion-item>
+          <ion-col size="4">
+            <ion-img class="creatureImg" src="assets/creature_imgs/test.png"></ion-img>
+          </ion-col>
+  
+          <ion-col>
+            <ion-list lines="none">
 
-            <ion-item>
-              <ion-chip>
-                <ion-avatar>
-                  <img src="assets/icons/placeholder.png" />
-                </ion-avatar>
-                <ion-label>CONSTITUTION</ion-label>
-              </ion-chip>
-              <ion-chip>
-                <ion-label>{{creatures.at(0)!.con}}</ion-label>
-              </ion-chip>
-            </ion-item>
+              <ion-item>
+                <ion-chip>
+                  <ion-avatar>
+                    <img src="assets/icons/placeholder.png" />
+                  </ion-avatar>
+                  <ion-label>STRENGTH</ion-label>
+                </ion-chip>
+                <ion-chip>
+                  <ion-label>{{creatures.at(0)!.str}}</ion-label>
+                </ion-chip>
+              </ion-item>
+              
+              <ion-item>
+                <ion-chip>
+                  <ion-avatar>
+                    <img src="assets/icons/placeholder.png" />
+                  </ion-avatar>
+                  <ion-label>AGILITY</ion-label>
+                </ion-chip>
+                <ion-chip>
+                  <ion-label>{{creatures.at(0)!.agi}}</ion-label>
+                </ion-chip>
+              </ion-item>
 
-            <ion-item>
-              <ion-chip>
-                <ion-avatar>
-                  <img src="assets/icons/placeholder.png" />
-                </ion-avatar>
-                <ion-label>INITIATIVE</ion-label>
-              </ion-chip>
-              <ion-chip>
-                <ion-label>{{creatures.at(0)!.ini}}</ion-label>
-              </ion-chip>
-            </ion-item>
+              <ion-item>
+                <ion-chip>
+                  <ion-avatar>
+                    <img src="assets/icons/placeholder.png" />
+                  </ion-avatar>
+                  <ion-label>CONSTITUTION</ion-label>
+                </ion-chip>
+                <ion-chip>
+                  <ion-label>{{creatures.at(0)!.con}}</ion-label>
+                </ion-chip>
+              </ion-item>
 
-          </ion-list>          
-        </ion-col>
-      </ion-row>
+              <ion-item>
+                <ion-chip>
+                  <ion-avatar>
+                    <img src="assets/icons/placeholder.png" />
+                  </ion-avatar>
+                  <ion-label>INITIATIVE</ion-label>
+                </ion-chip>
+                <ion-chip>
+                  <ion-label>{{creatures.at(0)!.ini}}</ion-label>
+                </ion-chip>
+              </ion-item>
+    
+            </ion-list>          
+          </ion-col>
 
+        </ion-row>
+
+        <ion-row>
+          <img *ngFor="let skill of creatures[0].skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}"/>
+        </ion-row>
+
+        <ion-button type="submit" color="danger" expand="block" (click)="learn()">learn</ion-button>
+
+      </ion-grid>
     </ion-card-content>
-
   </ion-card>
 </ion-content>

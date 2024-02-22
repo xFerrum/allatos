@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { Creature } from 'src/creature';
+import { Creature } from 'src/classes/creature';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { CommonModule } from '@angular/common';
+import { Skill } from 'src/classes/skill';
 
 @Component({
   selector: 'app-creatures',
@@ -15,7 +16,6 @@ import { CommonModule } from '@angular/common';
 
 export class CreaturesPage implements OnInit
 {
-  //TODO: handle array of creatures instead of a single one
   creatures: Creature[] = [];
   loadingDone = false;
   constructor(public creatureService: CreatureService, public userService: UserService)
@@ -30,10 +30,17 @@ export class CreaturesPage implements OnInit
       {
         const crID = data["ownedCreatures"][0];
         await this.creatureService.getCreatureDetails(crID).then((crData: any) =>
-        this.creatures.push(new Creature(crData!["type"], crData!["str"], crData!["agi"], crData!["con"], crData!["ini"], crData!["ownedBy"])));
+        this.creatures.push(new Creature(crData!["type"], crData!["str"], crData!["agi"], crData!["con"], crData!["ini"], crData!["ownedBy"], crData!["skills"])));
       }
     });
 
     this.loadingDone = true;
+  }
+
+  async learn()
+  {
+    const newSkill = new Skill("attack", 15, 0);
+    await this.creatureService.learnSkill("LHDQdHhn0uinvgqaiQ69", newSkill);
+    console.log(this.creatures[0].skills);
   }
 }

@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where} from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc} from 'firebase/firestore/lite';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { Injectable } from "@angular/core";
 import { firebaseConfig } from "src/app/fbaseconfig";
-  
+import { Skill } from "src/classes/skill";
+
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
 
@@ -17,6 +18,14 @@ export class CreatureService
   {
     let data = await getDoc(doc(db, "creatures", id));
     return(data.data());
+  }
+
+  async learnSkill(cid: string, skill: Skill)
+  {
+    await updateDoc(doc(db, "creatures", cid),
+      {
+        skills: arrayUnion(Object.assign({}, skill))
+      });
   }
 
 /*   async getCreaturesOfOwner(ownerId: string)

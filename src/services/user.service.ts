@@ -36,7 +36,6 @@ export class UserService
   });
   }
 
-  //returns firebase auth uid if successful
   async logUserIn(email: string, password: string)
   {
     let uid = await signInWithEmailAndPassword(auth, email, password)
