@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { UserService } from 'src/services/user.service';
 import { PopUpService } from 'src/services/popup.service';
 import { RouterLinkWithHref } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -17,7 +18,7 @@ import { RouterLinkWithHref } from '@angular/router';
 export class RegistrationPage implements OnInit
 { 
   form!: FormGroup;
-  constructor(public formBuilder: FormBuilder, public userService: UserService, public popUpService: PopUpService) {}
+  constructor(public formBuilder: FormBuilder, public userService: UserService, public popUpService: PopUpService, public router: Router) {}
 
   ngOnInit()
   {
@@ -41,6 +42,7 @@ export class RegistrationPage implements OnInit
     if (this.form.valid)
     {
       this.userService.registerUser(this.form.get('username')!.value, this.form.get('email')!.value, this.form.get('password')!.value);
+      this.router.navigate(['']);;
     }
     else
     {

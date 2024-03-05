@@ -27,7 +27,6 @@ export class PopUpService
   async dismissPopUp()
   {
     this.isLoading = false;
-
     this.popup.dismiss();
   }
 }

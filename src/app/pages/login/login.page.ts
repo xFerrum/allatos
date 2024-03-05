@@ -14,11 +14,13 @@ import { PopUpService } from 'src/services/popup.service';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterLinkWithHref, ReactiveFormsModule],
 })
-export class LoginPage
+
+export class LoginPage implements OnInit
 {
+  loadingDone = false;
   form!: FormGroup;
   constructor(public formBuilder: FormBuilder, public userService: UserService, public router: Router, public popUpService: PopUpService)
-  {
+  { 
     this.form = this.formBuilder.group({
       password: ['', [Validators.required, Validators.minLength(6)]],
       email: [
@@ -30,6 +32,12 @@ export class LoginPage
       ],
     });
   }
+  
+  ngOnInit(): void
+  {
+    if (this.userService.isLoggedIn()) this.router.navigate(["tabs/profile"]);
+    else this.loadingDone = true;
+  }
 
   async tryLogIn()
   {
@@ -39,7 +47,7 @@ export class LoginPage
     {
       if (await this.userService.logUserIn(this.form.get('email')!.value, this.form.get('password')!.value))
       {
-        this.router.navigate(['tabs/profile'])
+        this.router.navigate(['tabs/profile']);
       }
       else
       {

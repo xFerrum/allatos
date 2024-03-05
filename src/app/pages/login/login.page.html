@@ -4,9 +4,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content  >
+<ion-content>
 
-  <form [formGroup]="form">
+  <form [formGroup]="form" *ngIf="loadingDone">
 
     <ion-item lines="full">
       <ion-label position="floating">Email</ion-label>
