@@ -16,4 +16,9 @@ export const routes: Routes = [
     path: 'registration',
     loadComponent: () => import('./pages/registration/registration.page').then( m => m.RegistrationPage)
   },
+  //TODO: remove this after testing, shouldnt be accessible through url
+  {
+    path: 'battle',
+    loadComponent: () => import('./pages/battle/battle.page').then( m => m.BattlePage)
+  },
 ];
