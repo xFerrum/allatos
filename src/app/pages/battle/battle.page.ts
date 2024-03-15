@@ -15,9 +15,8 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule]
 })
-export class BattlePage implements OnInit {
-  message!: string;
-  messages: string[] = [];
+
+export class BattlePage implements OnInit {  
   constructor(public creatureService: CreatureService, public userService: UserService, public battleService: BattleService) { }
 
   ngOnInit()

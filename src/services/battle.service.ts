@@ -4,9 +4,11 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { firebaseConfig } from "src/app/fbaseconfig";
 import { Injectable } from "@angular/core";
 import { Skill } from "src/classes/skill";
+import { io } from 'socket.io-client';
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
+const socket = io('http://localhost:3000');
 
 @Injectable({
   providedIn: 'root',

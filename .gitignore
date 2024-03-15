@@ -67,4 +67,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-/server
+# Socket io stuff
+/server/node_modules
