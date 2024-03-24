@@ -8,7 +8,6 @@ import { io } from 'socket.io-client';
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
-const socket = io('http://localhost:3000');
 
 @Injectable({
   providedIn: 'root',
@@ -16,5 +15,21 @@ const socket = io('http://localhost:3000');
 
 export class BattleService
 {
+  socket: any;
 
+  initializeBattle(roomID: string)
+  {
+    this.socket = io('http://localhost:3000');
+    this.socket.on('connect', () =>
+    {
+      console.log("connected with id:" + this.socket.id);
+      this.socket.emit('join-room', roomID, (joinSuccessful: boolean) => {
+        if (joinSuccessful)
+        {
+          console.log("joined room " + roomID);
+        }
+      });
+    });
+
+  }
 }

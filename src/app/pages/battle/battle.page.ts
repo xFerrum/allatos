@@ -16,12 +16,21 @@ import { FormsModule } from '@angular/forms';
   imports: [IonicModule, CommonModule, FormsModule]
 })
 
-export class BattlePage implements OnInit {  
-  constructor(public creatureService: CreatureService, public userService: UserService, public battleService: BattleService) { }
+export class BattlePage implements OnInit
+{
+  p1cr!: Creature;
+  p2cr!: Creature;
+  roomID: string;
+  joinedRoom = false; //TODO: implement loading while joining
+
+  constructor(public creatureService: CreatureService, public userService: UserService, public battleService: BattleService)
+  {
+    this.roomID = history.state.roomID;
+  }
 
   ngOnInit()
   {
-
+    this.battleService.initializeBattle(this.roomID);
   }
 
 }
