@@ -35,7 +35,7 @@ export class LoginPage implements OnInit
   
   ngOnInit(): void
   {
-    if (this.userService.isLoggedIn()) this.router.navigate(["tabs/profile"]);
+    if (this.userService.isLoggedIn()) this.router.navigate(["tabs"]);
     else this.loadingDone = true;
   }
 
@@ -47,7 +47,7 @@ export class LoginPage implements OnInit
     {
       if (await this.userService.logUserIn(this.form.get('email')!.value, this.form.get('password')!.value))
       {
-        this.router.navigate(['tabs/profile']);
+        this.router.navigate(['tabs']);
       }
       else
       {

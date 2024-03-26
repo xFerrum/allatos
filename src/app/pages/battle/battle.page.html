@@ -4,16 +4,32 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" *ngIf="loadingDone">
   <ion-header collapse="condense">
-    <ion-toolbar>
+    <ion-toolbar> 
       <ion-title size="large">battle</ion-title>
     </ion-toolbar>
   </ion-header>
 
   <ion-card>
     <ion-card-content>
-      
+      <ion-grid>
+
+        <ion-row>
+
+          <ion-col size="4">
+            <ion-img class="creatureImg" src="assets/creature_imgs/test.png"></ion-img>
+          </ion-col>
+
+        </ion-row>
+
+        <ion-row>
+          <img *ngFor="let skill of myCr.skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}"/>
+        </ion-row>
+
+        <ion-button type="submit" color="danger" expand="block" (click)="testAttack()">Attack</ion-button>
+
+      </ion-grid>
     </ion-card-content>
   </ion-card>
 </ion-content>

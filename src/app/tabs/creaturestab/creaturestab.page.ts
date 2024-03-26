@@ -23,14 +23,13 @@ export class CreaturesPage implements OnInit
 
   async ngOnInit(): Promise<void>
   {
-    //get creatures owned by the logged in user, then add them to the "creatures" array
+    //add owned creatures to array
     await this.userService.getUserDetails(localStorage.getItem("loggedInID")!).then(async (data: any) =>
     {
-      for (let index = 0; index < data["ownedCreatures"].length; index++)
+      for (let i = 0; i < data["ownedCreatures"].length; i++)
       {
-        const crID = data["ownedCreatures"][0];
-        await this.creatureService.getCreatureDetails(crID).then((crData: any) =>
-        this.creatures.push(new Creature(crData!["type"], crData!["str"], crData!["agi"], crData!["con"], crData!["ini"], crData!["ownedBy"], crData!["skills"])));
+        const crID = data["ownedCreatures"][i];
+        this.creatures.push(await this.creatureService.getCreatureById(crID));
       }
     });
 

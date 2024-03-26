@@ -7,6 +7,7 @@ import { Skill } from 'src/classes/skill';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-battle',
@@ -18,19 +19,36 @@ import { FormsModule } from '@angular/forms';
 
 export class BattlePage implements OnInit
 {
-  p1cr!: Creature;
-  p2cr!: Creature;
-  roomID: string;
-  joinedRoom = false; //TODO: implement loading while joining
+  loadingDone = false; //TODO: implement loading spinner while joining
+  myCrID!: string;
+  myCr!: Creature;
+  opCrID!: string;
+  opCr!: Creature;
+  roomID!: string;
+  joinedRoom = false;
 
-  constructor(public creatureService: CreatureService, public userService: UserService, public battleService: BattleService)
+  constructor(public creatureService: CreatureService, public userService: UserService, public battleService: BattleService, private route: ActivatedRoute, private router: Router)
   {
-    this.roomID = history.state.roomID;
+    this.route.queryParams.subscribe(_p =>
+    {
+      const navParams = this.router.getCurrentNavigation()!.extras.state;
+      console.log(navParams!['creatureID'])
+      this.myCrID = navParams!['creatureID'];
+      this.roomID = navParams!['roomID'];
+      console.log(navParams!['roomID'])
+    })
+
   }
 
-  ngOnInit()
+  async ngOnInit()
   {
-    this.battleService.initializeBattle(this.roomID);
+    this.myCr = await this.creatureService.getCreatureById(this.myCrID);
+    this.loadingDone = await this.battleService.joinBattle(this.roomID, this.myCr, localStorage.getItem('loggedInID')!);
+  }
+
+  testAttack()
+  {
+
   }
 
 }

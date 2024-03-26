@@ -23,14 +23,14 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: './profiletab/profiletab.page',
+        redirectTo: 'profile',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '',
-    redirectTo: './profiletab/profiletab.page',
+    redirectTo: 'profile',
     pathMatch: 'full',
   },
 ];

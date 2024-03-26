@@ -13,7 +13,14 @@
     </ion-toolbar>
   </ion-header>
 
-<ion-input [(ngModel)]="roomID" label="test"></ion-input>
+<ion-input [(ngModel)]="roomID" label="Enter room ID:"></ion-input>
+<ion-list>
+  <ion-item>
+    <ion-select aria-label="Creature" interface="popover" placeholder="Select creature" (ionChange)="chooseCreature($event)">
+      <ion-select-option *ngFor="let cr of creatures" [value]=cr>{{cr.name}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-list>
 <ion-button id="joinButton" type="submit" expand="block" (click)="joinRoom()">Join</ion-button>
 
 </ion-content>

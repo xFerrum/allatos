@@ -3,6 +3,7 @@ import { Skill } from "src/classes/skill";
 
 export class BattleSession
 {
+    roomID!: string;
     p1cr!: Creature;
     p2cr!: Creature;
 

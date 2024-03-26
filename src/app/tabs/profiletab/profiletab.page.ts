@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { IonicModule, ViewDidEnter, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { UserService } from 'src/services/user.service';
 import { Router } from '@angular/router';
 import { PopUpService } from 'src/services/popup.service';
@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   imports: [IonicModule, CommonModule],
 })
 
-export class ProfilePage implements OnInit{
+export class ProfilePage implements OnInit {
   username!: string; 
   email!: string;
   loadingDone = false;
@@ -23,10 +23,7 @@ export class ProfilePage implements OnInit{
 
   async ngOnInit(): Promise<void>
   {
-    let userService = new UserService;
-    let userData = await userService.getUserDetails(localStorage.getItem("loggedInID")!);
-    this.username = userData!["username"];
-    this.email = userData!["email"];
+    await this.loadProfileDetails();
 
     this.loadingDone = true;
   }
@@ -39,7 +36,14 @@ export class ProfilePage implements OnInit{
     {
       this.router.navigate(['']);
     }
-
+    
     await this.popUpService.dismissPopUp();
+  }
+
+  async loadProfileDetails()
+  {
+    let userData = await this.userService.getUserDetails(localStorage.getItem("loggedInID")!);
+    this.username = userData!["username"];
+    this.email = userData!["email"];
   }
 }
