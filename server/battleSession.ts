@@ -1,15 +1,24 @@
-import { Creature } from "src/classes/creature";
-import { Skill } from "src/classes/skill";
+import { Creature } from "../src/classes/creature";
+import { Skill } from "../src/classes/skill";
 
 export class BattleSession
 {
     roomID!: string;
-    p1cr!: Creature;
-    p2cr!: Creature;
+    cr1!: Creature;
+    cr2!: Creature;
+    uid1!: string;
+    uid2!: string;
 
-    constructor(p1cr: Creature, p2cr: Creature)
+    constructor(roomID: string, cr: Creature)
     {
-        this.p1cr = p1cr;
-        this.p2cr = p2cr;
+        this.roomID = roomID;
+        this.cr1 = cr;
+        this.uid1 = cr.ownedBy;
+    }
+
+    addSecondPlayer(cr: Creature)
+    {
+        this.cr2 = cr;
+        this.uid2 = cr.ownedBy;
     }
 }

@@ -38,8 +38,8 @@ export class CreaturesPage implements OnInit
 
   async learn()
   {
-    const newSkill = new Skill("attack", 15, 0);
-    await this.creatureService.learnSkill("LHDQdHhn0uinvgqaiQ69", newSkill);
+    const newSkill = new Skill("attack", 18, 0);
+    await this.creatureService.learnSkill(this.creatures[0].crID, newSkill);
     console.log(this.creatures[0].skills);
   }
 }
