@@ -27,6 +27,8 @@ export class BattlePage implements OnInit
   opUID!: string;
   roomID!: string;
   socket: any;
+  myMaxHP!: number;
+  opMaxHP!: number;
 
 //TODO: validate creature id belongs to user
   //connect to socket, then room with the user's details
@@ -44,6 +46,7 @@ export class BattlePage implements OnInit
 
   async ngOnInit()
   {
+  
     this.myCr = await this.creatureService.getCreatureById(this.myCrID);
     this.socket = io('http://localhost:3000');
     //connect to server socket, join room
@@ -59,33 +62,70 @@ export class BattlePage implements OnInit
       });
     });
 
-    //
-    this.socket.on('players-ready', (cr1: Creature, cr2: Creature) =>
+    //TODO: shorten next 2 funcs
+    this.socket.on('players-ready', (cr1: Creature, cr2: Creature, hp1: number, hp2: number) =>
     {
-      if (this.myCr.crID === cr1.crID)
+      if (this.myCrID === cr1.crID)
       {
         this.isPlayerOne = true;
         this.opCr = cr2;
         this.opUID = cr2.ownedBy;
+        this.myMaxHP = hp1;
+        this.opMaxHP = hp2;
       }
-      else
+      else if (this.myCrID === cr2.crID)
       {
         this.isPlayerOne = false;
         this.opCr = cr1;
         this.opUID = cr1.ownedBy;
+        this.myMaxHP = hp2;
+        this.opMaxHP = hp1;
       }
-      console.log(this.loadingDone);
       this.loadingDone = true;
-    })
+    });
+
+    this.socket.on('player-rejoin', (cr1: Creature, cr2: Creature, hp1: number, hp2: number) =>
+    {
+      if (this.opCr === undefined) //if user is the one rejoining
+      {
+        if (this.myCrID === cr1.crID)
+        {
+          this.myCr = cr1;
+          this.isPlayerOne = true;
+          this.opCr = cr2;
+          this.opUID = cr2.ownedBy;
+          this.myMaxHP = hp1;
+          this.opMaxHP = hp2;
+        }
+        else if (this.myCrID === cr2.crID)
+        {
+          this.myCr = cr2;
+          this.isPlayerOne = false;
+          this.opCr = cr1;
+          this.opUID = cr1.ownedBy;
+          this.myMaxHP = hp2;
+          this.opMaxHP = hp1;
+        }
+        else; //TODO: spectate
+        this.loadingDone = true;
+      }
+    });
+
+    this.socket.on('skill-used', (cr1: Creature, cr2: Creature) =>
+    {
+      if (this.isPlayerOne) this.updateCreatures(cr1, cr2);
+      else this.updateCreatures(cr2, cr1);
+    });
   }
 
   testAttack()
   {
-
+    this.socket.emit('use-skill', this.isPlayerOne, new Skill('attack', 10, 0));
   }
 
-  battleStateChanged()
+  updateCreatures(myCr: Creature, opCr: Creature)
   {
-
+    this.myCr = myCr;
+    this.opCr = opCr;
   }
 }

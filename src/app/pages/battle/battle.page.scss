@@ -1,4 +1,43 @@
 .creatureImg
 {
-
+    max-width: 200px;
+    margin: auto;
 }
+
+.skillIcon
+{
+
+    width: 50px;
+    height: 50px;
+    padding: 5px;
+}
+
+.creatureCard
+{
+    display: block;
+    justify-content: center;
+}
+
+.crName
+{
+    margin: auto;
+}
+
+.progress-outer {
+    width: 96%;
+    margin: 10px 2%;
+    padding: 3px;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    color: #000000;
+    border-radius: 20px;
+  }
+
+  .progress-inner {
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+    border-radius: 20px;
+    background-color: red;
+  }

@@ -12,16 +12,24 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-card>
+  <ion-card class="creatureCard">
     <ion-card-content>
       <ion-grid>
 
         <ion-row>
+          <ion-card-title class="crName">{{opCr.name}}</ion-card-title>
+        </ion-row>
 
-          <ion-col size="4">
-            <ion-img class="creatureImg" src="assets/creature_imgs/test.png"></ion-img>
+        <ion-row>
+          <div class="progress-outer">
+            <div class="progress-inner" [style.width]="(opCr.con*100)/opMaxHP + '%'">{{opCr.con}}</div>
+          </div>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-img class="creatureImg" src="{{'assets/creature_imgs/' + opCr.type + '.png'}}"></ion-img>
           </ion-col>
-
         </ion-row>
 
         <ion-row>
@@ -32,14 +40,24 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
+  <ion-card class="creatureCard">
     <ion-card-content>
       <ion-grid>
 
         <ion-row>
+          <ion-card-title class="crName">{{myCr.name}}</ion-card-title>
+        </ion-row>
 
-          <ion-col size="4">
-            <ion-img class="creatureImg" src="assets/creature_imgs/test.png"></ion-img>
+        <ion-row>
+          <div class="progress-outer">
+            <div class="progress-inner" [style.width]="(myCr.con*100)/myMaxHP + '%'">{{myCr.con}}</div>
+          </div>
+        </ion-row>
+
+        <ion-row>
+
+          <ion-col>
+            <ion-img class="creatureImg" src="{{'assets/creature_imgs/' + myCr.type + '.png'}}"></ion-img>
           </ion-col>
 
         </ion-row>
