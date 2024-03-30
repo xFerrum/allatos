@@ -10,6 +10,13 @@ export class BattleSession
     uid2!: string;
     maxHP1!: number;
     maxHP2!: number;
+    playerOneActs: boolean; //who won ini roll or whose skill is resolving next
+
+    gameState: number; //IDEA: replace conditions with gameState checks (numbered starting from 1, each number means a different state like pick phase, reveal phase, action phase etc)
+    p1pick: Skill;
+    p2pick: Skill;
+    p1SkillsUsed: Skill[] = [];
+    p2SkillsUsed: Skill[] = [];
 
     constructor(roomID: string, cr: Creature)
     {
@@ -24,5 +31,88 @@ export class BattleSession
         this.cr2 = cr;
         this.uid2 = cr.ownedBy;
         this.maxHP2 = cr.con;
+
+        this.startOfTurn();
+    }
+
+    //picked skills are stored until both players have chosen, if chosen 2-2 -> execute skills
+    //return true if action phase happened
+    skillPicked(owneruid: string, skill: Skill): boolean
+    {
+        if (owneruid === this.uid1) 
+        {
+            this.p1SkillsUsed.push(skill);
+        }
+        else
+        {
+            this.p2SkillsUsed.push(skill);
+        }
+
+        if ((this.p1SkillsUsed.length + this.p2SkillsUsed.length) >= 4)
+        {
+            for (let i = 0; i < 4; i++)
+            {
+                let currentSkill: Skill;
+                let actor: Creature;
+                let opponent: Creature;
+                if (this.playerOneActs)
+                {
+                    currentSkill = this.p1SkillsUsed.shift();
+                    actor = this.cr1;
+                    opponent = this.cr2;
+                }
+                else
+                {
+                    currentSkill = this.p2SkillsUsed.shift();
+                    actor = this.cr2;
+                    opponent = this.cr1;
+                }
+
+                if (currentSkill.selfTarget)
+                    this.useSkillOn(actor, currentSkill);
+                else
+                    this.useSkillOn(opponent, currentSkill);
+
+                this.playerOneActs = !this.playerOneActs;
+            }
+
+            return true;
+        }
+        else return false;
+    }
+
+    startOfTurn()
+    {
+        //chance of who goes first is relative to each other's ini -> if 30v20 then 30 ini has 60% chance of going first
+        const iniTotal = this.cr1.ini + this.cr2.ini;
+        const randomNumber = iniTotal * Math.random();
+        if (randomNumber > this.cr1.ini)
+            this.playerOneActs = false;
+        else
+            this.playerOneActs = true;
+        
+        console.log(this.playerOneActs);
+    }
+
+    endOfTurn()
+    {
+
+    }
+
+    startAction()
+    {
+
+    }
+
+    useSkillOn(creature: Creature, skill: Skill)
+    {
+        switch(skill.type)
+        {
+            case 'attack':
+                creature.con -= skill.effects.dmg;
+                break;
+        }
+        
+        console.log(creature.name);
     }
 }

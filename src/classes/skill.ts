@@ -1,13 +1,24 @@
 export class Skill
 {
     type: string;
-    dmg: number;
-    heal: number;
+    description!: string;
+    selfTarget: boolean; 
+    effects: any;
 
-    constructor(type: string, dmg: number, heal: number)
+    constructor(type: string, selfTarget: boolean, effects: Object)
     {
         this.type = type;
-        this.dmg = dmg;
-        this.heal = heal;
+        this.selfTarget = selfTarget;
+        this.effects = effects;
+
+        //construct description
+        switch(type)
+        {
+            case "attack":
+                this.description = "Deal " + this.effects.dmg + " damage"
+                break;
+            default:
+                this.description = "Description"
+          }
     }
 }

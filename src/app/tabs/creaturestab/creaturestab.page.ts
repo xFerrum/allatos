@@ -5,6 +5,7 @@ import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { CommonModule } from '@angular/common';
 import { Skill } from 'src/classes/skill';
+import { PopUpService } from 'src/services/popup.service';
 
 @Component({
   selector: 'app-creatures',
@@ -18,7 +19,7 @@ export class CreaturesPage implements OnInit
 {
   creatures: Creature[] = [];
   loadingDone = false;
-  constructor(public creatureService: CreatureService, public userService: UserService)
+  constructor(public creatureService: CreatureService, public userService: UserService, public popupService: PopUpService)
   {}
 
   async ngOnInit(): Promise<void>
@@ -38,8 +39,13 @@ export class CreaturesPage implements OnInit
 
   async learn()
   {
-    const newSkill = new Skill("attack", 18, 0);
+    let testeffects = {dmg: 17};
+    const newSkill = new Skill("attack", false, testeffects);
     await this.creatureService.learnSkill(this.creatures[0].crID, newSkill);
-    console.log(this.creatures[0].skills);
+  }
+
+  openSkill(name: string, desc: string)
+  {
+    this.popupService.skillPopUp(name, desc);
   }
 }

@@ -63,10 +63,8 @@
         </ion-row>
 
         <ion-row>
-          <img *ngFor="let skill of myCr.skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}"/>
+          <img *ngFor="let skill of myCr.skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="useSkill(skill)"/>
         </ion-row>
-
-        <ion-button type="submit" color="danger" expand="block" (click)="testAttack()">Attack</ion-button>
 
       </ion-grid>
     </ion-card-content>

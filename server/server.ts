@@ -32,7 +32,6 @@ io.on('connection', (socket: any) =>
     else if (battlesInProgress.get(roomID)!.uid2 === undefined) //if joining user is the second one to connect (to new match)
     {
       battlesInProgress.get(roomID)!.addSecondPlayer(cr);
-      startOfBattle(battlesInProgress.get(roomID));
       const cr1 = battlesInProgress.get(roomID)!.cr1;
       const cr2 = battlesInProgress.get(roomID)!.cr2;
       io.to(roomID).emit('players-ready', cr1, cr2, battlesInProgress.get(roomID).maxHP1, battlesInProgress.get(roomID).maxHP2); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
@@ -50,37 +49,17 @@ io.on('connection', (socket: any) =>
 
   //get cr1 and cr2, apply effects on target, and emit updates
   //creatureOne: is creature 1 the actor?
-  socket.on('use-skill', (creatureOne: boolean, skill: Skill) =>
+  socket.on('play-skill', (owneruid: string, skill: Skill) =>
   {
     let battle = battlesInProgress.get(socket.data.roomID);
-    let actor: Creature;
-    let target: Creature;
-
-    if (creatureOne)
+    if(battle.skillPicked(owneruid, skill))
     {
-      actor = battle.cr1;
-      target = battle.cr2;
+      io.to(battle.roomID).emit('skill-used', battle.cr1, battle.cr2);
     }
-    else
-    {
-      actor = battle.cr2;
-      target = battle.cr1;
-    }
-
-    switch(skill.type)
-    {
-      case 'attack':
-      {
-        target.con -= skill.dmg;
-      }
-    }
-
-    io.to(battle.roomID).emit('skill-used', battle.cr1, battle.cr2);
   });
 });
 
-
-function startOfBattle(battle: BattleSession) //start of battle effects happen
+function startOfAction()
 {
 
 }

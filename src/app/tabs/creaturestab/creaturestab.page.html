@@ -80,7 +80,7 @@
         </ion-row>
 
         <ion-row>
-          <img *ngFor="let skill of creatures[0].skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="learn()"/>
+          <img *ngFor="let skill of creatures[0].skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="openSkill(skill.type, skill.description)"/>
         </ion-row>
 
         <ion-button type="submit" color="danger" expand="block" (click)="learn()">learn</ion-button>

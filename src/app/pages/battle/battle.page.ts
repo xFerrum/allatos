@@ -118,9 +118,10 @@ export class BattlePage implements OnInit
     });
   }
 
-  testAttack()
+  useSkill(skill: Skill)
   {
-    this.socket.emit('use-skill', this.isPlayerOne, new Skill('attack', 10, 0));
+    this.socket.emit('play-skill', localStorage.getItem('loggedInID'), skill);
+    console.log("Skill used by creature " + this.myCr.name + ": " + skill.description);
   }
 
   updateCreatures(myCr: Creature, opCr: Creature)
