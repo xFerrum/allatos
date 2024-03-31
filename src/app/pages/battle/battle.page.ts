@@ -116,12 +116,16 @@ export class BattlePage implements OnInit
       if (this.isPlayerOne) this.updateCreatures(cr1, cr2);
       else this.updateCreatures(cr2, cr1);
     });
+
+    this.socket.on('log-sent', (log: string) =>
+    {
+      console.log(log);
+    });
   }
 
   useSkill(skill: Skill)
   {
     this.socket.emit('play-skill', localStorage.getItem('loggedInID'), skill);
-    console.log("Skill used by creature " + this.myCr.name + ": " + skill.description);
   }
 
   updateCreatures(myCr: Creature, opCr: Creature)

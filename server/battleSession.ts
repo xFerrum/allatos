@@ -10,20 +10,23 @@ export class BattleSession
     uid2!: string;
     maxHP1!: number;
     maxHP2!: number;
-    playerOneActs: boolean; //who won ini roll or whose skill is resolving next
+    io: any;
 
-    gameState: number; //IDEA: replace conditions with gameState checks (numbered starting from 1, each number means a different state like pick phase, reveal phase, action phase etc)
+    //gameState: number; IDEA: replace conditions with gameState checks (numbered starting from 1, each number means a different state like pick phase, reveal phase, action phase etc)
+    playerOneActs: boolean; //who won ini roll or whose skill is resolving next
     p1pick: Skill;
     p2pick: Skill;
     p1SkillsUsed: Skill[] = [];
     p2SkillsUsed: Skill[] = [];
+    combatLog = "";
 
-    constructor(roomID: string, cr: Creature)
+    constructor(roomID: string, cr: Creature, io: any)
     {
         this.roomID = roomID;
         this.cr1 = cr;
         this.uid1 = cr.ownedBy;
         this.maxHP1 = cr.con;
+        this.io = io;
     }
 
     addSecondPlayer(cr: Creature)
@@ -31,7 +34,6 @@ export class BattleSession
         this.cr2 = cr;
         this.uid2 = cr.ownedBy;
         this.maxHP2 = cr.con;
-
         this.startOfTurn();
     }
 
@@ -76,6 +78,7 @@ export class BattleSession
                 this.playerOneActs = !this.playerOneActs;
             }
 
+            this.sendLog();
             return true;
         }
         else return false;
@@ -87,11 +90,17 @@ export class BattleSession
         const iniTotal = this.cr1.ini + this.cr2.ini;
         const randomNumber = iniTotal * Math.random();
         if (randomNumber > this.cr1.ini)
+        {
             this.playerOneActs = false;
+            this.combatLog += this.cr2.name + " won the initiative roll. (";
+        }
         else
+        {
             this.playerOneActs = true;
-        
-        console.log(this.playerOneActs);
+            this.combatLog += this.cr2.name + " won the initiative roll. (";
+        }
+        this.combatLog += "rolled " + randomNumber + "/" + iniTotal + ")\n";
+        this.sendLog();
     }
 
     endOfTurn()
@@ -110,9 +119,17 @@ export class BattleSession
         {
             case 'attack':
                 creature.con -= skill.effects.dmg;
+                this.combatLog += creature.name + " got hit for " + skill.effects.dmg + " damage.\n"
                 break;
         }
         
         console.log(creature.name);
+    }
+
+    //send log to clients and clear it
+    sendLog()
+    {
+        this.io.to(this.roomID).emit('log-sent', this.combatLog);
+        this.combatLog = "";
     }
 }
