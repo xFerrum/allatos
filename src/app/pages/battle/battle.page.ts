@@ -116,20 +116,42 @@ export class BattlePage implements OnInit
       }
     });
 
-    this.socket.on('skill-used', (cr1: Creature, cr2: Creature) =>
-    {
-      if (this.isPlayerOne) this.updateCreatures(cr1, cr2);
-      else this.updateCreatures(cr2, cr1);
-    });
-
     this.socket.on('log-sent', (log: string) =>
     {
       console.log(log);
     });
 
-    this.socket.on('reveal-phase', () =>
+    this.socket.on('game-state-sent', (cr1: Creature, cr2: Creature, hp1: number, hp2: number, p1CanPick: boolean, p2CanPick: boolean) =>
     {
-      this.canPick = true;
+      if (this.myCrID === cr1.crID)
+        {
+          this.myCr = cr1;
+          this.isPlayerOne = true;
+          this.opCr = cr2;
+          this.opUID = cr2.ownedBy;
+          this.myMaxHP = hp1;
+          this.opMaxHP = hp2;
+          this.canPick = p1CanPick
+        }
+        else if (this.myCrID === cr2.crID)
+        {
+          this.myCr = cr2;
+          this.isPlayerOne = false;
+          this.opCr = cr1;
+          this.opUID = cr1.ownedBy;
+          this.myMaxHP = hp2;
+          this.opMaxHP = hp1;
+          this.canPick = p2CanPick;
+        }
+    });
+
+    this.socket.on('player-won', (uid: string) =>
+    {
+      if (uid === this.myCr.ownedBy)
+      {
+        console.log("You won.")
+      }
+      else console.log("You lost.")
     });
   }
 
@@ -140,11 +162,5 @@ export class BattlePage implements OnInit
       this.socket.emit('play-skill', localStorage.getItem('loggedInID'), skill);
       this.canPick = false;
     }
-  }
-
-  updateCreatures(myCr: Creature, opCr: Creature)
-  {
-    this.myCr = myCr;
-    this.opCr = opCr;
   }
 }

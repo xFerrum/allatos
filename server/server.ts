@@ -43,8 +43,8 @@ io.on('connection', (socket: any) =>
       let battle = battlesInProgress.get(roomID);
 
       let canPick = false;
-      if (battle.uid1 === socket.data.uid) canPick = true;
-      if (battle.uid2 === socket.data.uid) canPick = true;
+      if (battle.uid1 === socket.data.uid) canPick = battle.p1CanPick;
+      if (battle.uid2 === socket.data.uid) canPick = battle.p2CanPick;
 
       io.to(roomID).emit('player-rejoin', battle.cr1, battle.cr2, battle.maxHP1, battle.maxHP2, canPick);
     }
@@ -62,7 +62,7 @@ io.on('connection', (socket: any) =>
     let battle = battlesInProgress.get(socket.data.roomID);
     if(battle.skillPicked(owneruid, skill))
     {
-      io.to(battle.roomID).emit('skill-used', battle.cr1, battle.cr2);
+      io.to(battle.roomID).emit('game-state-sent', battle.cr1, battle.cr2, battle.maxHP1, battle.maxHP2, battle.p1CanPick, battle.p2CanPick);
     }
   });
 });

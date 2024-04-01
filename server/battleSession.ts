@@ -46,7 +46,7 @@ export class BattleSession
     //players can pick 1-1 skill, after both players picked, they can pick 1-1 again
     skillPicked(owneruid: string, skill: Skill): boolean //TODO: if players picked 1-1 send to clients the skills picked
     {
-        if (this.gameState === 10)
+        if (this.gameState === 10 || this.gameState === 20)
         {
             if (owneruid === this.uid1)
             {
@@ -59,42 +59,20 @@ export class BattleSession
                 this.p2CanPick = false;
             }
 
-            if (!this.p1CanPick && !this.p2CanPick) this.revealPhase();
+            console.log(!this.p1CanPick, !this.p2CanPick, this.gameState);
+            if (!this.p1CanPick && !this.p2CanPick)
+            {
+                if (this.gameState === 10)
+                    this.revealPhase();
+                else if (this.gameState === 20)
+                    this.actionPhase();
+            }
         }
 
-        if ((this.p1SkillsUsed.length + this.p2SkillsUsed.length) >= 4)
+        if (this.gameState === 30)
         {
             this.actionPhase();
 
-            for (let i = 0; i < 4; i++)
-            {
-                let currentSkill: Skill;
-                let actor: Creature;
-                let opponent: Creature;
-                if (this.playerOneActs)
-                {
-                    currentSkill = this.p1SkillsUsed.shift();
-                    actor = this.cr1;
-                    opponent = this.cr2;
-                }
-                else
-                {
-                    currentSkill = this.p2SkillsUsed.shift();
-                    actor = this.cr2;
-                    opponent = this.cr1;
-                }
-
-                if (currentSkill.selfTarget)
-                    this.useSkillOn(actor, currentSkill);
-                else
-                    this.useSkillOn(opponent, currentSkill);
-
-                this.playerOneActs = !this.playerOneActs;
-            }
-
-            this.p1CanPick = true;
-            this.p2CanPick = true;
-            this.sendLog();
             return true;
         }
         else return false;
@@ -121,16 +99,11 @@ export class BattleSession
         console.log(this.cr1.ini);
         this.combatLog += "rolled " + randomNumber + "/" + iniTotal + ")\n";
         this.sendLog();
-    }
 
-    endOfTurn()
-    {
+        this.p1CanPick = true;
+        this.p2CanPick = true;
 
-    }
-
-    startAction()
-    {
-
+        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.maxHP1, this.maxHP2, this.p1CanPick, this.p2CanPick);
     }
 
     useSkillOn(creature: Creature, skill: Skill)
@@ -142,8 +115,9 @@ export class BattleSession
                 this.combatLog += creature.name + " got hit for " + skill.effects.dmg + " damage.\n"
                 break;
         }
-        
-        console.log(creature.name);
+
+        this.sendLog();
+        this.io.to(this.roomID).emit('skill-used', this.cr1, this.cr2);
     }
 
     revealPhase()
@@ -153,29 +127,49 @@ export class BattleSession
         console.log(this.p1SkillsUsed);
         console.log(this.p1SkillsUsed);
 
-        this.combatLog += this.cr1.name + " picked skill: " + this.p1SkillsUsed[0].description;
-        this.combatLog += this.cr2.name + " picked skill: " + this.p1SkillsUsed[0].description;
+        this.combatLog += this.cr1.name + " picked skill: " + this.p1SkillsUsed[0].description + "\n";
+        this.combatLog += this.cr2.name + " picked skill: " + this.p1SkillsUsed[0].description + "\n";
         this.p1CanPick = true;
         this.p2CanPick = true;
 
         this.sendLog();
-        this.io.to(this.roomID).emit('reveal-phase');
+        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.maxHP1, this.maxHP2, this.p1CanPick, this.p2CanPick);
     }
 
     actionPhase()
     {
         this.gameState = 30;
 
-        console.log(this.p1SkillsUsed);
-        console.log(this.p1SkillsUsed);
+        for (let i = 0; i < 4; i++)
+        {
+            let currentSkill: Skill;
+            let actor: Creature;
+            let opponent: Creature;
+            if (this.playerOneActs)
+            {
+                currentSkill = this.p1SkillsUsed.shift();
+                actor = this.cr1;
+                opponent = this.cr2;
+            }
+            else
+            {
+                currentSkill = this.p2SkillsUsed.shift();
+                actor = this.cr2;
+                opponent = this.cr1;
+            }
 
-        this.combatLog += this.cr1.name + " picked skill: " + this.p1SkillsUsed[0].description;
-        this.combatLog += this.cr2.name + " picked skill: " + this.p1SkillsUsed[0].description;
-        this.p1CanPick = true;
-        this.p2CanPick = true;
+            if (currentSkill.selfTarget)
+                this.useSkillOn(actor, currentSkill);
+            else
+                this.useSkillOn(opponent, currentSkill);
+
+            this.checkIfGameEnd();
+
+            this.playerOneActs = !this.playerOneActs;
+        }
 
         this.sendLog();
-        this.io.to(this.roomID).emit('reveal-phase');
+        this.startOfTurn();
     }
 
     //send log to clients and clear it
@@ -183,5 +177,39 @@ export class BattleSession
     {
         this.io.to(this.roomID).emit('log-sent', this.combatLog);
         this.combatLog = "";
+    }
+
+    //check if cr1 or cr2 hp is below 0 (tie if both below 0)
+    checkIfGameEnd()
+    {
+        if (this.cr1.con <= 0)
+        {
+            if (this.cr2.con <= 0)
+            {
+                //tie
+            }
+            else
+            {
+                //p2 won
+                this.gameState = 666;
+                this.playerWon(this.uid2);
+            }
+        }
+        else if (this.cr2.con <= 0)
+        {
+            //p1 won
+            this.gameState = 666;
+            this.playerWon(this.uid1);
+        }
+    }
+
+    playerWon(uid: string)
+    {
+        this.io.to(this.roomID).emit('player-won', uid);
+    }
+
+    sleep(ms: number)
+    {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
