@@ -19,9 +19,9 @@ io.on('connection', (socket: any) =>
   socket.on('join-room', async (cr: Creature, roomID: string, joinSuccessful: Function) =>
   {
     await socket.join(roomID);
-    console.log(await io.in(roomID).fetchSockets());
     joinSuccessful(true);
     socket.data.roomID = roomID;
+    socket.data.uid = cr.ownedBy;
 
     if (!battlesInProgress.has(roomID)) //if it's the first user joining the room (for the first time)
     {
@@ -31,14 +31,22 @@ io.on('connection', (socket: any) =>
     }
     else if (battlesInProgress.get(roomID)!.uid2 === undefined) //if joining user is the second one to connect (to new match)
     {
-      battlesInProgress.get(roomID)!.addSecondPlayer(cr);
-      const cr1 = battlesInProgress.get(roomID)!.cr1;
-      const cr2 = battlesInProgress.get(roomID)!.cr2;
-      io.to(roomID).emit('players-ready', cr1, cr2, battlesInProgress.get(roomID).maxHP1, battlesInProgress.get(roomID).maxHP2); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
+      let battle = battlesInProgress.get(roomID);
+
+      battle.addSecondPlayer(cr);
+      const cr1 = battle.cr1;
+      const cr2 = battle.cr2;
+      io.to(roomID).emit('players-ready', cr1, cr2, battle.maxHP1, battle.maxHP2); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
     }
-    else //rejoin existing match
+    else //user is rejoining, check if its p1 or p2
     {
-      io.to(roomID).emit('player-rejoin', battlesInProgress.get(roomID)!.cr1, battlesInProgress.get(roomID)!.cr2, battlesInProgress.get(roomID).maxHP1, battlesInProgress.get(roomID).maxHP2);
+      let battle = battlesInProgress.get(roomID);
+
+      let canPick = false;
+      if (battle.uid1 === socket.data.uid) canPick = true;
+      if (battle.uid2 === socket.data.uid) canPick = true;
+
+      io.to(roomID).emit('player-rejoin', battle.cr1, battle.cr2, battle.maxHP1, battle.maxHP2, canPick);
     }
   });
 

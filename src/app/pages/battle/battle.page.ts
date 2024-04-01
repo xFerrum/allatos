@@ -29,6 +29,7 @@ export class BattlePage implements OnInit
   socket: any;
   myMaxHP!: number;
   opMaxHP!: number;
+  canPick = false;
 
 //TODO: validate creature id belongs to user
   //connect to socket, then room with the user's details
@@ -81,10 +82,12 @@ export class BattlePage implements OnInit
         this.myMaxHP = hp2;
         this.opMaxHP = hp1;
       }
+
+      this.canPick = true;
       this.loadingDone = true;
     });
 
-    this.socket.on('player-rejoin', (cr1: Creature, cr2: Creature, hp1: number, hp2: number) =>
+    this.socket.on('player-rejoin', (cr1: Creature, cr2: Creature, hp1: number, hp2: number, canPick: boolean) =>
     {
       if (this.opCr === undefined) //if user is the one rejoining
       {
@@ -107,6 +110,8 @@ export class BattlePage implements OnInit
           this.opMaxHP = hp1;
         }
         else; //TODO: spectate
+
+        this.canPick = canPick;
         this.loadingDone = true;
       }
     });
@@ -121,11 +126,20 @@ export class BattlePage implements OnInit
     {
       console.log(log);
     });
+
+    this.socket.on('reveal-phase', () =>
+    {
+      this.canPick = true;
+    });
   }
 
   useSkill(skill: Skill)
   {
-    this.socket.emit('play-skill', localStorage.getItem('loggedInID'), skill);
+    if (this.canPick)
+    {
+      this.socket.emit('play-skill', localStorage.getItem('loggedInID'), skill);
+      this.canPick = false;
+    }
   }
 
   updateCreatures(myCr: Creature, opCr: Creature)
