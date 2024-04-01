@@ -14,7 +14,7 @@ export class BattleSession
 
     //gameStates -> 0: initializing || 10: turn start || 20: 1-1 skills picked (reveal phase) || 30: 2-2 skills picked (action phase)
     gameState = 0; 
-    playerOneActs: boolean; //who won ini roll or whose skill is resolving next
+    playerOneActs: boolean; //whose skill is resolving next
     p1pick: Skill;
     p2pick: Skill;
     p1SkillsUsed: Skill[] = [];
@@ -41,11 +41,14 @@ export class BattleSession
         this.startOfTurn();
     }
 
-    //picked skills are stored until both players have chosen, if chosen 2-2 -> execute skills
-    //return true if action phase happened
-    //players can pick 1-1 skill, after both players picked, they can pick 1-1 again
-    skillPicked(owneruid: string, skill: Skill): boolean //TODO: if players picked 1-1 send to clients the skills picked
+    //this is the main function driving the gameplay
+    //players can pick 1-1 skill, after both players picked, they can pick 1-1 again (reveal phase), then action phase
+    skillPicked(owneruid: string, skill: Skill)
     {
+        //block foul play from a client
+        if (owneruid === this.uid1 && !this.p1CanPick) return;
+        if (owneruid === this.uid2 && !this.p2CanPick) return;
+
         if (this.gameState === 10 || this.gameState === 20)
         {
             if (owneruid === this.uid1)
@@ -59,7 +62,6 @@ export class BattleSession
                 this.p2CanPick = false;
             }
 
-            console.log(!this.p1CanPick, !this.p2CanPick, this.gameState);
             if (!this.p1CanPick && !this.p2CanPick)
             {
                 if (this.gameState === 10)
@@ -72,10 +74,7 @@ export class BattleSession
         if (this.gameState === 30)
         {
             this.actionPhase();
-
-            return true;
         }
-        else return false;
     }
 
     startOfTurn()
@@ -98,37 +97,19 @@ export class BattleSession
         console.log(this.cr1.name);
         console.log(this.cr1.ini);
         this.combatLog += "rolled " + randomNumber + "/" + iniTotal + ")\n";
-        this.sendLog();
-
         this.p1CanPick = true;
         this.p2CanPick = true;
 
-        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.maxHP1, this.maxHP2, this.p1CanPick, this.p2CanPick);
-    }
-
-    useSkillOn(creature: Creature, skill: Skill)
-    {
-        switch(skill.type)
-        {
-            case 'attack':
-                creature.con -= skill.effects.dmg;
-                this.combatLog += creature.name + " got hit for " + skill.effects.dmg + " damage.\n"
-                break;
-        }
-
         this.sendLog();
-        this.io.to(this.roomID).emit('skill-used', this.cr1, this.cr2);
+        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.maxHP1, this.maxHP2, this.p1CanPick, this.p2CanPick);
     }
 
     revealPhase()
     {
         this.gameState = 20;
 
-        console.log(this.p1SkillsUsed);
-        console.log(this.p1SkillsUsed);
-
         this.combatLog += this.cr1.name + " picked skill: " + this.p1SkillsUsed[0].description + "\n";
-        this.combatLog += this.cr2.name + " picked skill: " + this.p1SkillsUsed[0].description + "\n";
+        this.combatLog += this.cr2.name + " picked skill: " + this.p2SkillsUsed[0].description + "\n";
         this.p1CanPick = true;
         this.p2CanPick = true;
 
@@ -172,6 +153,19 @@ export class BattleSession
         this.startOfTurn();
     }
 
+    useSkillOn(creature: Creature, skill: Skill)
+    {
+        switch(skill.type)
+        {
+            case 'attack':
+                creature.con -= skill.effects.dmg;
+                this.combatLog += creature.name + " got hit for " + skill.effects.dmg + " damage.\n"
+                break;
+        }
+
+        this.sendLog();
+    }
+
     //send log to clients and clear it
     sendLog()
     {
@@ -206,10 +200,5 @@ export class BattleSession
     playerWon(uid: string)
     {
         this.io.to(this.roomID).emit('player-won', uid);
-    }
-
-    sleep(ms: number)
-    {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

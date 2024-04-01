@@ -18,7 +18,7 @@ export class CreatureService
   async getCreatureById(id: string)
   {
     let data = (await getDoc(doc(db, "creatures", id))).data();
-    let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["con"], data!["ini"], data!["ownedBy"], data!["skills"]);
+    let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["con"], data!["ini"], data!["ownedBy"], data!["skills"], data!["stamina"]);
     return(creature);
   }
 

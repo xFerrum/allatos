@@ -4,12 +4,14 @@ export class Skill
     description!: string;
     selfTarget: boolean; 
     effects: any;
+    fatCost: number;
 
-    constructor(type: string, selfTarget: boolean, effects: Object)
+    constructor(type: string, selfTarget: boolean, effects: Object, fatCost: number)
     {
         this.type = type;
         this.selfTarget = selfTarget;
         this.effects = effects;
+        this.fatCost = fatCost;
 
         //construct description
         switch(type)

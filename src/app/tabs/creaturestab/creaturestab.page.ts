@@ -39,9 +39,7 @@ export class CreaturesPage implements OnInit
 
   async learn()
   {
-    let testeffects = {dmg: 17};
-    const newSkill = new Skill("attack", false, testeffects);
-    await this.creatureService.learnSkill(this.creatures[0].crID, newSkill);
+
   }
 
   openSkill(name: string, desc: string)

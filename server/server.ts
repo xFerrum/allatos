@@ -60,10 +60,7 @@ io.on('connection', (socket: any) =>
   socket.on('play-skill', (owneruid: string, skill: Skill) =>
   {
     let battle = battlesInProgress.get(socket.data.roomID);
-    if(battle.skillPicked(owneruid, skill))
-    {
-      io.to(battle.roomID).emit('game-state-sent', battle.cr1, battle.cr2, battle.maxHP1, battle.maxHP2, battle.p1CanPick, battle.p2CanPick);
-    }
+    battle.skillPicked(owneruid, skill);
   });
 });
 

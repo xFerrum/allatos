@@ -9,10 +9,11 @@ export class Creature
     agi: number;
     con: number;
     ini: number;
+    stamina: number;
     ownedBy: string;
     skills: Array<Skill> = [];
-    
-    constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>)
+
+    constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>, stamina: number)
     {
         this.crID = crID;
         this.name = name;
@@ -23,5 +24,6 @@ export class Creature
         this.ini = ini;
         this.ownedBy = ownedBy;
         this.skills = skills;
+        this.stamina = stamina;
     }
 }
