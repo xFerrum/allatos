@@ -22,28 +22,115 @@ TYPES:
 - BUFF
     keywords: heal
 */
-export function generateSkill(rarity: number, type: string): Skill
-{
-    let dmg;
-    let block;
-    let fatCost;
-    let keywords: Object;
-    
-    switch(type)
+
+/* TEMPLATE for randomly picking skill effects
+
+const rollArr = Array.from(Array(100).keys());
+while (points >= 3)
     {
-        case 'attack':
-            const dmgarr = [6, 7, 8, 10];
-            dmg = dmgarr[rarity] 
-            fatCost = 10;
+        let roll = this.roll(rollArr);
+        {
+            switch (roll) {
+                case value:
+                    break;
+                        
+                default:
+                    rollArr.splice(rollArr.indexOf(roll), 1);
+                    this.roll(rollArr)
+                    break;
+            }
+        }
+    }
+*/
 
-            break;
+export class SkillGenerator
+{
+    //steps: determine type, get points to spend based on rarity -> calculate sum of effect chances for given type -> roll randomly (between 0 and sum)
+    //      -> iterate through effects in EC object (and subtract the effect chance each time) until roll is "<= 0" -> add that effect
+    generateSkill(rarity: number, type: string): Skill
+    {
+        let s: Skill;
+        s.type = type;
+        
+        let points = 10 + rarity*4;
 
-        case 'block':
-            const blockarr = [4, 4.5, 5.5, 7];
-            block = blockarr[rarity];
-            fatCost = 5;
+        switch(type)
+        {
+            case 'attack':
+                const dmgarr = [5.5, 6.5, 8, 10];
+                s.effects.dmg = dmgarr[rarity] 
+                s.fatCost = 10;
 
-            break;
+                while (points >= 3)
+                {
+                    let roll = Math.random() * this.sumOfWeights(this.AEC);
+                    {
+                        for (var effect in this.AEC)
+                        {
+                            if (Object.hasOwnProperty(effect))
+                            {
+                                roll -= this.AEC[effect];
+                            }
+                            if (roll <= 0)
+                            {
+                                s.effects[effect] = this.AECFuncs[effect];
+                            }
+                        }
+                    }
+                }
+                break;
+
+
+
+            case 'block':
+                const blockarr = [4, 4.5, 5.5, 7];
+                s.effects.block = blockarr[rarity];
+                s.fatCost = 5;
+
+                break;
+        }
+
     }
 
+    //attack effect chances (weights)
+    AEC = 
+    {
+        'shredder': 10,
+        'heavy': 10,
+    };
+
+    AECFuncs =
+    {
+        'shredder': () =>
+        {
+            return 1;
+        },
+        'heavy': () =>
+        {
+            return(Math.round(Math.random() * 4 + 4));
+        },
+    };
+
+    //block effect chances (weights)
+    BEC = 
+    {
+        'stance': 10,
+        'retaliate': 10,
+        'heal': 10,
+    };
+
+    sumOfWeights(EC: Object)
+    {
+        let sum = 0;
+
+        for (var effect in EC)
+        {
+            if (Object.hasOwnProperty(effect))
+            {
+                sum += EC[effect];
+            }
+        }
+
+        return sum;
+    }
 }
