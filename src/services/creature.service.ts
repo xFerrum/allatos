@@ -30,6 +30,14 @@ export class CreatureService
       });
   }
 
+  async deleteAllSkills(cid: string)
+  {
+    await updateDoc(doc(db, "creatures", cid),
+    {
+      skills: {}
+    });
+  }
+
 /*   async getCreaturesOfOwner(ownerId: string)
   {
 		const q = query(collection(db, "creatures"), where("ownedBy", "==", ownerId));

@@ -6,6 +6,7 @@ import { UserService } from 'src/services/user.service';
 import { CommonModule } from '@angular/common';
 import { Skill } from 'src/classes/skill';
 import { PopUpService } from 'src/services/popup.service';
+import { SkillGenerator } from 'server/skillGenerator';
 
 @Component({
   selector: 'app-creatures',
@@ -39,7 +40,14 @@ export class CreaturesPage implements OnInit
 
   async learn()
   {
+    let skillGenerator = new SkillGenerator;
+    const skillToLearn = skillGenerator.generateSkill(2, "block");
+    this.creatureService.learnSkill(this.creatures[0].crID, skillToLearn);
+  }
 
+  async deleteSkills()
+  {
+    this.creatureService.deleteAllSkills(this.creatures[0].crID);
   }
 
   openSkill(name: string, desc: string)

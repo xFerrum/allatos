@@ -1,5 +1,4 @@
 import { Skill } from "../src/classes/skill";
-
 /*
 NOTES/IDEAS:
 - rarity: 0-3 minor, major, pro, mythical or smth idk WIP
@@ -13,124 +12,129 @@ NOTES/IDEAS:
 TYPES:
 - ATTACK
     base: 6-7-8-10
-    keywords: shredder: block is weaker vs || heavy: builds more fatigue on opponent (but also more on you?) || combo: extra effect if previous skill was attack
+    keywords: shredder: remove X block from opp || heavy: builds more fatigue on opponent (but also more on you?) || combo: extra effect if next skill is attack too
 - BLOCK
     base: 4-5-6-8
-    keywords: stance: buff next block || retaliate: deal damage if all damage blocked (heavier fatigue cost on blocker?) || heal
+    keywords: stance: extra block if previous was block too || retaliate: deal damage if all damage blocked (heavier fatigue cost on blocker?) || heal
 - DEBUFF
     keywords: stun || poison ? || 
 - BUFF
     keywords: heal
 */
 
-/* TEMPLATE for randomly picking skill effects
-
-const rollArr = Array.from(Array(100).keys());
-while (points >= 3)
-    {
-        let roll = this.roll(rollArr);
-        {
-            switch (roll) {
-                case value:
-                    break;
-                        
-                default:
-                    rollArr.splice(rollArr.indexOf(roll), 1);
-                    this.roll(rollArr)
-                    break;
-            }
-        }
-    }
+/*
+Method of generation:
+    - get the rarity and type of skill to be generated
+    - add baseline skill properties
+    - load skill (functions) of that type into "skills" array
+    - choose a skill function randomly (and input rarity, so effects can be scaled accordingly), it adds/modifies the property variables
+    - construct and return skill at end of generateSkill
 */
 
+//TODO: put variables inside generateSkill, load attack/block skills into different array and call those
 export class SkillGenerator
 {
-    //steps: determine type, get points to spend based on rarity -> calculate sum of effect chances for given type -> roll randomly (between 0 and sum)
-    //      -> iterate through effects in EC object (and subtract the effect chance each time) until roll is "<= 0" -> add that effect
+    selfTarget!: boolean;
+    effects: any = {};
+    fatCost!: number;
+    name!: string;;
+
+    skills: Function[] = [];
+
     generateSkill(rarity: number, type: string): Skill
     {
-        let s: Skill;
-        s.type = type;
-        
-        let points = 10 + rarity*4;
 
         switch(type)
         {
             case 'attack':
-                const dmgarr = [5.5, 6.5, 8, 10];
-                s.effects.dmg = dmgarr[rarity] 
-                s.fatCost = 10;
+                const dmgarr = [10, 11, 12, 15];
+                this.effects.dmg = dmgarr[rarity] 
+                this.fatCost = 10;
+                this.selfTarget = false;
 
-                while (points >= 3)
-                {
-                    let roll = Math.random() * this.sumOfWeights(this.AEC);
-                    {
-                        for (var effect in this.AEC)
-                        {
-                            if (Object.hasOwnProperty(effect))
-                            {
-                                roll -= this.AEC[effect];
-                            }
-                            if (roll <= 0)
-                            {
-                                s.effects[effect] = this.AECFuncs[effect];
-                            }
-                        }
-                    }
-                }
+                this.loadAttacks(rarity);
+                this.skills[Math.floor(Math.random() * this.skills.length)](); //get random element
+
                 break;
 
 
 
             case 'block':
-                const blockarr = [4, 4.5, 5.5, 7];
-                s.effects.block = blockarr[rarity];
-                s.fatCost = 5;
+                const blockarr = [7, 7, 8, 10];
+                this.effects.block = blockarr[rarity];
+                this.fatCost = 3;
+                this.selfTarget = true;
+
+                this.loadBlocks(rarity);
+                this.skills[Math.floor(Math.random() * this.skills.length)](); //get random element
 
                 break;
         }
 
+        return (new Skill(type, this.selfTarget, this.effects, this.fatCost, rarity, this.name));
     }
 
-    //attack effect chances (weights)
-    AEC = 
+    loadAttacks(r: number)
     {
-        'shredder': 10,
-        'heavy': 10,
-    };
-
-    AECFuncs =
-    {
-        'shredder': () =>
+        //+3-12 dmg
+        this.skills.push(() =>
         {
-            return 1;
-        },
-        'heavy': () =>
+            this.name = "Strike";
+            this.effects.dmg += this.rndInt(3, 6) + (r * 2);
+        });
+
+        //+0-6 dmg, +heavy 4-9 
+        this.skills.push(() =>
         {
-            return(Math.round(Math.random() * 4 + 4));
-        },
-    };
+            this.name = "Heavy attack";
+            this.effects.dmg += r * 2;
+            this.effects.heavy = this.rndInt(4, 6) + r;
+        });
 
-    //block effect chances (weights)
-    BEC = 
-    {
-        'stance': 10,
-        'retaliate': 10,
-        'heal': 10,
-    };
-
-    sumOfWeights(EC: Object)
-    {
-        let sum = 0;
-
-        for (var effect in EC)
+        //+0-6 dmg, +shred 4-9
+        this.skills.push(() =>
         {
-            if (Object.hasOwnProperty(effect))
-            {
-                sum += EC[effect];
-            }
-        }
+            this.name = "Shred";
+            this.effects.dmg += r * 2;
+            this.effects.shred = this.rndInt(4, 6) + r;
+        });
 
-        return sum;
+/*         //combo: +5-17 dmg
+        this.skills.push(() =>
+        {
+            this.name = "Twin strike";
+            this.effects.combo = {dmg: this.rndInt(5, 8) + (r * 3)};
+        }); */
+    }
+
+    loadBlocks(r: number)
+    {
+        //+2-8 block
+        this.skills.push(() =>
+        {
+            this.name = "Block";
+            this.effects.block += this.rndInt(2, 5) + (r);
+        });
+
+        //stance: 3-12 block, +1 fatCost
+        this.skills.push(() =>
+        {
+            this.name = "Barricade";
+            this.effects.stance = this.rndInt(3, 6) + (r * 2);
+            this.fatCost += 1;
+        });
+
+/*         //+1-4 block, retaliate: 2-6 dmg
+        this.skills.push(() =>
+        {
+            this.name = "Riposte";
+            this.effects.block += this.rndInt(1, 4);
+            this.effects.retaliate = {dmg: (this.rndInt(2, 3) + r)}; 
+        }); */
+    }
+
+    rndInt(min: number, max: number): number
+    {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 }
