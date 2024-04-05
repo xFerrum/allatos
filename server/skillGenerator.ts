@@ -99,12 +99,12 @@ export class SkillGenerator
             this.effects.shred = this.rndInt(4, 6) + r;
         });
 
-/*         //combo: +5-17 dmg
+        //combo: +7-17 dmg
         this.skills.push(() =>
         {
             this.name = "Twin strike";
-            this.effects.combo = {dmg: this.rndInt(5, 8) + (r * 3)};
-        }); */
+            this.effects.combo = {dmg: this.rndInt(7, 11) + (r * 2)};
+        });
     }
 
     loadBlocks(r: number)
@@ -124,13 +124,13 @@ export class SkillGenerator
             this.fatCost += 1;
         });
 
-/*         //+1-4 block, retaliate: 2-6 dmg
+        //+1-4 block, retaliate: 2-6 dmg
         this.skills.push(() =>
         {
             this.name = "Riposte";
             this.effects.block += this.rndInt(1, 4);
             this.effects.retaliate = {dmg: (this.rndInt(2, 3) + r)}; 
-        }); */
+        });
     }
 
     rndInt(min: number, max: number): number

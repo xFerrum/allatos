@@ -41,7 +41,7 @@ export class CreaturesPage implements OnInit
   async learn()
   {
     let skillGenerator = new SkillGenerator;
-    const skillToLearn = skillGenerator.generateSkill(2, "attack");
+    const skillToLearn = skillGenerator.generateSkill(2, "block");
     this.creatureService.learnSkill(this.creatures[0].crID, skillToLearn);
   }
 

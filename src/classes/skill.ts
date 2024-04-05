@@ -3,7 +3,7 @@ export class Skill
     type: string;
     description = "";
     selfTarget: boolean; 
-    effects: any; // object (map-like)
+    effects: any = []; // object (map-like)
     fatCost: number;
     rarity: number;
     name: string;

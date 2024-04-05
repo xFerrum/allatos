@@ -10,7 +10,7 @@ export class BattleSession
     uid2!: string;
     io: any;
 
-    //gameStates -> 0: initializing || 10: turn start || 20: 1-1 skills picked (reveal phase) || 30: 2-2 skills picked (action phase)
+    //gameStates -> 0: initializing || 10: turn start || 20: 1-1 skills picked (reveal phase) || 30: 2-2 skills picked (action phase) || 40: turn ending
     gameState = 0; 
     playerOneFirst: boolean; //who won ini roll
     p1pick: Skill;
@@ -28,8 +28,8 @@ export class BattleSession
         this.cr1 = cr;
         this.uid1 = cr.ownedBy;
         this.cr1.HP = cr.con;
+        this.cr1.fatigue = 0;
         this.io = io;
-        
     }
 
     addSecondPlayer(cr: Creature)
@@ -37,6 +37,8 @@ export class BattleSession
         this.cr2 = cr;
         this.uid2 = cr.ownedBy;
         this.cr2.HP = cr.con;
+        this.cr2.fatigue = 0
+
         this.startOfTurn();
     }
 
@@ -69,6 +71,7 @@ export class BattleSession
                     this.revealPhase();
                 else if (this.gameState === 20)
                     this.actionPhase();
+                
             }
         }
     }
@@ -79,6 +82,8 @@ export class BattleSession
         this.gameState = 10;
         this.cr1.block = 0;
         this.cr2.block = 0;
+        this.cr1.turnInfo = {retaliate: {}, combo: {}};
+        this.cr2.turnInfo = {retaliate: {}, combo: {}};
         //chance of who goes first is relative to each other's ini -> if 30v20 then 30 ini has 60% chance of going first
         const iniTotal = this.cr1.ini + this.cr2.ini;
         const randomNumber = iniTotal * Math.random();
@@ -190,46 +195,138 @@ export class BattleSession
             this.checkIfGameEnd();
         }
 
-        this.sendLog();
+        if (this.playerOneFirst)
+        {
+            this.afterActionPhase(this.cr1, this.cr2);
+            this.afterActionPhase(this.cr2, this.cr1);
+        }
+        else
+        {
+            this.afterActionPhase(this.cr2, this.cr1);
+            this.afterActionPhase(this.cr1, this.cr2);
+        }
+
+        this.endOfTurn();
         this.startOfTurn();
+        this.sendLog();
+    }
+
+    afterActionPhase(actor: Creature, opponent: Creature)
+    {
+        if (actor.turnInfo.retaliate && !(actor.turnInfo.gotHit))
+        {
+            if ('dmg' in actor.turnInfo.retaliate)
+            {
+                this.hit(actor, opponent, actor.turnInfo.retaliate.dmg);
+            }
+        }
+    }
+
+    endOfTurn()
+    {
+        this.gameState = 40;
     }
 
     useSkill(actor: Creature, opponent: Creature, skill: Skill)
     {
+        actor.fatigue += skill.fatCost;
+        //TODO: if fatigue higher than stamina ->trigger fatigued effect (maybe check at end of turn?)
         switch(skill.type)
         {
             case 'attack':
-                let incomingDmg = skill.effects.dmg;
-                if (incomingDmg > opponent.block)
+
+                if ('shred' in skill.effects)
                 {
-                    //hit
-                    incomingDmg -= opponent.block;
-                    opponent.block = 0;
+                    opponent.block -= skill.effects.shred;
+                    if (opponent.block < 0) opponent.block = 0;
                 }
-                else
+                if ('heavy' in skill.effects)
                 {
-                    //miss
-                    opponent.block -= incomingDmg;
-                    incomingDmg = 0;
+                    opponent.fatigue += skill.effects.heavy;
                 }
-                opponent.HP -= incomingDmg;
-                this.combatLog += opponent.name + " got hit for " + incomingDmg + " damage.\n"
+                if ('combo' in skill.effects)
+                {
+                    for (let eff in skill.effects.combo)
+                    {
+                        if (eff in actor.turnInfo.combo)
+                        {
+                            actor.turnInfo.combo[eff] += skill.effects.combo[eff];
+                        }
+                        else
+                        {
+                            actor.turnInfo.combo[eff] = skill.effects.combo[eff];
+                        }
+                    }
+                }
+
+                this.hit(actor, opponent, skill.effects.dmg);
                 break;
             
             case 'block':
-                actor.block += skill.effects.block;
-                this.combatLog += actor.name + " is blocking " + skill.effects.block + ".\n"
+
+                if ('stance' in skill.effects)
+                {
+                    if (actor.turnInfo.lastSkill?.type === 'block')
+                    {
+                        this.addBlock(actor, skill.effects.stance);
+                    }
+                }
+                if ('retaliate' in skill.effects)
+                {
+                    for (let eff in skill.effects.retaliate)
+                    {
+                        if (eff in actor.turnInfo.retaliate)
+                        {
+                            actor.turnInfo.retaliate[eff] += skill.effects.retaliate[eff];    
+                        }
+                        else
+                        {
+                            actor.turnInfo.retaliate[eff] = skill.effects.retaliate[eff];
+                        }
+                    }
+                }
+                    
+                this.addBlock(actor, skill.effects.block);
                 break;
         }
 
+        actor.turnInfo.lastSkill = skill;
         this.sendLog();
     }
 
-    //send log to clients and clear it
-    sendLog()
+    addBlock(cr: Creature, amount: number)
     {
-        this.io.to(this.roomID).emit('log-sent', this.combatLog);
-        this.combatLog = "";
+        cr.block += amount;
+        this.combatLog += cr.name + " is blocking " + amount + ".\n"
+    }
+
+    hit(actor: Creature, target: Creature, dmg: number)
+    {
+        if (actor.turnInfo.combo)
+        {
+            if ('dmg' in actor.turnInfo.combo)
+            {
+                dmg += actor.turnInfo.combo.dmg;
+            }
+
+            actor.turnInfo.combo = {};
+        }
+
+        if (dmg > target.block)
+        {
+            //hit
+            target.turnInfo.gotHit = true;
+            dmg -= target.block;
+            target.block = 0;
+        }
+        else
+        {
+            //miss
+            target.block -= dmg;
+            dmg = 0;
+        }
+        this.combatLog += target.name + " got hit for " + dmg + " damage.\n"
+
     }
 
     //check if cr1 or cr2 hp is below 0 (tie if both below 0)
@@ -259,5 +356,11 @@ export class BattleSession
     playerWon(uid: string)
     {
         this.io.to(this.roomID).emit('player-won', uid);
+    }
+    //send log to clients and clear it
+    sendLog()
+    {
+        this.io.to(this.roomID).emit('log-sent', this.combatLog);
+        this.combatLog = "";
     }
 }

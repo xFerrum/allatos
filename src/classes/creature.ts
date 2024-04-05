@@ -14,7 +14,9 @@ export class Creature
     skills: Array<Skill> = [];
     HP?: number;
     block?: number;
-
+    fatigue?: number;
+    turnInfo: any = {};
+    lingering: any = {};
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>, stamina: number)
     {
