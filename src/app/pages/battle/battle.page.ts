@@ -27,8 +27,8 @@ export class BattlePage implements OnInit
   opUID!: string;
   roomID!: string;
   socket: any;
-  myMaxHP!: number;
-  opMaxHP!: number;
+  myHP!: number;
+  opHP!: number;
   canPick = false;
 
 //TODO: validate creature id belongs to user
@@ -71,16 +71,16 @@ export class BattlePage implements OnInit
         this.isPlayerOne = true;
         this.opCr = cr2;
         this.opUID = cr2.ownedBy;
-        this.myMaxHP = hp1;
-        this.opMaxHP = hp2;
+        this.myCr.HP = hp1;
+        this.opCr.HP = hp2;
       }
       else if (this.myCrID === cr2.crID)
       {
         this.isPlayerOne = false;
         this.opCr = cr1;
         this.opUID = cr1.ownedBy;
-        this.myMaxHP = hp2;
-        this.opMaxHP = hp1;
+        this.myCr.HP = hp2;
+        this.opCr.HP = hp1;
       }
 
       this.canPick = true;
@@ -97,8 +97,8 @@ export class BattlePage implements OnInit
           this.isPlayerOne = true;
           this.opCr = cr2;
           this.opUID = cr2.ownedBy;
-          this.myMaxHP = hp1;
-          this.opMaxHP = hp2;
+          this.myCr.HP = hp1;
+          this.opCr.HP = hp2;
         }
         else if (this.myCrID === cr2.crID)
         {
@@ -106,8 +106,8 @@ export class BattlePage implements OnInit
           this.isPlayerOne = false;
           this.opCr = cr1;
           this.opUID = cr1.ownedBy;
-          this.myMaxHP = hp2;
-          this.opMaxHP = hp1;
+          this.myCr.HP = hp2;
+          this.opCr.HP = hp1;
         }
         else; //TODO: spectate
 
@@ -129,8 +129,8 @@ export class BattlePage implements OnInit
           this.isPlayerOne = true;
           this.opCr = cr2;
           this.opUID = cr2.ownedBy;
-          this.myMaxHP = hp1;
-          this.opMaxHP = hp2;
+          this.myCr.HP = hp1;
+          this.opCr.HP = hp2;
           this.canPick = p1CanPick
         }
         else if (this.myCrID === cr2.crID)
@@ -139,8 +139,8 @@ export class BattlePage implements OnInit
           this.isPlayerOne = false;
           this.opCr = cr1;
           this.opUID = cr1.ownedBy;
-          this.myMaxHP = hp2;
-          this.opMaxHP = hp1;
+          this.myCr.HP = hp2;
+          this.opCr.HP = hp1;
           this.canPick = p2CanPick;
         }
     });

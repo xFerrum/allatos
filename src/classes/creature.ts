@@ -12,6 +12,9 @@ export class Creature
     stamina: number;
     ownedBy: string;
     skills: Array<Skill> = [];
+    HP?: number;
+    block?: number;
+
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>, stamina: number)
     {

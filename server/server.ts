@@ -36,7 +36,7 @@ io.on('connection', (socket: any) =>
       battle.addSecondPlayer(cr);
       const cr1 = battle.cr1;
       const cr2 = battle.cr2;
-      io.to(roomID).emit('players-ready', cr1, cr2, battle.maxHP1, battle.maxHP2); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
+      io.to(roomID).emit('players-ready', cr1, cr2, cr1.HP, cr2.HP); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
     }
     else //user is rejoining, check if its p1 or p2
     {
@@ -46,7 +46,7 @@ io.on('connection', (socket: any) =>
       if (battle.uid1 === socket.data.uid) canPick = battle.p1CanPick;
       if (battle.uid2 === socket.data.uid) canPick = battle.p2CanPick;
 
-      io.to(roomID).emit('player-rejoin', battle.cr1, battle.cr2, battle.maxHP1, battle.maxHP2, canPick);
+      io.to(roomID).emit('player-rejoin', battle.cr1, battle.cr2, battle.cr1.HP, battle.cr2.HP  , canPick);
     }
   });
 

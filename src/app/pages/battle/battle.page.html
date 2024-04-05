@@ -22,7 +22,7 @@
 
         <ion-row>
           <div class="progress-outer">
-            <div class="progress-inner" [style.width]="(opCr.con*100)/opMaxHP + '%'">{{opCr.con}}</div>
+            <div class="progress-inner" [style.width]="(opCr.HP*100)/opCr.con + '%'">{{opCr.HP}}</div>
           </div>
         </ion-row>
 
@@ -50,7 +50,7 @@
 
         <ion-row>
           <div class="progress-outer">
-            <div class="progress-inner" [style.width]="(myCr.con*100)/myMaxHP + '%'">{{myCr.con}}</div>
+            <div class="progress-inner" [style.width]="(myCr.HP*100)/myCr.con + '%'">{{myCr.HP}}</div>
           </div>
         </ion-row>
 

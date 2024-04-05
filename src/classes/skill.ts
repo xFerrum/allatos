@@ -7,7 +7,8 @@ export class Skill
     fatCost: number;
     rarity: number;
     name: string;
-
+    usedByP1?: boolean;
+    
     constructor(type: string, selfTarget: boolean, effects: Object, fatCost: number, rarity: number, name: string)
     {
         this.type = type;
