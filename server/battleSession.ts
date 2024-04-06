@@ -24,11 +24,18 @@ export class BattleSession
 
     constructor(roomID: string, cr: Creature, io: any)
     {
-        this.roomID = roomID;
         this.cr1 = cr;
         this.uid1 = cr.ownedBy;
         this.cr1.HP = cr.con;
         this.cr1.fatigue = 0;
+        this.cr1.deck = [];
+        this.cr1.deck.push(...this.cr1.skills);
+        this.cr1.skills.splice(0, this.cr1.skills.length);
+        this.cr1.grave = [];
+        this.cr1.turnInfo = {};
+        this.cr1.lingering = {};
+
+        this.roomID = roomID;
         this.io = io;
     }
 
@@ -37,33 +44,51 @@ export class BattleSession
         this.cr2 = cr;
         this.uid2 = cr.ownedBy;
         this.cr2.HP = cr.con;
-        this.cr2.fatigue = 0
+        this.cr2.fatigue = 0;
+        this.cr2.deck = [];
+        this.cr2.deck.push(...this.cr2.skills);
+        this.cr2.skills.splice(0, this.cr2.skills.length);
+        this.cr2.grave = [];
+        this.cr2.turnInfo = {};
+        this.cr2.lingering = {};
 
+        console.log(this.cr1.deck, this.cr2.deck)
         this.startOfTurn();
     }
 
     //this is the main function driving the gameplay
     //players can pick 1-1 skill, after both players picked, they can pick 1-1 again (reveal phase), then action phase
-    skillPicked(owneruid: string, skill: Skill)
+    skillPicked(owneruid: string, index: number)
     {
         //block foul play from a client
         if (owneruid === this.uid1 && !this.p1CanPick) return;
         if (owneruid === this.uid2 && !this.p2CanPick) return;
 
+        let pickedBy: Creature;
+        let skill: Skill;
+
         if (this.gameState === 10 || this.gameState === 20)
         {
             if (owneruid === this.uid1)
             {
+                pickedBy = this.cr1;
+                skill = pickedBy.skills[index];
                 skill.usedByP1 = true;
                 this.p1SkillsUsed.push(skill);
                 this.p1CanPick = false;
             }
             else
             {
+                pickedBy = this.cr2;
+                skill = pickedBy.skills[index];
                 skill.usedByP1 = false;
                 this.p2SkillsUsed.push(skill);
                 this.p2CanPick = false;
             }
+
+        console.log(pickedBy.skills.indexOf(skill));
+        pickedBy.skills.splice(pickedBy.skills.indexOf(skill), 1);
+
 
             if (!this.p1CanPick && !this.p2CanPick)
             {
@@ -74,6 +99,8 @@ export class BattleSession
                 
             }
         }
+
+        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.p1CanPick, this.p2CanPick);
     }
 
     //roll ini, set blocks to 0, start of turn triggers
@@ -98,11 +125,13 @@ export class BattleSession
             this.combatLog += this.cr1.name + " won the initiative roll. (";
         }
         this.combatLog += "rolled " + randomNumber + "/" + iniTotal + ")\n";
+        this.drawHand(this.cr1);
+        this.drawHand(this.cr2);
         this.p1CanPick = true;
         this.p2CanPick = true;
 
         this.sendLog();
-        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.cr1.HP, this.cr2.HP, this.p1CanPick, this.p2CanPick);
+        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.p1CanPick, this.p2CanPick);
     }
 
     revealPhase()
@@ -115,7 +144,7 @@ export class BattleSession
         this.p2CanPick = true;
 
         this.sendLog();
-        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.cr1.HP, this.cr2.HP, this.p1CanPick, this.p2CanPick);
+        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.p1CanPick, this.p2CanPick);
     }
 
     actionPhase()
@@ -129,6 +158,7 @@ export class BattleSession
             if (this.p1SkillsUsed[i].type === 'block')
             {
                 this.useSkill(this.cr1, this.cr2, this.p1SkillsUsed[i]);
+
                 this.p1SkillsUsed.splice(i, 1);
                 i--;
             }
@@ -291,6 +321,8 @@ export class BattleSession
         }
 
         actor.turnInfo.lastSkill = skill;
+        actor.grave.push(skill);
+
         this.sendLog();
     }
 
@@ -325,7 +357,34 @@ export class BattleSession
             target.block -= dmg;
             dmg = 0;
         }
+        target.HP -= dmg;
+
         this.combatLog += target.name + " got hit for " + dmg + " damage.\n"
+
+    }
+
+    //discard hand, draw X skills from deck
+    drawHand(cr: Creature)
+    {
+
+
+        //discard leftover skills from last turn
+        cr.grave.push(...cr.skills);
+        cr.skills.splice(0, cr.skills.length);
+        for (let i = 0; i < 5; i++)
+        {
+            //if deck is empty, shuffle grave back to deck
+            if (cr.deck.length === 0)
+            {
+                cr.deck.push(...cr.grave);
+                cr.grave.splice(0, cr.grave.length);
+            }
+
+            const drawIndex = Math.floor(Math.random() * cr.deck.length);
+            cr.skills.push(cr.deck.splice(drawIndex, 1)[0]);
+        }
+
+        console.log(cr.grave.length + cr.deck.length + cr.skills.length);
 
     }
 

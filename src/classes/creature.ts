@@ -15,8 +15,10 @@ export class Creature
     HP?: number;
     block?: number;
     fatigue?: number;
-    turnInfo: any = {};
-    lingering: any = {};
+    turnInfo?: any;
+    lingering?: any;
+    deck?: Array<Skill>;
+    grave?: Array<Skill>;
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>, stamina: number)
     {

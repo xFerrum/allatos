@@ -20,15 +20,13 @@ import { io } from 'socket.io-client';
 export class BattlePage implements OnInit
 {
   loadingDone = false; //TODO: implement loading spinner while joining
-  isPlayerOne = new Boolean;
+  isPlayerOne!: boolean;
   myCrID!: string;
   myCr!: Creature;
   opCr!: Creature;
   opUID!: string;
   roomID!: string;
   socket: any;
-  myHP!: number;
-  opHP!: number;
   canPick = false;
 
 //TODO: validate creature id belongs to user
@@ -63,55 +61,46 @@ export class BattlePage implements OnInit
       });
     });
 
-    //TODO: shorten next 2 funcs
-    this.socket.on('players-ready', (cr1: Creature, cr2: Creature, hp1: number, hp2: number) =>
+    this.socket.on('players-ready', (cr1: Creature, cr2: Creature, p1CanPick: boolean, p2CanPick: boolean) =>
     {
       if (this.myCrID === cr1.crID)
       {
         this.isPlayerOne = true;
-        this.opCr = cr2;
+        this.updateMe(cr1, p1CanPick);
+        this.updateOp(cr2);
         this.opUID = cr2.ownedBy;
-        this.myCr.HP = hp1;
-        this.opCr.HP = hp2;
       }
       else if (this.myCrID === cr2.crID)
       {
         this.isPlayerOne = false;
-        this.opCr = cr1;
+        this.updateMe(cr2, p2CanPick);
+        this.updateOp(cr1);
         this.opUID = cr1.ownedBy;
-        this.myCr.HP = hp2;
-        this.opCr.HP = hp1;
       }
 
-      this.canPick = true;
       this.loadingDone = true;
     });
 
-    this.socket.on('player-rejoin', (cr1: Creature, cr2: Creature, hp1: number, hp2: number, canPick: boolean) =>
+    this.socket.on('player-rejoin', (cr1: Creature, cr2: Creature, p1CanPick: boolean, p2CanPick: boolean) =>
     {
       if (this.opCr === undefined) //if user is the one rejoining
       {
         if (this.myCrID === cr1.crID)
         {
-          this.myCr = cr1;
           this.isPlayerOne = true;
-          this.opCr = cr2;
+          this.updateMe(cr1, p1CanPick);
+          this.updateOp(cr2);
           this.opUID = cr2.ownedBy;
-          this.myCr.HP = hp1;
-          this.opCr.HP = hp2;
         }
         else if (this.myCrID === cr2.crID)
         {
-          this.myCr = cr2;
           this.isPlayerOne = false;
-          this.opCr = cr1;
+          this.updateMe(cr2, p2CanPick);
+          this.updateOp(cr1);
           this.opUID = cr1.ownedBy;
-          this.myCr.HP = hp2;
-          this.opCr.HP = hp1;
         }
         else; //TODO: spectate
 
-        this.canPick = canPick;
         this.loadingDone = true;
       }
     });
@@ -121,28 +110,18 @@ export class BattlePage implements OnInit
       console.log(log);
     });
 
-    this.socket.on('game-state-sent', (cr1: Creature, cr2: Creature, hp1: number, hp2: number, p1CanPick: boolean, p2CanPick: boolean) =>
+    this.socket.on('game-state-sent', (cr1: Creature, cr2: Creature, p1CanPick: boolean, p2CanPick: boolean) =>
     {
       if (this.myCrID === cr1.crID)
-        {
-          this.myCr = cr1;
-          this.isPlayerOne = true;
-          this.opCr = cr2;
-          this.opUID = cr2.ownedBy;
-          this.myCr.HP = hp1;
-          this.opCr.HP = hp2;
-          this.canPick = p1CanPick
-        }
-        else if (this.myCrID === cr2.crID)
-        {
-          this.myCr = cr2;
-          this.isPlayerOne = false;
-          this.opCr = cr1;
-          this.opUID = cr1.ownedBy;
-          this.myCr.HP = hp2;
-          this.opCr.HP = hp1;
-          this.canPick = p2CanPick;
-        }
+      {
+        this.updateMe(cr1, p1CanPick);
+        this.updateOp(cr2);
+      }
+      else if (this.myCrID === cr2.crID)
+      {
+        this.updateMe(cr2, p2CanPick);
+        this.updateOp(cr1);
+      }
     });
 
     this.socket.on('player-won', (uid: string) =>
@@ -155,11 +134,22 @@ export class BattlePage implements OnInit
     });
   }
 
-  useSkill(skill: Skill)
+  updateMe(cr: Creature, canPick: boolean)
+  {
+    this.myCr = cr;
+    this.canPick = canPick;
+  }
+
+  updateOp(cr: Creature)
+  {
+    this.opCr = cr;
+  }
+
+  useSkill(index: number)
   {
     if (this.canPick)
     {
-      this.socket.emit('play-skill', localStorage.getItem('loggedInID'), skill);
+      this.socket.emit('play-skill', localStorage.getItem('loggedInID'), index);
       this.canPick = false;
     }
   }

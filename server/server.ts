@@ -36,17 +36,13 @@ io.on('connection', (socket: any) =>
       battle.addSecondPlayer(cr);
       const cr1 = battle.cr1;
       const cr2 = battle.cr2;
-      io.to(roomID).emit('players-ready', cr1, cr2, cr1.HP, cr2.HP); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
+      io.to(roomID).emit('players-ready', cr1, cr2, battle.p1CanPick, battle.p2CanPick); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
     }
     else //user is rejoining, check if its p1 or p2
     {
       let battle = battlesInProgress.get(roomID);
 
-      let canPick = false;
-      if (battle.uid1 === socket.data.uid) canPick = battle.p1CanPick;
-      if (battle.uid2 === socket.data.uid) canPick = battle.p2CanPick;
-
-      io.to(roomID).emit('player-rejoin', battle.cr1, battle.cr2, battle.cr1.HP, battle.cr2.HP  , canPick);
+      io.to(roomID).emit('player-rejoin', battle.cr1, battle.cr2, battle.p1CanPick, battle.p2CanPick);
     }
   });
 
@@ -57,10 +53,10 @@ io.on('connection', (socket: any) =>
 
   //get cr1 and cr2, apply effects on target, and emit updates
   //creatureOne: is creature 1 the actor?
-  socket.on('play-skill', (owneruid: string, skill: Skill) =>
+  socket.on('play-skill', (owneruid: string, index: number) =>
   {
     let battle = battlesInProgress.get(socket.data.roomID);
-    battle.skillPicked(owneruid, skill);
+    battle.skillPicked(owneruid, index);
   });
 });
 

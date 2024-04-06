@@ -63,7 +63,7 @@
         </ion-row>
 
         <ion-row>
-          <img *ngFor="let skill of myCr.skills" class="skillIcon" [attr.disabled]="canPick ? false : true" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="useSkill(skill)"/>
+          <img *ngFor="let skill of myCr.skills" class="skillIcon" [attr.disabled]="canPick ? false : true" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="useSkill(myCr.skills.indexOf(skill))"/>
         </ion-row>
 
       </ion-grid>
