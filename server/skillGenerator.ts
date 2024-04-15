@@ -43,6 +43,8 @@ export class SkillGenerator
 
     generateSkill(rarity: number, type: string): Skill
     {
+        this.effects = {};
+        this.fatCost = 0;
 
         switch(type)
         {
@@ -53,7 +55,6 @@ export class SkillGenerator
                 this.selfTarget = false;
 
                 this.loadAttacks(rarity);
-                this.skills[Math.floor(Math.random() * this.skills.length)](); //get random element
 
                 break;
 
@@ -66,11 +67,11 @@ export class SkillGenerator
                 this.selfTarget = true;
 
                 this.loadBlocks(rarity);
-                this.skills[Math.floor(Math.random() * this.skills.length)](); //get random element
 
                 break;
         }
 
+        this.skills[Math.floor(Math.random() * this.skills.length)](); //get random element
         return (new Skill(type, this.selfTarget, this.effects, this.fatCost, rarity, this.name));
     }
 

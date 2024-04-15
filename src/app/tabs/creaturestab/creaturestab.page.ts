@@ -41,8 +41,12 @@ export class CreaturesPage implements OnInit
   async learn()
   {
     let skillGenerator = new SkillGenerator;
-    const skillToLearn = skillGenerator.generateSkill(2, "block");
-    this.creatureService.learnSkill(this.creatures[0].crID, skillToLearn);
+    for (let index = 0; index < 5; index++)
+    {
+      const skillToLearn = skillGenerator.generateSkill(2, "block");
+      await this.creatureService.learnSkill(this.creatures[0].crID, skillToLearn);
+    }
+    console.log("done");
   }
 
   async deleteSkills()
@@ -52,6 +56,6 @@ export class CreaturesPage implements OnInit
 
   openSkill(name: string, desc: string)
   {
-    this.popupService.skillPopUp(name, desc);
+    this.popupService.skillPopUp(name, desc, 'skill-pop-up');
   }
 }

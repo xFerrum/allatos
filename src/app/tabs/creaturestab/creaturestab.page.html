@@ -7,85 +7,98 @@
 </ion-header>
 
 <ion-content *ngIf="loadingDone">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Creatures</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-card>
-    <ion-card-content>
-      <ion-grid>
-
-        <ion-row>
-
-          <ion-col size="4">
-            <ion-img class="creatureImg" src="{{'assets/creature_imgs/' + creatures.at(0).type + '.png'}}"></ion-img>
-          </ion-col>
+      <ion-grid class="main-container">
+        <ion-row class="image-row">
   
-          <ion-col>
-            <ion-list lines="none">
-
-              <ion-item>
-                <ion-chip>
-                  <ion-avatar>
-                    <img src="assets/icons/placeholder.png" />
-                  </ion-avatar>
-                  <ion-label>STRENGTH</ion-label>
-                </ion-chip>
-                <ion-chip>
-                  <ion-label>{{creatures.at(0)!.str}}</ion-label>
-                </ion-chip>
-              </ion-item>
-              
-              <ion-item>
-                <ion-chip>
-                  <ion-avatar>
-                    <img src="assets/icons/placeholder.png" />
-                  </ion-avatar>
-                  <ion-label>AGILITY</ion-label>
-                </ion-chip>
-                <ion-chip>
-                  <ion-label>{{creatures.at(0)!.agi}}</ion-label>
-                </ion-chip>
-              </ion-item>
-
-              <ion-item>
-                <ion-chip>
-                  <ion-avatar>
-                    <img src="assets/icons/placeholder.png" />
-                  </ion-avatar>
-                  <ion-label>CONSTITUTION</ion-label>
-                </ion-chip>
-                <ion-chip>
-                  <ion-label>{{creatures.at(0)!.con}}</ion-label>
-                </ion-chip>
-              </ion-item>
-
-              <ion-item>
-                <ion-chip>
-                  <ion-avatar>
-                    <img src="assets/icons/placeholder.png" />
-                  </ion-avatar>
-                  <ion-label>INITIATIVE</ion-label>
-                </ion-chip>
-                <ion-chip>
-                  <ion-label>{{creatures.at(0)!.ini}}</ion-label>
-                </ion-chip>
-              </ion-item>
-    
-            </ion-list>          
+          <ion-col class="img-column">
+            <img class="creatureImg" src="{{'assets/creature_imgs/' + creatures.at(0).type + '.png'}}">
           </ion-col>
 
+        </ion-row>     
+        
+        <ion-row>
+          <ion-col class="attributes-col">
+            <ion-row class="attributes-row">
+              <ion-card class="attributes-card">
+                <ion-card-content>
+                  <ion-row class="attr-row">
+                    <ion-col size="2" class="attr-icon-col">
+                      <img class="attr-icon" src="assets/icons/placeholder.png" />
+                    </ion-col>
+                    <ion-col class="attr-name-col">
+                      <ion-label>STRENGTH</ion-label>
+                    </ion-col>
+                    <ion-col class="attr-number-col">
+                      <ion-label>{{creatures.at(0)!.str}}</ion-label>
+                    </ion-col>
+                  </ion-row>
+
+                  <ion-row class="attr-row">
+                    <ion-col size="2" class="attr-icon-col">
+                      <img class="attr-icon" src="assets/icons/placeholder.png" />
+                    </ion-col>
+                    <ion-col class="attr-name-col">
+                      <ion-label>AGILITY</ion-label>
+                    </ion-col>
+                    <ion-col class="attr-number-col">
+                      <ion-label>{{creatures.at(0)!.agi}}</ion-label>
+                    </ion-col>
+                  </ion-row>
+
+                  <ion-row class="attr-row">
+                    <ion-col size="2" class="attr-icon-col">
+                      <img class="attr-icon" src="assets/icons/placeholder.png" />
+                    </ion-col>
+                    <ion-col class="attr-name-col">
+                      <ion-label>CONSTITUTION</ion-label>
+                    </ion-col>
+                    <ion-col class="attr-number-col">
+                      <ion-label>{{creatures.at(0)!.con}}</ion-label>
+                    </ion-col>
+                  </ion-row>
+
+                  <ion-row class="attr-row">
+                    <ion-col size="2" class="attr-icon-col">
+                      <img class="attr-icon" src="assets/icons/placeholder.png" />
+                    </ion-col>
+                    <ion-col class="attr-name-col">
+                      <ion-label>STAMINA</ion-label>
+                    </ion-col>
+                    <ion-col class="attr-number-col">
+                      <ion-label>{{creatures.at(0)!.stamina}}</ion-label>
+                    </ion-col>
+                  </ion-row>
+
+                  <ion-row class="attr-row">
+                    <ion-col size="2" class="attr-icon-col">
+                      <img class="attr-icon" src="assets/icons/placeholder.png" />
+                    </ion-col>
+                    <ion-col class="attr-name-col">
+                      <ion-label>INITIATIVE</ion-label>
+                    </ion-col>
+                    <ion-col class="attr-number-col">
+                      <ion-label>{{creatures.at(0)!.ini}}</ion-label>
+                    </ion-col>
+                  </ion-row>
+                </ion-card-content>
+
+              </ion-card>
+            </ion-row>
+          </ion-col>
+
+          <ion-col class="skills-card-col">
+            <ion-card class="skills-card">
+              <ion-card-content>
+                <img *ngFor="let skill of creatures[0].skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="openSkill(skill.name, skill.description)"/>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
         </ion-row>
 
         <ion-row>
-          <img *ngFor="let skill of creatures[0].skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="openSkill(skill.name, skill.description)"/>
         </ion-row>
 
-        <ion-button type="submit" color="danger" expand="block" (click)="learn()">learn</ion-button>
-
+        <ion-button type="submit" color="primary" expand="block" (click)="learn()">learn</ion-button>
       </ion-grid>
-    </ion-card-content>
-  </ion-card>
 </ion-content>

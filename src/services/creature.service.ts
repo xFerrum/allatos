@@ -24,10 +24,14 @@ export class CreatureService
 
   async learnSkill(cid: string, skill: Skill)
   {
+    let temp = (await this.getCreatureById(cid)).skills;
+    temp.push(skill);
+
+    const converted = temp.map((obj)=> {return Object.assign({}, obj)});
     await updateDoc(doc(db, "creatures", cid),
-      {
-        skills: arrayUnion(Object.assign({}, skill))
-      });
+    {
+      skills: converted
+    });
   }
 
   async deleteAllSkills(cid: string)

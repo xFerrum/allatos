@@ -56,7 +56,7 @@ export class LoginPage implements OnInit
     }
     else
     {
-      return console.log('Please provide all the required values!');
+      console.log('Please provide all the required values!');
     }
 
     await this.popUpService.dismissPopUp();

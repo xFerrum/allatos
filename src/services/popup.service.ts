@@ -32,13 +32,14 @@ export class PopUpService
     this.skill.dismiss;
   }
 
-  async skillPopUp(name: string, description: string)
+  async skillPopUp(name: string, description: string, cssClass: string)
   {
     this.skill = await this.alertController.create
     ({
       header: name,
       message: description,
-      buttons: ['Close']
+      buttons: ['Close'],
+      cssClass: cssClass
     });
 
     await this.skill.present();

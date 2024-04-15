@@ -6,8 +6,9 @@
 
 #profilePic
 {
-    width: 100px;
-    height: 100px;
+    padding-top: 10px;
+    width: 120px;
+    height: 120px;
     margin: auto;
 }
 
@@ -20,4 +21,15 @@
 {
     margin: auto;
     width: 100px;
+}
+
+.profile-card
+{
+    background-color: rgba(78, 119, 146, 0.85);
+    color: black;
+}
+
+ion-content
+{
+    --background: url(/assets/bg.png) center/cover fixed;
 }

@@ -20,6 +20,8 @@ img[disabled = true]
 {
     display: block;
     justify-content: center;
+
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .crName
@@ -38,10 +40,14 @@ img[disabled = true]
     border-radius: 20px;
   }
 
-  .progress-inner {
+.progress-inner {
     white-space: nowrap;
     overflow: hidden;
     padding: 5px;
     border-radius: 20px;
     background-color: red;
-  }
+}
+
+ion-content {
+    --background: url(/assets/bg2.png) no-repeat center/cover fixed;
+}
