@@ -25,10 +25,10 @@
                     <ion-col size="2" class="attr-icon-col">
                       <img class="attr-icon" src="assets/icons/placeholder.png" />
                     </ion-col>
-                    <ion-col class="attr-name-col">
+                    <ion-col class="attr-name">
                       <ion-label>STRENGTH</ion-label>
                     </ion-col>
-                    <ion-col class="attr-number-col">
+                    <ion-col class="attr-number">
                       <ion-label>{{creatures.at(0)!.str}}</ion-label>
                     </ion-col>
                   </ion-row>
@@ -37,10 +37,10 @@
                     <ion-col size="2" class="attr-icon-col">
                       <img class="attr-icon" src="assets/icons/placeholder.png" />
                     </ion-col>
-                    <ion-col class="attr-name-col">
+                    <ion-col class="attr-name">
                       <ion-label>AGILITY</ion-label>
                     </ion-col>
-                    <ion-col class="attr-number-col">
+                    <ion-col class="attr-number">
                       <ion-label>{{creatures.at(0)!.agi}}</ion-label>
                     </ion-col>
                   </ion-row>
@@ -49,10 +49,10 @@
                     <ion-col size="2" class="attr-icon-col">
                       <img class="attr-icon" src="assets/icons/placeholder.png" />
                     </ion-col>
-                    <ion-col class="attr-name-col">
+                    <ion-col class="attr-name">
                       <ion-label>CONSTITUTION</ion-label>
                     </ion-col>
-                    <ion-col class="attr-number-col">
+                    <ion-col class="attr-number">
                       <ion-label>{{creatures.at(0)!.con}}</ion-label>
                     </ion-col>
                   </ion-row>
@@ -61,10 +61,10 @@
                     <ion-col size="2" class="attr-icon-col">
                       <img class="attr-icon" src="assets/icons/placeholder.png" />
                     </ion-col>
-                    <ion-col class="attr-name-col">
+                    <ion-col class="attr-name">
                       <ion-label>STAMINA</ion-label>
                     </ion-col>
-                    <ion-col class="attr-number-col">
+                    <ion-col class="attr-number">
                       <ion-label>{{creatures.at(0)!.stamina}}</ion-label>
                     </ion-col>
                   </ion-row>
@@ -73,10 +73,10 @@
                     <ion-col size="2" class="attr-icon-col">
                       <img class="attr-icon" src="assets/icons/placeholder.png" />
                     </ion-col>
-                    <ion-col class="attr-name-col">
+                    <ion-col class="attr-name">
                       <ion-label>INITIATIVE</ion-label>
                     </ion-col>
-                    <ion-col class="attr-number-col">
+                    <ion-col class="attr-number">
                       <ion-label>{{creatures.at(0)!.ini}}</ion-label>
                     </ion-col>
                   </ion-row>
@@ -89,7 +89,7 @@
           <ion-col class="skills-card-col">
             <ion-card class="skills-card">
               <ion-card-content>
-                <img *ngFor="let skill of creatures[0].skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="openSkill(skill.name, skill.description)"/>
+                <img *ngFor="let skill of creatures[0].skills" class="skillIcon" src="{{'assets/skills/' + skill.type + '.png'}}" (mouseenter)="hoverSkill(skill.name, skill.description)" (mouseleave)="unhoverSkill()"/>
               </ion-card-content>
             </ion-card>
           </ion-col>

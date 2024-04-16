@@ -20,6 +20,9 @@ export class CreaturesPage implements OnInit
 {
   creatures: Creature[] = [];
   loadingDone = false;
+  hovering = false;
+  to: any; //for handling hover timeout
+
   constructor(public creatureService: CreatureService, public userService: UserService, public popupService: PopUpService)
   {}
 
@@ -54,8 +57,16 @@ export class CreaturesPage implements OnInit
     this.creatureService.deleteAllSkills(this.creatures[0].crID);
   }
 
-  openSkill(name: string, desc: string)
+  hoverSkill(name: string, desc: string)
   {
-    this.popupService.skillPopUp(name, desc, 'skill-pop-up');
+    this.to = setTimeout(() =>
+    {
+      this.popupService.skillPopUp(name, desc, 'skill-pop-up');
+    }, 500);
+  }
+
+  unhoverSkill()
+  {
+    clearTimeout(this.to);
   }
 }

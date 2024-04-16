@@ -76,9 +76,20 @@ export class UserService
     else return true;
   }
 
-  async getUserDetails(uid: string)
+  async getUserDetails(uid: string, tries = 10): Promise<any>
   {
-    let data = await getDoc(doc(db, "users", uid));
-    return(data.data());
+    try
+    {
+      let data = await getDoc(doc(db, "users", uid));
+      return(data.data());
+    }
+    catch (error)
+    {
+      if (tries > 0)
+      {
+        return await this.getUserDetails(uid, tries-1)
+      }
+      else throw error;
+    }
   }
 }

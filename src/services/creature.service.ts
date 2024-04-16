@@ -15,11 +15,22 @@ const db = getFirestore(fbase);
 
 export class CreatureService
 {
-  async getCreatureById(id: string)
+  async getCreatureById(id: string, tries = 10): Promise<Creature>
   {
-    let data = (await getDoc(doc(db, "creatures", id))).data();
-    let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["con"], data!["ini"], data!["ownedBy"], data!["skills"], data!["stamina"]);
-    return(creature);
+    try
+    {
+      let data = (await getDoc(doc(db, "creatures", id))).data();
+      let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["con"], data!["ini"], data!["ownedBy"], data!["skills"], data!["stamina"]);
+      return(creature);
+    }
+    catch (error)
+    {
+      if (tries > 0)
+      {
+        return await this.getCreatureById(id, tries-1)
+      }
+      else throw error;
+    }
   }
 
   async learnSkill(cid: string, skill: Skill)
