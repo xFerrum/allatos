@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonModal, IonicModule } from '@ionic/angular';
 import { Creature } from 'src/classes/creature';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
@@ -7,21 +7,22 @@ import { CommonModule } from '@angular/common';
 import { Skill } from 'src/classes/skill';
 import { PopUpService } from 'src/services/popup.service';
 import { SkillGenerator } from 'server/skillGenerator';
+import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard.component';
 
 @Component({
   selector: 'app-creatures',
   templateUrl: 'creaturestab.page.html',
   styleUrls: ['creaturestab.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule, CommonModule, SkillcardComponent]
 })
 
 export class CreaturesPage implements OnInit
 {
+  @ViewChild(IonModal) modal!: IonModal;
   creatures: Creature[] = [];
   loadingDone = false;
   hovering = false;
-  to: any; //for handling hover timeout
 
   constructor(public creatureService: CreatureService, public userService: UserService, public popupService: PopUpService)
   {}
@@ -57,12 +58,13 @@ export class CreaturesPage implements OnInit
     this.creatureService.deleteAllSkills(this.creatures[0].crID);
   }
 
-  hoverSkill(name: string, desc: string)
+  openSkills(skills: Array<Skill>)
   {
-
+    this.creatureService.currentSkillDeck = skills;
   }
 
-  unhoverSkill()
+  closeSkills()
   {
+    this.modal.dismiss(null, 'cancel');
   }
 }

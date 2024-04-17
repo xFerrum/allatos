@@ -15,6 +15,9 @@ const db = getFirestore(fbase);
 
 export class CreatureService
 {
+  //for storing skills to construct in skills view
+  currentSkillDeck?: Array<Skill>;
+
   async getCreatureById(id: string, tries = 10): Promise<Creature>
   {
     try
