@@ -59,14 +59,10 @@ export class CreaturesPage implements OnInit
 
   hoverSkill(name: string, desc: string)
   {
-    this.to = setTimeout(() =>
-    {
-      this.popupService.skillPopUp(name, desc, 'skill-pop-up');
-    }, 500);
+
   }
 
   unhoverSkill()
   {
-    clearTimeout(this.to);
   }
 }

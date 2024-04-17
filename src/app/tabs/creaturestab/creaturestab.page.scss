@@ -12,11 +12,10 @@
     justify-content: center;
 }
 
-.skillIcon
+.skill-icon
 {
-    width: 50px;
-    height: 50px;
-    padding: 5px;
+    width: 45px;
+    height: 45px;
     cursor: pointer;
 }
 
@@ -89,18 +88,29 @@
     max-width: 1000px;
 }
 
+.skills-card-content
+{
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.skills-container
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skill-container
+{
+    padding: 0;
+}
+
 .main-container
 {
     background-color: rgba(0, 0, 0, 0.3);
     margin: 7px;
     border-radius: 5px;
-}
-
-.skills-card-col
-{
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 ion-content
