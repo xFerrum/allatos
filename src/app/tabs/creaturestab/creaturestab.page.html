@@ -91,10 +91,10 @@
         <ion-row>
         </ion-row>
 
-        <ion-button type="submit" color="primary" expand="block" id="open-skills" (click)="openSkills()">open skills</ion-button>
+        <ion-button type="submit" color="primary" expand="block" id="open-skills" (click)="openSkills(creature.skills)">open skills</ion-button>
         <ion-button type="submit" color="primary" expand="block" (click)="learn()">learn</ion-button>
 
-        <ion-modal trigger="open-skills">
+        <ion-modal trigger="open-skills" class="skills-window">
           <ng-template>
 
             <ion-header>
@@ -106,13 +106,13 @@
               </ion-toolbar>
             </ion-header>
   
-            <ion-content class="ion-padding">
+            <ion-content>
               <ion-grid>
                 <ion-row class="cards-container">
                   <ion-col *ngFor="let skill of creature.skills" size="auto" class="card-container">
                     <app-skillcard></app-skillcard>
                   </ion-col>
-              </ion-row>
+                </ion-row>
               </ion-grid>
             </ion-content>
 

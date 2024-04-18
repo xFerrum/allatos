@@ -28,12 +28,12 @@
 
         <ion-row>
           <ion-col>
-            <ion-img class="creatureImg" src="{{'assets/creature_imgs/' + opCr.type + '.png'}}"></ion-img>
+            <ion-img class="creature-img" src="{{'assets/creature_imgs/' + opCr.type + '.png'}}"></ion-img>
           </ion-col>
         </ion-row>
 
-        <ion-row>
-          <img *ngFor="let skill of opCr.skills" class="skill-icon" src="{{'assets/skills/' + skill.type + '.png'}}"/>
+        <ion-row class="opp-skills">
+          <img *ngFor="let i of dummyArr(opSkillsLength)" class="skill-icon" src="{{'assets/skills/unknown.png'}}"/>
         </ion-row>
 
       </ion-grid>
@@ -57,14 +57,18 @@
         <ion-row>
 
           <ion-col>
-            <ion-img class="creatureImg" src="{{'assets/creature_imgs/' + myCr.type + '.png'}}"></ion-img>
+            <ion-img class="creature-img" src="{{'assets/creature_imgs/' + myCr.type + '.png'}}"></ion-img>
           </ion-col>
 
         </ion-row>
 
-        <ion-row>
-          <img *ngFor="let skill of myCr.skills" class="skill-icon" [attr.disabled]="canPick ? false : true" src="{{'assets/skills/' + skill.type + '.png'}}" (click)="useSkill(myCr.skills.indexOf(skill))"/>
-        </ion-row>
+      <ion-grid class="ion-padding">
+          <ion-row class="cards-container">
+            <ion-col *ngFor="let skill of myCr.skills" size="auto" class="card-container" [attr.disabled]="canPick ? false : true" (click)="useSkill(myCr.skills.indexOf(skill))">
+              <app-skillcard></app-skillcard>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
 
       </ion-grid>
     </ion-card-content>

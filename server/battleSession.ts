@@ -9,6 +9,8 @@ export class BattleSession
     uid1!: string;
     uid2!: string;
     io: any;
+    socket1: any;
+    socket2: any;
 
     //gameStates -> 0: initializing || 10: turn start || 20: 1-1 skills picked (reveal phase) || 30: 2-2 skills picked (action phase) || 40: turn ending
     gameState = 0; 
@@ -52,13 +54,35 @@ export class BattleSession
         this.cr2.turnInfo = {};
         this.cr2.lingering = {};
 
-        console.log(this.cr1.deck, this.cr2.deck)
         this.startOfTurn();
+    }
+
+    playerRejoin(socket: any)
+    {
+        if (socket.data.uid === this.uid1)
+        {
+            this.socket1 = socket;
+
+        }
+        else
+        {
+            this.socket2 = socket;
+        }
+
+        const cr1SkillsLength = this.cr1.skills.length;
+        const cr2SkillsLength = this.cr2.skills.length;
+        let decoy1 = { ...this.cr1 };
+        let decoy2 = { ...this.cr2 };
+        decoy1.skills = [];
+        decoy2.skills = [];
+
+        this.socket1.emit('player-rejoin', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength);
+        this.socket2.emit('player-rejoin', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength);
     }
 
     //this is the main function driving the gameplay
     //players can pick 1-1 skill, after both players picked, they can pick 1-1 again (reveal phase), then action phase
-    skillPicked(owneruid: string, index: number)
+    skillPicked(owneruid: string, index: number, socket: any)
     {
         //block foul play from a client
         if (owneruid === this.uid1 && !this.p1CanPick) return;
@@ -86,7 +110,6 @@ export class BattleSession
                 this.p2CanPick = false;
             }
 
-        console.log(pickedBy.skills.indexOf(skill));
         pickedBy.skills.splice(pickedBy.skills.indexOf(skill), 1);
 
 
@@ -100,7 +123,7 @@ export class BattleSession
             }
         }
 
-        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.p1CanPick, this.p2CanPick);
+        this.sendGameState();
     }
 
     //roll ini, set blocks to 0, start of turn triggers
@@ -131,7 +154,7 @@ export class BattleSession
         this.p2CanPick = true;
 
         this.sendLog();
-        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.p1CanPick, this.p2CanPick);
+        this.sendGameState();
     }
 
     revealPhase()
@@ -144,7 +167,7 @@ export class BattleSession
         this.p2CanPick = true;
 
         this.sendLog();
-        this.io.to(this.roomID).emit('game-state-sent', this.cr1, this.cr2, this.p1CanPick, this.p2CanPick);
+        this.sendGameState();
     }
 
     actionPhase()
@@ -383,9 +406,6 @@ export class BattleSession
             const drawIndex = Math.floor(Math.random() * cr.deck.length);
             cr.skills.push(cr.deck.splice(drawIndex, 1)[0]);
         }
-
-        console.log(cr.grave.length + cr.deck.length + cr.skills.length);
-
     }
 
     //check if cr1 or cr2 hp is below 0 (tie if both below 0)
@@ -416,6 +436,20 @@ export class BattleSession
     {
         this.io.to(this.roomID).emit('player-won', uid);
     }
+
+    sendGameState()
+    {
+        const cr1SkillsLength = this.cr1.skills.length;
+        const cr2SkillsLength = this.cr2.skills.length;
+        let decoy1 = { ...this.cr1 };
+        let decoy2 = { ...this.cr2 };
+        decoy1.skills = [];
+        decoy2.skills = [];
+
+        this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength);
+        this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength);
+    }
+
     //send log to clients and clear it
     sendLog()
     {

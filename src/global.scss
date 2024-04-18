@@ -34,3 +34,11 @@
 {
     color: black!important;
 }
+
+.skills-window
+{
+    &::part(content)
+    {
+        width: 1000px
+      }
+}

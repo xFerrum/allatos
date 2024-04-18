@@ -1,64 +1,67 @@
-$cardheight: 160px;
-$cardwidth: 112px;
+$cardwidth: 160px;
 
-ion-card
+.skill-card
 {
-    height: $cardheight;
+    height: 220px;
     width: $cardwidth;
     color: black;
-    border-radius: 3%;
+    border-radius: 6px;
+    border-style: solid;
+    border-color: black;
 }
 
 img
 {
-    box-sizing: border-box; 
-    height: $cardheight * 0.25;
+    height: $cardwidth * 0.4;
+    padding: 0;
+    margin: 0;
     width: 100%;
 }
 
 ion-card-header
 {
-    box-sizing: border-box; 
-
-    height: $cardheight * 0.175;
+    height: 25px;
     align-items: center;
     justify-content: center;
-    margin-bottom: $cardheight * 0.015;
-}
-
-p
-{
-    box-sizing: border-box;     
-    height: $cardheight * 0.525;
-    padding: $cardheight * 0.01;
-    margin: 0;
-    font-size: calc(1.83vb);
-}
-
-ion-card-content
-{
-    box-sizing: border-box; 
-    height: $cardheight * 0.525;
-    color: rgb(11, 60, 100);
-    margin: $cardheight * 0.02;
-    margin-top: 0;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 3%;
-    font-size: 2vb;
+    margin-top: 5px;
+    margin-bottom: 8px;
+    margin-left: 1px;
+    margin-right: 1px;
 }
 
 ion-card-title
 {
-    box-sizing: border-box; 
-    font-size: 15px;
+    font-size: 20px;
     margin: 0;
     color: rgb(0, 0, 0);
 }
 
 ion-card-subtitle
 {
-    box-sizing: border-box; 
-    font-size: 10px;
+    font-size: 13px;
     margin: 0;
     color: rgb(0, 0, 0);
+}
+
+p
+{
+    padding-top: $cardwidth * 0.015;
+    padding-bottom: $cardwidth * 0.015;
+    white-space: pre-wrap;
+    margin: 0;
+    font-size: 17;
+}
+
+ion-card-content
+{
+    padding: 4px;
+    padding-bottom: 0;
+    padding-top: 0;
+    height: 130px;
+    color: rgb(11, 60, 100);
+    margin: 4px;
+    margin-top: 0;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    font-size: 2vb;
 }

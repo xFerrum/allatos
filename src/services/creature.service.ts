@@ -17,6 +17,7 @@ export class CreatureService
 {
   //for storing skills to construct in skills view
   currentSkillDeck?: Array<Skill>;
+  currentIndex?: number;
 
   async getCreatureById(id: string, tries = 10): Promise<Creature>
   {

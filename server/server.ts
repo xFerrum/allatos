@@ -26,12 +26,14 @@ io.on('connection', (socket: any) =>
     if (!battlesInProgress.has(roomID)) //if it's the first user joining the room (for the first time)
     {
       let newBattle = new BattleSession(roomID, cr, io);
+      newBattle.socket1 = socket;
 
       battlesInProgress.set(roomID, newBattle);
     }
     else if (battlesInProgress.get(roomID)!.uid2 === undefined) //if joining user is the second one to connect (to new match)
     {
       let battle = battlesInProgress.get(roomID);
+      battle.socket2 = socket;
 
       battle.addSecondPlayer(cr);
       const cr1 = battle.cr1;
@@ -40,9 +42,9 @@ io.on('connection', (socket: any) =>
     }
     else //user is rejoining, check if its p1 or p2
     {
+      console.log("as");
       let battle = battlesInProgress.get(roomID);
-
-      io.to(roomID).emit('player-rejoin', battle.cr1, battle.cr2, battle.p1CanPick, battle.p2CanPick);
+      battle.playerRejoin(socket);
     }
   });
 
@@ -56,7 +58,7 @@ io.on('connection', (socket: any) =>
   socket.on('play-skill', (owneruid: string, index: number) =>
   {
     let battle = battlesInProgress.get(socket.data.roomID);
-    battle.skillPicked(owneruid, index);
+    battle.skillPicked(owneruid, index, socket);
   });
 });
 
