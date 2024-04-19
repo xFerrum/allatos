@@ -34,7 +34,6 @@ export class BattleSession
         this.cr1.deck.push(...this.cr1.skills);
         this.cr1.skills.splice(0, this.cr1.skills.length);
         this.cr1.grave = [];
-        this.cr1.turnInfo = {};
         this.cr1.lingering = {};
 
         this.roomID = roomID;
@@ -51,9 +50,12 @@ export class BattleSession
         this.cr2.deck.push(...this.cr2.skills);
         this.cr2.skills.splice(0, this.cr2.skills.length);
         this.cr2.grave = [];
-        this.cr2.turnInfo = {};
         this.cr2.lingering = {};
 
+        this.cr1.block = 0;
+        this.cr2.block = 0;
+        this.cr1.turnInfo = new Object({retaliate: {}, combo: {}});
+        this.cr2.turnInfo = new Object({retaliate: {}, combo: {}});
         this.startOfTurn();
     }
 
@@ -111,7 +113,7 @@ export class BattleSession
             }
 
         pickedBy.skills.splice(pickedBy.skills.indexOf(skill), 1);
-
+        this.sendGameState(); //so user sees 3 cards in hand after the 2nd pick rather than 4
 
             if (!this.p1CanPick && !this.p2CanPick)
             {
@@ -130,10 +132,7 @@ export class BattleSession
     startOfTurn()
     {
         this.gameState = 10;
-        this.cr1.block = 0;
-        this.cr2.block = 0;
-        this.cr1.turnInfo = {retaliate: {}, combo: {}};
-        this.cr2.turnInfo = {retaliate: {}, combo: {}};
+
         //chance of who goes first is relative to each other's ini -> if 30v20 then 30 ini has 60% chance of going first
         const iniTotal = this.cr1.ini + this.cr2.ini;
         const randomNumber = iniTotal * Math.random();
@@ -152,7 +151,6 @@ export class BattleSession
         this.drawHand(this.cr2);
         this.p1CanPick = true;
         this.p2CanPick = true;
-
         this.sendLog();
         this.sendGameState();
     }
@@ -163,11 +161,20 @@ export class BattleSession
 
         this.combatLog += this.cr1.name + " picked skill:\n" + this.p1SkillsUsed[0].description + "\n";
         this.combatLog += this.cr2.name + " picked skill:\n" + this.p2SkillsUsed[0].description + "\n";
-        this.p1CanPick = true;
-        this.p2CanPick = true;
+        if (!(this.cr1.turnInfo.fatigued)) this.p1CanPick = true;
+        if (!(this.cr2.turnInfo.fatigued)) this.p2CanPick = true;
 
         this.sendLog();
-        this.sendGameState();
+        if(!this.p1CanPick && !this.p2CanPick)
+        {
+            this.actionPhase();
+        }
+        else
+        {
+            this.socket1.emit('skill-revealed', this.p2SkillsUsed[0]);
+            this.socket2.emit('skill-revealed', this.p1SkillsUsed[0]);
+            this.sendGameState();
+        }
     }
 
     actionPhase()
@@ -278,15 +285,49 @@ export class BattleSession
     endOfTurn()
     {
         this.gameState = 40;
+
+        this.cr1.block = 0;
+        this.cr2.block = 0;
+        this.cr1.turnInfo = {retaliate: {}, combo: {}};
+        this.cr2.turnInfo = {retaliate: {}, combo: {}};
+        if (this.cr1.fatigue >= this.cr1.stamina)
+        {
+            this.cr1.turnInfo.fatigued = true;
+
+            this.cr1.fatigue -= this.cr1.stamina;
+        }
+        if (this.cr2.fatigue >= this.cr2.stamina)
+        {
+            this.cr2.turnInfo.fatigued = true;
+
+            this.cr2.fatigue -= this.cr2.stamina;
+        }
+
+        this.io.to(this.roomID).emit('turn-ended');
     }
 
     useSkill(actor: Creature, opponent: Creature, skill: Skill)
     {
         actor.fatigue += skill.fatCost;
-        //TODO: if fatigue higher than stamina ->trigger fatigued effect (maybe check at end of turn?)
         switch(skill.type)
         {
             case 'attack':
+
+                this.io.to(this.roomID).emit('attack-action', actor, skill);
+
+                //combo check, then erase combo turn effect
+                for (let eff in actor.turnInfo.combo)
+                {
+                    if (eff in skill.effects)
+                    {
+                        skill[eff] += actor.turnInfo.combo[eff];
+                    }
+                    else
+                    {
+                        skill[eff] = actor.turnInfo.combo[eff];
+                    }
+                }
+                actor.turnInfo.combo = {};
 
                 if ('shred' in skill.effects)
                 {
@@ -315,7 +356,10 @@ export class BattleSession
                 this.hit(actor, opponent, skill.effects.dmg);
                 break;
             
+                
             case 'block':
+
+                this.io.to(this.roomID).emit('block-action', actor, skill);
 
                 if ('stance' in skill.effects)
                 {
@@ -383,18 +427,21 @@ export class BattleSession
         target.HP -= dmg;
 
         this.combatLog += target.name + " got hit for " + dmg + " damage.\n"
-
+        this.io.to(this.roomID).emit("got-hit", target, dmg);
     }
 
     //discard hand, draw X skills from deck
     drawHand(cr: Creature)
     {
-
-
-        //discard leftover skills from last turn
-        cr.grave.push(...cr.skills);
+        //put leftover skills from last turn into deck
+        cr.deck.push(...cr.skills);
         cr.skills.splice(0, cr.skills.length);
-        for (let i = 0; i < 5; i++)
+        this.drawCards(cr, 5);
+    }
+
+    drawCards(cr: Creature, n: number)
+    {
+        for (let i = 0; i < n; i++)
         {
             //if deck is empty, shuffle grave back to deck
             if (cr.deck.length === 0)
@@ -448,6 +495,25 @@ export class BattleSession
 
         this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength);
         this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength);
+    }
+
+    gameStateRequested(socket: any)
+    {
+        const cr1SkillsLength = this.cr1.skills.length;
+        const cr2SkillsLength = this.cr2.skills.length;
+        let decoy1 = { ...this.cr1 };
+        let decoy2 = { ...this.cr2 };
+        decoy1.skills = [];
+        decoy2.skills = [];
+
+        if (socket === this.socket1)
+        {
+            this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength);
+        }
+        if (socket === this.socket2)
+        {
+            this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength);
+        }
     }
 
     //send log to clients and clear it

@@ -1,11 +1,16 @@
 <ion-card class="skill-card">
-  <img src="https://ionicframework.com/docs/img/demos/card-media.png" />
+  <img src="https://ionicframework.com/docs/img/demos/card-media.png" class="thumbnail"/>
+  <div class="fat-cost-container">
+    <img src="assets/icons/fatigue_cost.png" class="fat-icon"/>
+    <p class="fat-cost">{{skill.fatCost}}</p>
+  </div>
+
   <ion-card-header>
-    <ion-card-title>{{name}}</ion-card-title>
-    <ion-card-subtitle>{{type}}</ion-card-subtitle>
+    <ion-card-title>{{skill.name}}</ion-card-title>
+    <ion-card-subtitle>{{skill.type}}</ion-card-subtitle>
   </ion-card-header>
 
   <ion-card-content>
-    <p>{{desc}}</p>
+    <p>{{skill.description}}</p>
   </ion-card-content>
 </ion-card>

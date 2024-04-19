@@ -1,10 +1,7 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>battle</ion-title>
-  </ion-toolbar>
-</ion-header>
+<img class="overlay" src="{{'assets/borderleaves.png'}}"/>
+<img class="background" src="{{'assets/bg2.png'}}"/>
 
-<ion-content [fullscreen]="true" *ngIf="loadingDone">
+<ion-content [fullscreen]="true" *ngIf="loadingDone" class="battle-content">
 
   <ion-header collapse="condense">
     <ion-toolbar> 
@@ -23,6 +20,12 @@
         <ion-row>
           <div class="progress-outer">
             <div class="progress-inner" [style.width]="(opCr.HP*100)/opCr.con + '%'">{{opCr.HP}}</div>
+          </div>
+        </ion-row>
+
+        <ion-row>
+          <div class="progress-outer">
+            <div class="progress-inner fatigue-bar" [style.width]="(opCr.fatigue*100)/opCr.stamina + '%'">{{opCr.fatigue}}</div>
           </div>
         </ion-row>
 
@@ -55,17 +58,21 @@
         </ion-row>
 
         <ion-row>
+          <div class="progress-outer">
+            <div class="progress-inner fatigue-bar" [style.width]="(myCr.fatigue*100)/myCr.stamina + '%'">{{myCr.fatigue}}</div>
+          </div>
+        </ion-row>
 
+        <ion-row>
           <ion-col>
             <ion-img class="creature-img" src="{{'assets/creature_imgs/' + myCr.type + '.png'}}"></ion-img>
           </ion-col>
-
         </ion-row>
 
       <ion-grid class="ion-padding">
           <ion-row class="cards-container">
-            <ion-col *ngFor="let skill of myCr.skills" size="auto" class="card-container" [attr.disabled]="canPick ? false : true" (click)="useSkill(myCr.skills.indexOf(skill))">
-              <app-skillcard></app-skillcard>
+            <ion-col *ngFor="let skill of myCr.skills" size="auto" class="card-container" [attr.disabled]="(canPick && !animating) ? false : true" (click)="useSkill(myCr.skills.indexOf(skill))">
+              <app-skillcard [skill]="skill"></app-skillcard>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -73,5 +80,34 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
+
+  <ion-modal class="skill-popup" [isOpen]="showRevealedSkill" (willDismiss)="showRevealedSkill = false">
+    <ng-template>
+      <ion-content>
+        <ion-row class="revealed-skill-content">
+          <p>Opponent picked:</p>
+        </ion-row>
+        <ion-row class="revealed-skill-content">
+          <app-skillcard [skill]="skillToDisplay"></app-skillcard>
+        </ion-row>
+        <ion-row class="revealed-skill-content">
+          <ion-button (click)="closeSkill()">OK</ion-button>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal class="skill-popup" [isOpen]="showPlayedSkill">
+    <ng-template>
+      <ion-content>
+        <ion-row class="revealed-skill-content">
+          <p>{{who}} {{what}}:</p>
+        </ion-row>
+        <ion-row class="revealed-skill-content">
+          <app-skillcard [skill]="skillToDisplay"></app-skillcard>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>

@@ -39,6 +39,22 @@
 {
     &::part(content)
     {
-        width: 1000px
-      }
+        width: 1000px;
+    }
+}
+
+.skill-popup
+{
+    &::part(content)
+    {
+        border-radius: 10px;
+        width: 300px;
+        height: 350px;
+    }
+    --backdrop-opacity: 0;
+}
+
+.hit-popup
+{
+    --backdrop-opacity: 0;
 }

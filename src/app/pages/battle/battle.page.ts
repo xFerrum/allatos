@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonModal, IonicModule, ModalController } from '@ionic/angular';
 import { Creature } from 'src/classes/creature';
 import { Skill } from 'src/classes/skill';
 import { CreatureService } from 'src/services/creature.service';
@@ -9,6 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { io } from 'socket.io-client';
 import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard.component';
+import { AnimationController } from '@ionic/angular/standalone';
+import { PopUpService } from 'src/services/popup.service';
 
 @Component({
   selector: 'app-battle',
@@ -28,11 +30,29 @@ export class BattlePage implements OnInit
   socket: any;
   canPick = false;
   opSkillsLength!: number;
+  showRevealedSkill = false;
+  showPlayedSkill = false;
+
+  @ViewChild(IonModal) modal!: IonModal;
+  
+  //for animation
+  myBlocks: Skill[] = [];
+  opBlocks: Skill[] = [];
+  myAttacks: Skill[] = [];
+  opAttacks: Skill[] = [];
+  myHits: number[] = [];
+  opHits: number[] = [];
+  hitFor!: number;
+  animating = false;
+  skillToDisplay!: Skill;
+  who = "actor";
+  what = "action";
 
 //TODO: validate creature id belongs to user
   //connect to socket, then room with the user's details
   //in the future the battle matchups will be created on the server side, then it will be stored on firebase (the 2 player ids and the 2 creature ids and room/battle id) this func will use those
-  constructor(public creatureService: CreatureService, public userService: UserService, private route: ActivatedRoute, private router: Router)
+  constructor(public creatureService: CreatureService, public userService: UserService, private route: ActivatedRoute, private router: Router, public animCtrl: AnimationController,
+    public popUpService: PopUpService)
   {
     this.route.queryParams.subscribe(_p =>
     {
@@ -89,7 +109,6 @@ export class BattlePage implements OnInit
         }
         else; //TODO: spectate
 
-        this.loadingDone = true;
       }
       this.loadingDone = true;
 
@@ -97,8 +116,14 @@ export class BattlePage implements OnInit
 
     this.socket.on('game-state-sent', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number) =>
     {
-      this.updateMe(myCr, canPick);
-      this.updateOp(opCr, opSkillsLength);
+      this.myCr.turnInfo.fatigued = myCr.turnInfo.fatigued;
+      this.opCr.turnInfo.fatigued = opCr.turnInfo.fatigued;
+
+      if (!this.animating)
+      {
+        this.updateMe(myCr, canPick);
+        this.updateOp(opCr, opSkillsLength);
+      }
     });
 
     this.socket.on('log-sent', (log: string) =>
@@ -111,6 +136,12 @@ export class BattlePage implements OnInit
       this.updateMe(pickedBy, canPick);
     });
 
+    this.socket.on('skill-revealed', (skill: Skill) =>
+    {
+      this.skillToDisplay = skill;
+      this.showRevealedSkill = true;
+    });
+
     this.socket.on('player-won', (uid: string) =>
     {
       if (uid === this.myCr.ownedBy)
@@ -119,14 +150,51 @@ export class BattlePage implements OnInit
       }
       else console.log("You lost.")
     });
+
+    //listeners for animation
+
+    this.socket.on('block-action', (actor: Creature, skill: Skill) =>
+    {
+      if (actor.ownedBy === this.myCr.ownedBy)
+      {
+        this.myBlocks.push(skill);
+      }
+      else this.opBlocks.push(skill);
+    });
+
+    this.socket.on('attack-action', (actor: Creature, skill: Skill) =>
+    {
+      if (actor.ownedBy === this.myCr.ownedBy)
+      {
+        this.myAttacks.push(skill);
+      }
+      else this.opAttacks.push(skill);
+    });
+
+    this.socket.on('got-hit', (target: Creature, dmg: number) =>
+    {
+      if (target.ownedBy === this.myCr.ownedBy)
+        {
+          this.opHits.push(dmg);
+        }
+        else this.myHits.push(dmg);
+    });
+
+    this.socket.on('turn-ended', async () =>
+    {
+      await this.EOTAnimations();
+      this.myBlocks = [];
+      this.myAttacks = [];
+      this.opBlocks = [];
+      this.opAttacks = [];
+
+    });
   }
 
   updateMe(cr: Creature, canPick: boolean)
   {
     this.myCr = cr;
     this.canPick = canPick;
-    this.creatureService.currentIndex = 0;
-    this.creatureService.currentSkillDeck = this.myCr.skills;
   }
 
   updateOp(opCr: Creature, skillsLength: number)
@@ -137,15 +205,120 @@ export class BattlePage implements OnInit
 
   useSkill(index: number)
   {
-    if (this.canPick)
-    {
-      this.socket.emit('play-skill', localStorage.getItem('loggedInID'), index);
-      this.canPick = false;
-    }
+    this.socket.emit('play-skill', localStorage.getItem('loggedInID'), index);
   }
 
   dummyArr(n: number)
   {
     return new Array(n);
   }
+
+  closeSkill()
+  {
+    this.modal.dismiss();
+  }
+
+  //animation stuff
+  async EOTAnimations()
+  {
+    this.animating = true;
+    const showCardFor = 1600;
+    const showEffectFor = 1200;
+    const inBetween = 500;
+
+    this.what = "blocks";
+
+    this.who = this.myCr.name;
+    for (let s of this.myBlocks)
+    {
+      this.skillToDisplay = s;
+      this.showPlayedSkill = true;
+      await this.delay(showCardFor);
+      this.modal.dismiss();
+      this.showPlayedSkill = false;
+      await this.delay(inBetween);
+    }
+
+    this.who = this.opCr.name;
+    for (let s of this.opBlocks)
+    {
+      this.skillToDisplay = s;
+      this.showPlayedSkill = true;
+      await this.delay(showCardFor);
+      this.modal.dismiss();
+      this.showPlayedSkill = false;
+      await this.delay(inBetween);
+    }
+
+
+    this.what = "attacks";
+
+    let i = 0;
+    for (let s of this.myAttacks)
+    {
+      this.who = this.myCr.name;
+      this.skillToDisplay = s;
+      this.showPlayedSkill = true;
+      await this.delay(showCardFor);
+      this.modal.dismiss();
+      this.showPlayedSkill = false;
+      await this.delay(inBetween);
+
+      this.who = this.opCr.name;
+      this.hitFor = this.myHits[i];
+      if (this.hitFor > 0)
+      {
+        await this.popUpService.effectPopUp(this.who + " got hit for " + this.hitFor + " damage!", 'hit-popup');
+      } else  this.popUpService.effectPopUp(this.who + " defended successfully!", 'hit-popup');
+      await this.delay(showEffectFor);
+      await this.popUpService.dismissPopUp();
+      await this.delay(inBetween);
+      i++;
+    }
+
+    i = 0;
+    for (let s of this.opAttacks)
+    {
+      this.who = this.opCr.name;
+      this.skillToDisplay = s;
+      this.showPlayedSkill = true;
+      await this.delay(showCardFor);
+      this.modal.dismiss();
+      this.showPlayedSkill = false;
+      await this.delay(inBetween);
+
+      this.who = this.myCr.name;
+      this.hitFor = this.opHits[i];
+      if (this.hitFor > 0)
+      {
+        await this.popUpService.effectPopUp(this.who + " got hit for " + this.hitFor + " damage!", 'hit-popup');
+      } else  this.popUpService.effectPopUp(this.who + " defended successfully!", 'hit-popup');
+      await this.delay(showEffectFor);
+      await this.popUpService.dismissPopUp();
+      await this.delay(inBetween);
+      i++;
+    }
+
+    if (this.myCr.turnInfo.fatigued)
+    {
+      await this.popUpService.effectPopUp(this.myCr.name + " is fatigued and needs to rest!", 'hit-popup');
+      await this.delay(showEffectFor);
+      await this.popUpService.dismissPopUp();
+    }
+
+    if (this.opCr.turnInfo.fatigued)
+    {
+      await this.popUpService.effectPopUp(this.opCr.name + " is fatigued and needs to rest!", 'hit-popup');
+      await this.delay(showEffectFor);
+      await this.popUpService.dismissPopUp();
+    }
+
+    this.animating = false;
+    this.socket.emit('game-state-requested');
+  }
+
+
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
 }

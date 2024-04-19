@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { Skill } from 'src/classes/skill';
 import { CreatureService } from 'src/services/creature.service';
 
 @Component({
@@ -11,19 +12,17 @@ import { CreatureService } from 'src/services/creature.service';
 })
 export class SkillcardComponent  implements OnInit
 {
-  name: string;
-  type: string;
-  desc: string;
+  @Input() skill!: Skill;
+
 
   constructor(public creatureService: CreatureService)
   {
-    this.name = this.creatureService.currentSkillDeck![this.creatureService.currentIndex!].name;
-    this.type = this.creatureService.currentSkillDeck![this.creatureService.currentIndex!].type;
-    this.desc = this.creatureService.currentSkillDeck![this.creatureService.currentIndex!].description;
 
-    this.creatureService.currentIndex! += 1;
   }
 
-  ngOnInit() {}
+  ngOnInit()
+  {
+
+  }
 
 }

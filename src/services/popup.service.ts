@@ -8,14 +8,15 @@ import { LoadingController } from "@ionic/angular/standalone";
  
 export class PopUpService
 {
-  skill!: any;
+  effect!: any;
   popup!: any;
-  isLoading: boolean = true; //needed in case popup needs to be dismissed before it has loaded, might get stuck otherwise
+  isLoading!: boolean; //needed in case popup needs to be dismissed before it has loaded, might get stuck otherwise
   
   constructor(public alertController: AlertController, public loadingController: LoadingController) {}
 
   async loadingPopUp(message: string)
   {
+    this.isLoading = true;
     this.popup = await this.loadingController.create
     ({
       message: message,
@@ -28,20 +29,20 @@ export class PopUpService
   async dismissPopUp()
   {
     this.isLoading = false;
-    this.popup.dismiss();
-    this.skill.dismiss;
+    this.popup?.dismiss();
+    this.effect?.dismiss();
   }
 
-  async skillPopUp(name: string, description: string, cssClass: string)
+  async effectPopUp(description: string, cssClass: string, header?: string)
   {
-    this.skill = await this.alertController.create
+    this.effect?.dismiss();
+    this.effect = await this.alertController.create
     ({
-      header: name,
+      header: header,
       message: description,
-      buttons: ['Close'],
       cssClass: cssClass
     });
 
-    await this.skill.present();
+    await this.effect.present();
   }
 }

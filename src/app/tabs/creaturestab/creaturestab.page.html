@@ -110,7 +110,7 @@
               <ion-grid>
                 <ion-row class="cards-container">
                   <ion-col *ngFor="let skill of creature.skills" size="auto" class="card-container">
-                    <app-skillcard></app-skillcard>
+                    <app-skillcard [skill]="skill"></app-skillcard>
                   </ion-col>
                 </ion-row>
               </ion-grid>

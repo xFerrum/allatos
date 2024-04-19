@@ -60,8 +60,7 @@ export class CreaturesPage implements OnInit
 
   openSkills(skills: Array<Skill>)
   {
-    this.creatureService.currentSkillDeck = skills;
-    this.creatureService.currentIndex = 0;
+
   }
 
   closeSkills()

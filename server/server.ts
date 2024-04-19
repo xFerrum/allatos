@@ -53,6 +53,11 @@ io.on('connection', (socket: any) =>
     console.log('Socket disconnected: '+ socket.id);
   });
 
+  socket.on('game-state-requested', () =>
+  {
+    battlesInProgress.get(socket.data.roomID).gameStateRequested(socket);
+  });
+
   //get cr1 and cr2, apply effects on target, and emit updates
   //creatureOne: is creature 1 the actor?
   socket.on('play-skill', (owneruid: string, index: number) =>
