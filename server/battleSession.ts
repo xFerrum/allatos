@@ -19,6 +19,8 @@ export class BattleSession
     p2pick: Skill;
     p1SkillsUsed: Skill[] = [];
     p2SkillsUsed: Skill[] = [];
+    p1SkillLog: Skill[] = []
+    p2SkillLog: Skill[] = []
     p1CanPick: boolean;
     p2CanPick: boolean;
     combatLog = "";
@@ -99,7 +101,6 @@ export class BattleSession
             {
                 pickedBy = this.cr1;
                 skill = pickedBy.skills[index];
-                skill.usedByP1 = true;
                 this.p1SkillsUsed.push(skill);
                 this.p1CanPick = false;
             }
@@ -107,10 +108,11 @@ export class BattleSession
             {
                 pickedBy = this.cr2;
                 skill = pickedBy.skills[index];
-                skill.usedByP1 = false;
                 this.p2SkillsUsed.push(skill);
                 this.p2CanPick = false;
             }
+            skill.usedByID = pickedBy.crID;
+
 
         pickedBy.skills.splice(pickedBy.skills.indexOf(skill), 1);
         this.sendGameState(); //so user sees 3 cards in hand after the 2nd pick rather than 4
@@ -181,6 +183,8 @@ export class BattleSession
     {
         this.gameState = 30;
         this.skillsOrdered = [];
+        this.p1SkillLog = this.p1SkillsUsed.slice();
+        this.p2SkillLog = this.p2SkillsUsed.slice();
 
         //activate blocks, player order doesnt matter
         for (let i = 0; i < this.p1SkillsUsed.length; i++)
@@ -239,7 +243,7 @@ export class BattleSession
             let actor: Creature;
             let opponent: Creature;
 
-            if (this.skillsOrdered[i].usedByP1)
+            if (this.skillsOrdered[i].usedByID === this.cr1.crID)
             {
                 actor = this.cr1;
                 opponent = this.cr2;
@@ -273,7 +277,8 @@ export class BattleSession
 
     afterActionPhase(actor: Creature, opponent: Creature)
     {
-        if (actor.turnInfo.retaliate && !(actor.turnInfo.gotHit))
+
+        if (actor.turnInfo.retaliate && !(actor.turnInfo.gotHit) && opponent.turnInfo.attacked)
         {
             if ('dmg' in actor.turnInfo.retaliate)
             {
@@ -286,10 +291,11 @@ export class BattleSession
     {
         this.gameState = 40;
 
-        this.cr1.block = 0;
-        this.cr2.block = 0;
+        this.removeBlock(this.cr1, this.cr1.block);
+        this.removeBlock(this.cr2, this.cr2.block);
         this.cr1.turnInfo = {retaliate: {}, combo: {}};
         this.cr2.turnInfo = {retaliate: {}, combo: {}};
+
         if (this.cr1.fatigue >= this.cr1.stamina)
         {
             this.cr1.turnInfo.fatigued = true;
@@ -308,31 +314,34 @@ export class BattleSession
 
     useSkill(actor: Creature, opponent: Creature, skill: Skill)
     {
+        this.io.to(this.roomID).emit('action-happened', skill);
         actor.fatigue += skill.fatCost;
         switch(skill.type)
         {
             case 'attack':
-
-                this.io.to(this.roomID).emit('attack-action', actor, skill);
+                actor.turnInfo.attacked = true;
 
                 //combo check, then erase combo turn effect
-                for (let eff in actor.turnInfo.combo)
+                if (actor.turnInfo.lastSkill?.effects && 'combo' in actor.turnInfo.lastSkill.effects)
                 {
-                    if (eff in skill.effects)
+                    for (let eff in actor.turnInfo.combo)
                     {
-                        skill[eff] += actor.turnInfo.combo[eff];
-                    }
-                    else
-                    {
-                        skill[eff] = actor.turnInfo.combo[eff];
+                        if (eff in skill.effects)
+                        {
+                            skill[eff] += actor.turnInfo.combo[eff];
+                        }
+                        else
+                        {
+                            skill[eff] = actor.turnInfo.combo[eff];
+                        }
                     }
                 }
                 actor.turnInfo.combo = {};
 
                 if ('shred' in skill.effects)
                 {
-                    opponent.block -= skill.effects.shred;
-                    if (opponent.block < 0) opponent.block = 0;
+                    this.removeBlock(opponent, skill.effects.shred);
+
                 }
                 if ('heavy' in skill.effects)
                 {
@@ -358,9 +367,6 @@ export class BattleSession
             
                 
             case 'block':
-
-                this.io.to(this.roomID).emit('block-action', actor, skill);
-
                 if ('stance' in skill.effects)
                 {
                     if (actor.turnInfo.lastSkill?.type === 'block')
@@ -397,37 +403,35 @@ export class BattleSession
     {
         cr.block += amount;
         this.combatLog += cr.name + " is blocking " + amount + ".\n"
+        this.io.to(this.roomID).emit('action-happened', {type: 'gain-block', block: amount, actorID: cr.crID});
+    }
+
+    removeBlock(cr: Creature, amount: number)
+    {
+        if (amount > cr.block) amount = cr.block;
+        this.io.to(this.roomID).emit('action-happened', {type: 'gain-block', block: -1 * amount, actorID: cr.crID});
+        cr.block -= amount;
     }
 
     hit(actor: Creature, target: Creature, dmg: number)
     {
-        if (actor.turnInfo.combo)
-        {
-            if ('dmg' in actor.turnInfo.combo)
-            {
-                dmg += actor.turnInfo.combo.dmg;
-            }
-
-            actor.turnInfo.combo = {};
-        }
-
         if (dmg > target.block)
         {
             //hit
             target.turnInfo.gotHit = true;
             dmg -= target.block;
-            target.block = 0;
+            this.removeBlock(target, target.block);
         }
         else
         {
             //miss
-            target.block -= dmg;
+            this.removeBlock(target, dmg);
             dmg = 0;
         }
         target.HP -= dmg;
 
         this.combatLog += target.name + " got hit for " + dmg + " damage.\n"
-        this.io.to(this.roomID).emit("got-hit", target, dmg);
+        this.io.to(this.roomID).emit('action-happened', {type: 'hit', dmg: dmg, targetID: target.crID});
     }
 
     //discard hand, draw X skills from deck

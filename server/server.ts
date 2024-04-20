@@ -42,7 +42,6 @@ io.on('connection', (socket: any) =>
     }
     else //user is rejoining, check if its p1 or p2
     {
-      console.log("as");
       let battle = battlesInProgress.get(roomID);
       battle.playerRejoin(socket);
     }
@@ -55,7 +54,7 @@ io.on('connection', (socket: any) =>
 
   socket.on('game-state-requested', () =>
   {
-    battlesInProgress.get(socket.data.roomID).gameStateRequested(socket);
+    battlesInProgress.get(socket.data.roomID)?.gameStateRequested(socket);
   });
 
   //get cr1 and cr2, apply effects on target, and emit updates

@@ -12,10 +12,18 @@ NOTES/IDEAS:
 TYPES:
 - ATTACK
     base: 6-7-8-10
-    keywords: shredder: remove X block from opp || heavy: builds more fatigue on opponent (but also more on you?) || combo: extra effect if next skill is attack too
+    keywords:
+        shredder: remove X block from opp
+        heavy: builds more fatigue on opponent (but also more on you?)
+        combo: extra effect if next skill is attack too
+
 - BLOCK
     base: 4-5-6-8
-    keywords: stance: extra block if previous was block too || retaliate: deal damage if all damage blocked (heavier fatigue cost on blocker?) || heal
+    keywords:
+        stance: extra block if previous was block too
+        retaliate: deal damage if opponent attacked and all damage blocked (heavier fatigue cost on blocker?)
+        heal
+
 - DEBUFF
     keywords: stun || poison ? || 
 - BUFF
@@ -39,13 +47,14 @@ export class SkillGenerator
     fatCost!: number;
     name!: string;;
 
-    skills: Function[] = [];
+    skills!: Function[];
 
     generateSkill(rarity: number, type: string): Skill
     {
         this.effects = {};
         this.fatCost = 0;
-
+        this.skills = [];
+        
         switch(type)
         {
             case 'attack':

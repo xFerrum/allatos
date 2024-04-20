@@ -7,7 +7,7 @@ export class Skill
     fatCost: number;
     rarity: number;
     name: string;
-    usedByP1?: boolean;
+    usedByID?: string;
     
     constructor(type: string, selfTarget: boolean, effects: Object, fatCost: number, rarity: number, name: string)
     {
@@ -26,7 +26,6 @@ export class Skill
         switch(this.type)
         {
             case 'attack':
-                //this.description += "Deal " + this.effects.dmg + " damage\n";
 
                 for (let effect in this.effects)
                     {
@@ -61,7 +60,7 @@ export class Skill
                             break;
 
                         case 'retaliate':
-                            this.description += "Retaliate: " + this.effects.stance + "\n";
+                            this.description += "Retaliate: " + this.effects.retaliate + "\n";
                             break;
                     }
                 }

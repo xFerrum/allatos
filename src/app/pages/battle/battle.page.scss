@@ -39,12 +39,17 @@
     align-items: center;
 }
 
-.creatureCard
+.creature-card
 {
     display: block;
     justify-content: center;
     z-index: 6;
     background-color: rgba(0, 0, 0, 0.3);
+}
+
+.creature-card-content
+{
+    padding: 0;
 }
 
 .cards-container
@@ -76,7 +81,7 @@
 
 .progress-outer
 {
-    width: 50%;
+    width: 100%;
     margin: auto;
     padding: 3px;
     text-align: center;
@@ -110,6 +115,7 @@
     --background: rgba(0, 0, 0, 0);
     --overflow: hidden;
     overflow: auto;
+    --offset-bottom: auto!important;
     &::-webkit-scrollbar {
       display: none;
     }
@@ -137,3 +143,41 @@
     pointer-events: none;
     z-index: -4;
   }
+
+.bars
+{
+}
+
+.blocks-icon
+{
+    min-width: 65px;
+    max-width: 100px;
+}
+
+.stats
+{
+    margin: auto;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.shield-container
+{
+    display: flex;
+    justify-content: right;
+}
+
+.shield-content
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.total-blocks-text
+{
+    color: black;
+    font-size: 25px;
+    position: fixed;
+}

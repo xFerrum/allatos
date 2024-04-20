@@ -9,24 +9,34 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-card class="creatureCard">
-    <ion-card-content>
+  <ion-card class="creature-card">
+    <ion-card-content class="creature-card-content">
       <ion-grid>
 
         <ion-row>
           <ion-card-title class="crName">{{opCr.name}}</ion-card-title>
         </ion-row>
 
-        <ion-row>
-          <div class="progress-outer">
-            <div class="progress-inner" [style.width]="(opCr.HP*100)/opCr.con + '%'">{{opCr.HP}}</div>
-          </div>
-        </ion-row>
-
-        <ion-row>
-          <div class="progress-outer">
-            <div class="progress-inner fatigue-bar" [style.width]="(opCr.fatigue*100)/opCr.stamina + '%'">{{opCr.fatigue}}</div>
-          </div>
+        <ion-row class="stats">
+          <ion-col size="2.8" class="shield-container">
+            <div class="shield-content">
+              <img class="blocks-icon" src="{{'assets/icons/total_blocks.png'}}"/>
+              <p class="total-blocks-text">{{opBlock}}</p>
+            </div>
+          </ion-col>
+          <ion-col class="bars" size="6.5">
+            <ion-row>
+              <div class="progress-outer">
+                <div class="progress-inner" [style.width]="(opCr.HP*100)/opCr.con + '%'">{{opCr.HP}}</div>
+              </div>
+            </ion-row>
+  
+            <ion-row>
+              <div class="progress-outer">
+                <div class="progress-inner fatigue-bar" [style.width]="(opCr.fatigue*100)/opCr.stamina + '%'">{{opCr.fatigue}}</div>
+              </div>
+            </ion-row>
+          </ion-col>
         </ion-row>
 
         <ion-row>
@@ -43,24 +53,34 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card class="creatureCard">
-    <ion-card-content>
+  <ion-card class="creature-card">
+    <ion-card-content class="creature-card-content">
       <ion-grid>
 
         <ion-row>
           <ion-card-title class="crName">{{myCr.name}}</ion-card-title>
         </ion-row>
 
-        <ion-row>
-          <div class="progress-outer">
-            <div class="progress-inner" [style.width]="(myCr.HP*100)/myCr.con + '%'">{{myCr.HP}}</div>
-          </div>
-        </ion-row>
-
-        <ion-row>
-          <div class="progress-outer">
-            <div class="progress-inner fatigue-bar" [style.width]="(myCr.fatigue*100)/myCr.stamina + '%'">{{myCr.fatigue}}</div>
-          </div>
+        <ion-row class="stats">
+          <ion-col size="2.8" class="shield-container">
+            <div class="shield-content">
+              <img class="blocks-icon" src="{{'assets/icons/total_blocks.png'}}"/>
+              <p class="total-blocks-text">{{myBlock}}</p>
+            </div>
+          </ion-col>
+          <ion-col class="bars" size="6.5">
+            <ion-row>
+              <div class="progress-outer">
+                <div class="progress-inner" [style.width]="(myCr.HP*100)/myCr.con + '%'">{{myCr.HP}}</div>
+              </div>
+            </ion-row>
+  
+            <ion-row>
+              <div class="progress-outer">
+                <div class="progress-inner fatigue-bar" [style.width]="(myCr.fatigue*100)/myCr.stamina + '%'">{{myCr.fatigue}}</div>
+              </div>
+            </ion-row>
+          </ion-col>
         </ion-row>
 
         <ion-row>
@@ -69,7 +89,7 @@
           </ion-col>
         </ion-row>
 
-      <ion-grid class="ion-padding">
+      <ion-grid>
           <ion-row class="cards-container">
             <ion-col *ngFor="let skill of myCr.skills" size="auto" class="card-container" [attr.disabled]="(canPick && !animating) ? false : true" (click)="useSkill(myCr.skills.indexOf(skill))">
               <app-skillcard [skill]="skill"></app-skillcard>

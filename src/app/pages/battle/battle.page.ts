@@ -32,16 +32,13 @@ export class BattlePage implements OnInit
   opSkillsLength!: number;
   showRevealedSkill = false;
   showPlayedSkill = false;
+  myBlock = 0;
+  opBlock = 0;
 
   @ViewChild(IonModal) modal!: IonModal;
   
   //for animation
-  myBlocks: Skill[] = [];
-  opBlocks: Skill[] = [];
-  myAttacks: Skill[] = [];
-  opAttacks: Skill[] = [];
-  myHits: number[] = [];
-  opHits: number[] = [];
+  actionChain: any[] = [];
   hitFor!: number;
   animating = false;
   skillToDisplay!: Skill;
@@ -153,41 +150,15 @@ export class BattlePage implements OnInit
 
     //listeners for animation
 
-    this.socket.on('block-action', (actor: Creature, skill: Skill) =>
+    this.socket.on('action-happened', (action: any) =>
     {
-      if (actor.ownedBy === this.myCr.ownedBy)
-      {
-        this.myBlocks.push(skill);
-      }
-      else this.opBlocks.push(skill);
-    });
-
-    this.socket.on('attack-action', (actor: Creature, skill: Skill) =>
-    {
-      if (actor.ownedBy === this.myCr.ownedBy)
-      {
-        this.myAttacks.push(skill);
-      }
-      else this.opAttacks.push(skill);
-    });
-
-    this.socket.on('got-hit', (target: Creature, dmg: number) =>
-    {
-      if (target.ownedBy === this.myCr.ownedBy)
-        {
-          this.opHits.push(dmg);
-        }
-        else this.myHits.push(dmg);
+      this.actionChain.push(action);
     });
 
     this.socket.on('turn-ended', async () =>
     {
       await this.EOTAnimations();
-      this.myBlocks = [];
-      this.myAttacks = [];
-      this.opBlocks = [];
-      this.opAttacks = [];
-
+      this.actionChain = [];
     });
   }
 
@@ -201,6 +172,15 @@ export class BattlePage implements OnInit
   {
     this.opSkillsLength = skillsLength;
     this.opCr = opCr;
+  }
+
+  updateBlock(amount: number, crID: string)
+  {
+    if (crID === this.myCrID)
+    {
+      this.myBlock += amount;
+    }
+    else this.opBlock += amount;
   }
 
   useSkill(index: number)
@@ -219,6 +199,62 @@ export class BattlePage implements OnInit
   }
 
   //animation stuff
+  async blockAnimation(s: Skill, showFor: number)
+  {
+    this.what = 'is blocking';
+    if (s.usedByID === this.myCrID)
+    {
+      this.who = this.myCr.name;
+    }
+    else
+    {
+      this.who = this.opCr.name;
+    }
+    this.skillToDisplay = s;
+    this.showPlayedSkill = true;
+    await this.delay(showFor);
+    this.modal.dismiss();
+    this.showPlayedSkill = false;
+  }
+
+  async attackAnimation(s: Skill, showFor: number)
+  {
+    this.what = 'attacks';
+    if (s.usedByID === this.myCrID)
+    {
+      this.who = this.myCr.name;
+    }
+    else
+    {
+      this.who = this.opCr.name;
+    }
+    this.skillToDisplay = s;
+    this.showPlayedSkill = true;
+    await this.delay(showFor);
+    this.modal.dismiss();
+    this.showPlayedSkill = false;
+  }
+
+  async hitAnimation(action: any, showFor: number)
+  {
+    if (action.targetID === this.myCrID)
+    {
+      this.who = this.myCr.name;
+    }
+    else
+    {
+      this.who = this.opCr.name;
+    }
+    this.hitFor = action.dmg;
+
+    if (this.hitFor > 0)
+    {
+      await this.popUpService.effectPopUp(this.who + " got hit for " + this.hitFor + " damage!", 'hit-popup');
+    } else  this.popUpService.effectPopUp(this.who + " defended successfully!", 'hit-popup');
+    await this.delay(showFor);
+    await this.popUpService.dismissPopUp();
+  }
+
   async EOTAnimations()
   {
     this.animating = true;
@@ -226,77 +262,28 @@ export class BattlePage implements OnInit
     const showEffectFor = 1200;
     const inBetween = 500;
 
-    this.what = "blocks";
-
-    this.who = this.myCr.name;
-    for (let s of this.myBlocks)
+    for (let a of this.actionChain)
     {
-      this.skillToDisplay = s;
-      this.showPlayedSkill = true;
-      await this.delay(showCardFor);
-      this.modal.dismiss();
-      this.showPlayedSkill = false;
-      await this.delay(inBetween);
-    }
-
-    this.who = this.opCr.name;
-    for (let s of this.opBlocks)
-    {
-      this.skillToDisplay = s;
-      this.showPlayedSkill = true;
-      await this.delay(showCardFor);
-      this.modal.dismiss();
-      this.showPlayedSkill = false;
-      await this.delay(inBetween);
-    }
-
-
-    this.what = "attacks";
-
-    let i = 0;
-    for (let s of this.myAttacks)
-    {
-      this.who = this.myCr.name;
-      this.skillToDisplay = s;
-      this.showPlayedSkill = true;
-      await this.delay(showCardFor);
-      this.modal.dismiss();
-      this.showPlayedSkill = false;
-      await this.delay(inBetween);
-
-      this.who = this.opCr.name;
-      this.hitFor = this.myHits[i];
-      if (this.hitFor > 0)
+      if (a.type === 'block')
       {
-        await this.popUpService.effectPopUp(this.who + " got hit for " + this.hitFor + " damage!", 'hit-popup');
-      } else  this.popUpService.effectPopUp(this.who + " defended successfully!", 'hit-popup');
-      await this.delay(showEffectFor);
-      await this.popUpService.dismissPopUp();
-      await this.delay(inBetween);
-      i++;
-    }
-
-    i = 0;
-    for (let s of this.opAttacks)
-    {
-      this.who = this.opCr.name;
-      this.skillToDisplay = s;
-      this.showPlayedSkill = true;
-      await this.delay(showCardFor);
-      this.modal.dismiss();
-      this.showPlayedSkill = false;
-      await this.delay(inBetween);
-
-      this.who = this.myCr.name;
-      this.hitFor = this.opHits[i];
-      if (this.hitFor > 0)
+        await this.blockAnimation(a, showCardFor);
+        await this.delay(inBetween);
+      }
+      else if (a.type === 'attack')
       {
-        await this.popUpService.effectPopUp(this.who + " got hit for " + this.hitFor + " damage!", 'hit-popup');
-      } else  this.popUpService.effectPopUp(this.who + " defended successfully!", 'hit-popup');
-      await this.delay(showEffectFor);
-      await this.popUpService.dismissPopUp();
-      await this.delay(inBetween);
-      i++;
+        await this.attackAnimation(a, showCardFor);
+        await this.delay(inBetween);
+      }
+      else if (a.type === 'hit')
+      {
+        await this.hitAnimation(a, showCardFor);
+        await this.delay(inBetween);
+      }
+      else if (a.type === 'gain-block')
+      {
+        this.updateBlock(a.block, a.actorID);
+      }
+
     }
 
     if (this.myCr.turnInfo.fatigued)
