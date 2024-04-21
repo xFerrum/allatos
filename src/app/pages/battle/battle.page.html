@@ -45,8 +45,10 @@
           </ion-col>
         </ion-row>
 
-        <ion-row class="opp-skills">
-          <img *ngFor="let i of dummyArr(opSkillsLength)" class="skill-icon" src="{{'assets/skills/unknown.png'}}"/>
+        <ion-row>
+          <ion-col class="opp-skills" size="auto">
+            <img *ngFor="let i of dummyArr(opSkillsLength)" class="skill-icon" src="{{'assets/skills/unknown.png'}}"/>
+          </ion-col>
         </ion-row>
 
       </ion-grid>
@@ -84,8 +86,18 @@
         </ion-row>
 
         <ion-row>
-          <ion-col>
+          <ion-col size="4" class="turn-indicator-col">
+            <ion-card class="turn-indicator-card">
+              <ion-card-content>
+                {{turnInfo}}
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="4">
             <ion-img class="creature-img" src="{{'assets/creature_imgs/' + myCr.type + '.png'}}"></ion-img>
+          </ion-col>
+          <ion-col size="4">
+            
           </ion-col>
         </ion-row>
 

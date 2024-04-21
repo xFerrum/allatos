@@ -78,6 +78,12 @@ export class SkillGenerator
                 this.loadBlocks(rarity);
 
                 break;
+
+            case 'trick':
+
+                this.loadTricks(rarity);
+
+                break;
         }
 
         this.skills[Math.floor(Math.random() * this.skills.length)](); //get random element
@@ -143,6 +149,32 @@ export class SkillGenerator
         });
     }
 
+    loadBlocks(r: number)
+    {
+        //+2-8 block
+        this.skills.push(() =>
+        {
+            this.name = "Block";
+            this.effects.block += this.rndInt(2, 5) + (r);
+        });
+
+        //stance: 3-12 block, +1 fatCost
+        this.skills.push(() =>
+        {
+            this.name = "Barricade";
+            this.effects.stance = this.rndInt(3, 6) + (r * 2);
+            this.fatCost += 1;
+        });
+
+        //+1-4 block, retaliate: 2-6 dmg
+        this.skills.push(() =>
+        {
+            this.name = "Riposte";
+            this.effects.block += this.rndInt(1, 4);
+            this.effects.retaliate = {dmg: (this.rndInt(2, 3) + r)}; 
+        });
+    }
+    
     rndInt(min: number, max: number): number
     {
         return Math.floor(Math.random() * (max - min + 1) + min);

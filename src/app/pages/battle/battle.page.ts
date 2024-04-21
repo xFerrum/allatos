@@ -34,6 +34,7 @@ export class BattlePage implements OnInit
   showPlayedSkill = false;
   myBlock = 0;
   opBlock = 0;
+  turnInfo = "";
 
   @ViewChild(IonModal) modal!: IonModal;
   
@@ -81,46 +82,53 @@ export class BattlePage implements OnInit
     //TODO: rewrite here and on server side not to share whole opp creature object
     this.socket.on('players-ready', (cr1: Creature, cr2: Creature, p1CanPick: boolean, p2CanPick: boolean) =>
     {
-      if (this.myCrID === cr1.crID)
-      {
-        this.updateMe(cr1, p1CanPick);
-        this.updateOp(cr2, cr2.skills.length);
-      }
-      else if (this.myCrID === cr2.crID)
-      {
-        this.updateMe(cr2, p2CanPick);
-        this.updateOp(cr1, cr1.skills.length);
-      }
-
+      this.socket.emit('game-state-requested');
       this.loadingDone = true;
     });
 
     this.socket.on('player-rejoin', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number) =>
     {
-      if (this.opCr === undefined) //if user is the one rejoining
-      {
-        if (this.myCrID === myCr.crID)
-        {
-          this.updateMe(myCr, canPick);
-          this.updateOp(opCr, opSkillsLength);
-        }
-        else; //TODO: spectate
-
-      }
+      this.socket.emit('game-state-requested');
       this.loadingDone = true;
-
     });
 
-    this.socket.on('game-state-sent', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number) =>
+    this.socket.on('game-state-sent', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number, gameState: number) =>
     {
-      this.myCr.turnInfo.fatigued = myCr.turnInfo.fatigued;
-      this.opCr.turnInfo.fatigued = opCr.turnInfo.fatigued;
-
       if (!this.animating)
       {
         this.updateMe(myCr, canPick);
         this.updateOp(opCr, opSkillsLength);
+        switch (gameState)
+        {
+          case 10:
+            if (canPick)
+            {
+              this.turnInfo = "Pick your first skill to play.";
+            }
+            else this.turnInfo = "Waiting for opponent.";
+            break;
+
+          case 20:
+            if (canPick)
+            {
+              this.turnInfo = "Pick your second skill to play.";
+            }
+            else this.turnInfo = "Waiting for opponent.";
+            break;
+
+          case 30:
+            this.turnInfo = "Action!";
+            break;
+
+          default:
+            this.turnInfo = "turninfo";
+            break;
+        }
       }
+      else this.turnInfo = "Action!";
+      
+      this.myCr.turnInfo.fatigued = myCr.turnInfo.fatigued;
+      this.opCr.turnInfo.fatigued = opCr.turnInfo.fatigued;
     });
 
     this.socket.on('log-sent', (log: string) =>

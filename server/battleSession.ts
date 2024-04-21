@@ -56,8 +56,7 @@ export class BattleSession
 
         this.cr1.block = 0;
         this.cr2.block = 0;
-        this.cr1.turnInfo = new Object({retaliate: {}, combo: {}});
-        this.cr2.turnInfo = new Object({retaliate: {}, combo: {}});
+        this.resetTurnInfo();
         this.startOfTurn();
     }
 
@@ -115,7 +114,6 @@ export class BattleSession
 
 
         pickedBy.skills.splice(pickedBy.skills.indexOf(skill), 1);
-        this.sendGameState(); //so user sees 3 cards in hand after the 2nd pick rather than 4
 
             if (!this.p1CanPick && !this.p2CanPick)
             {
@@ -181,6 +179,8 @@ export class BattleSession
 
     actionPhase()
     {
+        this.sendGameState();
+
         this.gameState = 30;
         this.skillsOrdered = [];
         this.p1SkillLog = this.p1SkillsUsed.slice();
@@ -293,8 +293,7 @@ export class BattleSession
 
         this.removeBlock(this.cr1, this.cr1.block);
         this.removeBlock(this.cr2, this.cr2.block);
-        this.cr1.turnInfo = {retaliate: {}, combo: {}};
-        this.cr2.turnInfo = {retaliate: {}, combo: {}};
+        this.resetTurnInfo();
 
         if (this.cr1.fatigue >= this.cr1.stamina)
         {
@@ -321,22 +320,21 @@ export class BattleSession
             case 'attack':
                 actor.turnInfo.attacked = true;
 
-                //combo check, then erase combo turn effect
-                if (actor.turnInfo.lastSkill?.effects && 'combo' in actor.turnInfo.lastSkill.effects)
+                //combo check
+                if (actor.turnInfo?.lastSkill && 'combo' in actor.turnInfo.lastSkill.effects)
                 {
-                    for (let eff in actor.turnInfo.combo)
+                    for (let eff in actor.turnInfo.lastSkill.effects.combo)
                     {
                         if (eff in skill.effects)
                         {
-                            skill[eff] += actor.turnInfo.combo[eff];
+                            skill.effects[eff] += actor.turnInfo.lastSkill.effects.combo[eff];
                         }
                         else
                         {
-                            skill[eff] = actor.turnInfo.combo[eff];
+                            skill.effects[eff] = actor.turnInfo.lastSkill.effects.combo[eff];
                         }
                     }
                 }
-                actor.turnInfo.combo = {};
 
                 if ('shred' in skill.effects)
                 {
@@ -346,20 +344,6 @@ export class BattleSession
                 if ('heavy' in skill.effects)
                 {
                     opponent.fatigue += skill.effects.heavy;
-                }
-                if ('combo' in skill.effects)
-                {
-                    for (let eff in skill.effects.combo)
-                    {
-                        if (eff in actor.turnInfo.combo)
-                        {
-                            actor.turnInfo.combo[eff] += skill.effects.combo[eff];
-                        }
-                        else
-                        {
-                            actor.turnInfo.combo[eff] = skill.effects.combo[eff];
-                        }
-                    }
                 }
 
                 this.hit(actor, opponent, skill.effects.dmg);
@@ -483,6 +467,12 @@ export class BattleSession
         }
     }
 
+    resetTurnInfo()
+    {
+        this.cr1.turnInfo = {retaliate: {}};
+        this.cr2.turnInfo = {retaliate: {}};
+    }
+
     playerWon(uid: string)
     {
         this.io.to(this.roomID).emit('player-won', uid);
@@ -497,8 +487,8 @@ export class BattleSession
         decoy1.skills = [];
         decoy2.skills = [];
 
-        this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength);
-        this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength);
+        this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength, this.gameState);
+        this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength, this.gameState);
     }
 
     gameStateRequested(socket: any)
@@ -512,11 +502,11 @@ export class BattleSession
 
         if (socket === this.socket1)
         {
-            this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength);
+            this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength, this.gameState);
         }
         if (socket === this.socket2)
         {
-            this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength);
+        this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength, this.gameState);
         }
     }
 
