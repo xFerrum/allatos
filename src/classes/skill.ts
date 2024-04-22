@@ -9,7 +9,7 @@ export class Skill
     name: string;
     usedByID?: string;
     
-    constructor(type: string, selfTarget: boolean, effects: Object, fatCost: number, rarity: number, name: string)
+    constructor(type: string, selfTarget: boolean, effects: Object, fatCost: number, rarity: number, name: string, description?: string)
     {
         this.type = type;
         this.selfTarget = selfTarget;
@@ -17,6 +17,10 @@ export class Skill
         this.fatCost = fatCost;
         this.rarity = rarity;
         this.name = name;
+        if (description)
+        {
+            this.description = description;
+        }
 
         this.buildDescription();
     }
@@ -39,9 +43,15 @@ export class Skill
                                 this.description += "Shred " + this.effects.shred + " block.\n";
                                 break;
     
-                            case 'combo': //TODO: rework for all possible combo effects
-                                this.description += "Combo: +" + this.effects.combo.dmg + " damage.\n";
+                            case 'heavy':
+                                this.description += "Heavy: " + this.effects.heavy + "\n";
                                 break;
+
+                            case 'combo':
+                                this.description += "Combo: ";
+                                if ('dmg' in this.effects.combo) this.description += "+ " + this.effects.combo.dmg + " damage. ";
+                                this.description += "\n";
+                            break;
                         }
                     }
                 break;
@@ -59,15 +69,21 @@ export class Skill
                             this.description += "Stance: " + this.effects.stance + "\n";
                             break;
 
+                        case 'steadfast':
+                            this.description += "Steadfast\n";
+                            break;
+
                         case 'retaliate':
-                            this.description += "Retaliate: " + this.effects.retaliate + "\n";
+                            this.description += "Retaliate: ";
+                            if ('dmg' in this.effects.retaliate) this.description += "Deal " + this.effects.retaliate.dmg + " damage. ";
+                            this.description += "\n";
                             break;
                     }
                 }
                 break;
 
             default:
-                this.description = "Description"
+                break;
             }
     }
 

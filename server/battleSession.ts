@@ -72,15 +72,13 @@ export class BattleSession
             this.socket2 = socket;
         }
 
-        const cr1SkillsLength = this.cr1.skills.length;
-        const cr2SkillsLength = this.cr2.skills.length;
         let decoy1 = { ...this.cr1 };
         let decoy2 = { ...this.cr2 };
         decoy1.skills = [];
         decoy2.skills = [];
 
-        this.socket1.emit('player-rejoin', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength);
-        this.socket2.emit('player-rejoin', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength);
+        this.socket1.emit('player-rejoin');
+        this.socket2.emit('player-rejoin');
     }
 
     //this is the main function driving the gameplay
@@ -123,9 +121,9 @@ export class BattleSession
                     this.actionPhase();
                 
             }
+            else    this.sendGameState();
         }
 
-        this.sendGameState();
     }
 
     //roll ini, set blocks to 0, start of turn triggers
@@ -212,10 +210,9 @@ export class BattleSession
 
         this.gameState = 35;
         //construct attack skill order and activate them
+        let P1turn = this.playerOneFirst;
         while (0 < this.p1SkillsUsed.length + this.p2SkillsUsed.length)
         {
-            let P1turn = this.playerOneFirst;
-
             if (P1turn)
             {
                 if (this.p1SkillsUsed.length > 0)
@@ -223,7 +220,6 @@ export class BattleSession
                     this.skillsOrdered.push(this.p1SkillsUsed.shift());
                 }
                 else this.skillsOrdered.push(this.p2SkillsUsed.shift());
-                P1turn = !P1turn;
             }
             else
             {
@@ -233,8 +229,8 @@ export class BattleSession
                 }
                 else this.skillsOrdered.push(this.p1SkillsUsed.shift());
 
-                P1turn = !P1turn;
             }
+            P1turn = !P1turn;
         }
 
         for (let i = 0; i < this.skillsOrdered.length; i++)
@@ -291,8 +287,8 @@ export class BattleSession
     {
         this.gameState = 40;
 
-        this.removeBlock(this.cr1, this.cr1.block);
-        this.removeBlock(this.cr2, this.cr2.block);
+        if (!this.cr1.turnInfo.steadfast) this.removeBlock(this.cr1, this.cr1.block);
+        if (!this.cr2.turnInfo.steadfast) this.removeBlock(this.cr2, this.cr2.block);
         this.resetTurnInfo();
 
         if (this.cr1.fatigue >= this.cr1.stamina)
@@ -372,7 +368,11 @@ export class BattleSession
                         }
                     }
                 }
-                    
+                if ('steadfast' in skill.effects)
+                {
+                    actor.turnInfo.steadfast = true;
+                }
+
                 this.addBlock(actor, skill.effects.block);
                 break;
         }

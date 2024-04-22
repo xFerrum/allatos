@@ -80,13 +80,13 @@ export class BattlePage implements OnInit
     });
 
     //TODO: rewrite here and on server side not to share whole opp creature object
-    this.socket.on('players-ready', (cr1: Creature, cr2: Creature, p1CanPick: boolean, p2CanPick: boolean) =>
+    this.socket.on('players-ready', () =>
     {
       this.socket.emit('game-state-requested');
       this.loadingDone = true;
     });
 
-    this.socket.on('player-rejoin', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number) =>
+    this.socket.on('player-rejoin', () =>
     {
       this.socket.emit('game-state-requested');
       this.loadingDone = true;
@@ -126,7 +126,7 @@ export class BattlePage implements OnInit
         }
       }
       else this.turnInfo = "Action!";
-      
+
       this.myCr.turnInfo.fatigued = myCr.turnInfo.fatigued;
       this.opCr.turnInfo.fatigued = opCr.turnInfo.fatigued;
     });
@@ -207,27 +207,9 @@ export class BattlePage implements OnInit
   }
 
   //animation stuff
-  async blockAnimation(s: Skill, showFor: number)
+  async cardAnimation(s: Skill, showFor: number, what: string)
   {
-    this.what = 'is blocking';
-    if (s.usedByID === this.myCrID)
-    {
-      this.who = this.myCr.name;
-    }
-    else
-    {
-      this.who = this.opCr.name;
-    }
-    this.skillToDisplay = s;
-    this.showPlayedSkill = true;
-    await this.delay(showFor);
-    this.modal.dismiss();
-    this.showPlayedSkill = false;
-  }
-
-  async attackAnimation(s: Skill, showFor: number)
-  {
-    this.what = 'attacks';
+    this.what = what;
     if (s.usedByID === this.myCrID)
     {
       this.who = this.myCr.name;
@@ -274,12 +256,12 @@ export class BattlePage implements OnInit
     {
       if (a.type === 'block')
       {
-        await this.blockAnimation(a, showCardFor);
+        await this.cardAnimation(a, showCardFor, "is blocking");
         await this.delay(inBetween);
       }
       else if (a.type === 'attack')
       {
-        await this.attackAnimation(a, showCardFor);
+        await this.cardAnimation(a, showCardFor, "attacks");
         await this.delay(inBetween);
       }
       else if (a.type === 'hit')

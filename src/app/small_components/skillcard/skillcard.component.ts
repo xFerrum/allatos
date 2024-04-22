@@ -13,7 +13,7 @@ import { CreatureService } from 'src/services/creature.service';
 export class SkillcardComponent  implements OnInit
 {
   @Input() skill!: Skill;
-
+  bgColor!: string;
 
   constructor(public creatureService: CreatureService)
   {
@@ -22,7 +22,11 @@ export class SkillcardComponent  implements OnInit
 
   ngOnInit()
   {
-
+    if (this.skill.type === 'attack')
+      {
+        this.bgColor = 'rgb(224, 127, 127)';
+      }
+      else this.bgColor = 'rgb(134, 185, 206)';
   }
 
 }

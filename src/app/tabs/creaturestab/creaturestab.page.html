@@ -8,15 +8,12 @@
 
 <ion-content *ngIf="loadingDone">
       <ion-grid class="main-container" *ngFor="let creature of creatures">
+        
         <ion-row class="image-row">
-  
-          <ion-col class="img-column">
+          <ion-col class="img-col">
             <img class="creatureImg" src="{{'assets/creature_imgs/' + creature.type + '.png'}}">
           </ion-col>
 
-        </ion-row>     
-        
-        <ion-row>
           <ion-col class="attributes-col">
             <ion-row class="attributes-row">
               <ion-card class="attributes-card">
@@ -88,12 +85,37 @@
           
         </ion-row>
 
-        <ion-row>
+        <ion-row class="stats-container">
+          <ion-col class="stats-col">
+            <ion-card class="stats-card">
+              <ion-card-content>
+                <ion-row class="lvl-row">
+                  <ion-col size="auto">
+                    <div>Level {{creature.level}}</div>
+                  </ion-col>
+                  <ion-col>
+                    <div class="progress-outer">
+                      <div class="progress-inner" [style.width]="creature.xp + '%'">{{creature.xp}} xp</div>
+                    </div>
+                  </ion-col>
+                </ion-row>
+
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col class="stats-filler" size="0"></ion-col>
+
+          <ion-col class="stats-col">
+
+          </ion-col>
         </ion-row>
 
-        <ion-button type="submit" color="primary" expand="block" id="open-skills" (click)="openSkills(creature.skills)">open skills</ion-button>
-        <ion-button type="submit" color="primary" expand="block" (click)="learn()">learn</ion-button>
-        <ion-button type="submit" color="primary" expand="block" (click)="deleteSkills()">delete all skills</ion-button>
+        <ion-row class="buts">
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="openSkills(creature.skills)" id="open-skills">open skills</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn()">learn</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills()">delete all skills</ion-button>
+        </ion-row>
 
         <ion-modal trigger="open-skills" class="skills-window">
           <ng-template>

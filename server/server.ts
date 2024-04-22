@@ -38,7 +38,7 @@ io.on('connection', (socket: any) =>
       battle.addSecondPlayer(cr);
       const cr1 = battle.cr1;
       const cr2 = battle.cr2;
-      io.to(roomID).emit('players-ready', cr1, cr2, battle.p1CanPick, battle.p2CanPick); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
+      io.to(roomID).emit('players-ready'); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
     }
     else //user is rejoining, check if its p1 or p2
     {

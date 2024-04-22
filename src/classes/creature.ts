@@ -12,6 +12,10 @@ export class Creature
     stamina: number;
     ownedBy: string;
     skills: Array<Skill> = [];
+    xp: number;
+    level: number;
+    age?: number;
+
     HP?: number;
     block?: number;
     fatigue?: number;
@@ -20,7 +24,7 @@ export class Creature
     deck?: Array<Skill>;
     grave?: Array<Skill>;
 
-    constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>, stamina: number)
+    constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>, stamina: number, xp: number)
     {
         this.crID = crID;
         this.name = name;
@@ -32,5 +36,8 @@ export class Creature
         this.ownedBy = ownedBy;
         this.skills = skills;
         this.stamina = stamina;
+        this.xp = xp;
+        
+        this.level = 1;
     }
 }

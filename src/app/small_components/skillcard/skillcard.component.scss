@@ -8,7 +8,7 @@ $cardwidth: 160px;
     border-radius: 6px;
     border-style: solid;
     border-color: black;
-    background-color: grey;
+    background-color: rgb(224, 127, 127)
 }
 
 .thumbnail
@@ -17,6 +17,7 @@ $cardwidth: 160px;
     padding: 0;
     margin: 0;
     width: 100%;
+    border-bottom: 3px solid rgb(0, 0, 0);
 }
 
 .fat-cost-container
@@ -79,7 +80,7 @@ ion-card-content
     padding-bottom: 0;
     padding-top: 0;
     height: 130px;
-    color: rgb(11, 60, 100);
+    color: rgb(0, 0, 0);
     margin: 4px;
     margin-top: 0;
     background: rgba(255, 255, 255, 0.5);

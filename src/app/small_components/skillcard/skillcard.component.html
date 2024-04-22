@@ -1,5 +1,5 @@
-<ion-card class="skill-card">
-  <img src="https://ionicframework.com/docs/img/demos/card-media.png" class="thumbnail"/>
+<ion-card class="skill-card" [style.background-color]='bgColor'>
+  <img src="{{'assets/skills/thumbnails/' + skill.type + '.png'}}" class="thumbnail"/>
   <div class="fat-cost-container">
     <img src="assets/icons/fatigue_cost.png" class="fat-icon"/>
     <p class="fat-cost">{{skill.fatCost}}</p>

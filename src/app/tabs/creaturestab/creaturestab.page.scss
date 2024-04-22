@@ -1,3 +1,10 @@
+.main-container
+{
+    margin: 7px;
+    margin-top: 27px;
+    border-radius: 5px;
+}
+
 .creatureImg
 {
     max-height: 250px;
@@ -5,11 +12,19 @@
     margin-left: 25px;
 }
 
-.img-column
+.image-row
+{
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.img-col
 {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: right;
+
 }
 
 .skill-icon
@@ -26,17 +41,10 @@
     justify-content: center;
 }
 
-.image-row
-{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .attributes-col
 {
     display: flex;
-    justify-content: center;
+    justify-content: left;
 }
 
 .attr-row
@@ -68,7 +76,7 @@
 .attributes-card
 {
     margin-bottom: auto;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
     border-style: solid;
     border-color: black;
     border-width: 2px;
@@ -88,13 +96,6 @@
     max-width: 1000px;
 }
 
-.main-container
-{
-    background-color: rgba(0, 0, 0, 0.3);
-    margin: 7px;
-    border-radius: 5px;
-}
-
 .card-container
 {
     margin: 0px;
@@ -106,6 +107,70 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.buts
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stats-container
+{
+    margin-top: 10px;
+    display: flex;
+}
+
+.stats-col
+{
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+
+}
+
+.stats-filler
+{
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.stats-card
+{
+    margin-bottom: auto;
+    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    color: black;
+    min-width: 250px;
+    max-width: 600px;
+}
+
+.lvl-row
+{
+    align-items: center;
+    font-size: 18px;
+}
+
+.progress-outer
+{
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+    background-color: rgba(88, 245, 179, 0.3);
+    border: 1px solid #000000;
+    color: #000000;
+    border-radius: 20px;
+  }
+
+.progress-inner
+{
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0px;
+    border-radius: 20px;
+    background-image: linear-gradient(to right, rgb(56, 199, 139), rgb(13, 114, 75));
 }
 
 ion-content

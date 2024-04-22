@@ -52,7 +52,7 @@ export class CreaturesPage implements OnInit
     }
     for (let index = 0; index < 3; index++)
     {
-      const skillToLearn = skillGenerator.generateSkill(3, "attack");
+      const skillToLearn = skillGenerator.generateSkill(2, "attack");
       await this.creatureService.learnSkill(this.creatures[0].crID, skillToLearn);
     }
     console.log("done");

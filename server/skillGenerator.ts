@@ -46,6 +46,7 @@ export class SkillGenerator
     effects: any = {};
     fatCost!: number;
     name!: string;;
+    description = "";
 
     skills!: Function[];
 
@@ -58,8 +59,8 @@ export class SkillGenerator
         switch(type)
         {
             case 'attack':
-                const dmgarr = [10, 11, 12, 15];
-                this.effects.dmg = dmgarr[rarity] 
+                const dmgArr = [10, 11, 12, 15];
+                this.effects.dmg = dmgArr[rarity] 
                 this.fatCost = 10;
                 this.selfTarget = false;
 
@@ -70,8 +71,8 @@ export class SkillGenerator
 
 
             case 'block':
-                const blockarr = [7, 7, 8, 10];
-                this.effects.block = blockarr[rarity];
+                const blockArr = [7, 7, 8, 10];
+                this.effects.block = blockArr[rarity];
                 this.fatCost = 3;
                 this.selfTarget = true;
 
@@ -92,89 +93,113 @@ export class SkillGenerator
 
     loadAttacks(r: number)
     {
-        //+3-12 dmg
+        //+3-13 dmg
         this.skills.push(() =>
         {
             this.name = "Strike";
-            this.effects.dmg += this.rndInt(3, 6) + (r * 2);
+
+            const dmgArr = [0, 2, 4, 7];
+            this.effects.dmg += this.rndInt(3, 6) + dmgArr[r];
         });
 
-        //+0-6 dmg, +heavy 4-9 
+        //+0-7 dmg, +heavy 4-10 
         this.skills.push(() =>
         {
-            this.name = "Heavy attack";
-            this.effects.dmg += r * 2;
-            this.effects.heavy = this.rndInt(4, 6) + r;
+            this.name = "Heavy Attack";
+
+            const dmgArr = [0, 2, 4, 7];
+            this.effects.dmg += dmgArr[r];
+            const heavyArr = [0, 1, 2, 4];
+            this.effects.heavy = this.rndInt(4, 6) + heavyArr[r];
         });
 
-        //+0-6 dmg, +shred 4-9
+        //+0-6 dmg, +shred 4-10
         this.skills.push(() =>
         {
             this.name = "Shred";
-            this.effects.dmg += r * 2;
-            this.effects.shred = this.rndInt(4, 6) + r;
+
+            const dmgArr = [0, 2, 4, 6];
+            this.effects.dmg += dmgArr[r];
+            const shredArr = [1, 2, 3, 5];
+            this.effects.shred = this.rndInt(3, 6) + shredArr[r];
         });
 
-        //combo: +7-17 dmg
+        //combo: +7-18 dmg
         this.skills.push(() =>
         {
-            this.name = "Twin strike";
-            this.effects.combo = {dmg: this.rndInt(7, 11) + (r * 2)};
+            this.name = "Twin Strike";
+
+            const comboDmgArr = [0, 2, 4, 7];
+            this.effects.combo = {dmg: this.rndInt(7, 11) + comboDmgArr[r]};
         });
     }
 
     loadBlocks(r: number)
     {
-        //+2-8 block
+        //+2-9 block
         this.skills.push(() =>
         {
             this.name = "Block";
-            this.effects.block += this.rndInt(2, 5) + (r);
+
+            const blockArr = [0, 1, 2, 4];
+            this.effects.block += this.rndInt(2, 5) + blockArr[r];
         });
 
-        //stance: 3-12 block, +1 fatCost
+        //stance: 3-13 block, +1 fatCost
         this.skills.push(() =>
         {
             this.name = "Barricade";
-            this.effects.stance = this.rndInt(3, 6) + (r * 2);
+
+            const stanceArr = [0, 2, 4, 7];
+            this.effects.stance = this.rndInt(3, 6) + stanceArr[r];
             this.fatCost += 1;
         });
 
-        //+1-4 block, retaliate: 2-6 dmg
+        //+1-4 block, retaliate: 2-7 dmg
         this.skills.push(() =>
         {
             this.name = "Riposte";
+
             this.effects.block += this.rndInt(1, 4);
-            this.effects.retaliate = {dmg: (this.rndInt(2, 3) + r)}; 
+            const riposteDmgArr = [0, 1, 2, 4];
+            this.effects.retaliate = {dmg: (this.rndInt(2, 3) + riposteDmgArr[r])}; 
+        });
+
+        //+0-5 block, steadfast
+        this.skills.push(() =>
+        {
+            this.name = "Stand Ready";
+
+            this.effects.steadfast = true;
+            const blockArr = [0, 1, 2, 4];
+            this.effects.block += this.rndInt(0, 1) + blockArr[r];
         });
     }
 
-    loadBlocks(r: number)
+    loadTricks(r: number)
     {
-        //+2-8 block
-        this.skills.push(() =>
+        if (r = 1)
         {
-            this.name = "Block";
-            this.effects.block += this.rndInt(2, 5) + (r);
-        });
+            
+        }
 
-        //stance: 3-12 block, +1 fatCost
-        this.skills.push(() =>
+        if (r = 2)
         {
-            this.name = "Barricade";
-            this.effects.stance = this.rndInt(3, 6) + (r * 2);
-            this.fatCost += 1;
-        });
+            //disarm
+            this.skills.push(() =>
+            {
+                this.name = "Disarm";
+                this.description = "Interrupt your opponent's next attack.";
+            });
+        }
 
-        //+1-4 block, retaliate: 2-6 dmg
-        this.skills.push(() =>
+        if (r = 3)
         {
-            this.name = "Riposte";
-            this.effects.block += this.rndInt(1, 4);
-            this.effects.retaliate = {dmg: (this.rndInt(2, 3) + r)}; 
-        });
+            
+        }
+
     }
-    
+
     rndInt(min: number, max: number): number
     {
         return Math.floor(Math.random() * (max - min + 1) + min);
