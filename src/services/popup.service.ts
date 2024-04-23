@@ -45,4 +45,17 @@ export class PopUpService
 
     await this.effect.present();
   }
+
+  async traitPopUp(description: string, cssClass: string, header?: string)
+  {
+    this.effect?.dismiss();
+    this.effect = await this.alertController.create
+    ({
+      header: header,
+      message: description,
+      cssClass: cssClass
+    });
+
+    await this.effect.present();
+  }
 }

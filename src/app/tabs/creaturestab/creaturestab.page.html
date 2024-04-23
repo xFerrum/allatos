@@ -6,115 +6,208 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="loadingDone">
+<ion-content *ngIf="loadingDone" class="page-content">
       <ion-grid class="main-container" *ngFor="let creature of creatures">
         
         <ion-row class="image-row">
+          <ion-col class="board-container">
+            <img src="assets/nameboard.png" class="name-board">
+            <div class="board-name-container"><p class="board-p">{{creature.name}}</p></div>
+            <div class="board-age-container"><p class="board-p">Age: {{calcAge(creature.born)}}</p></div>
+            <div class="board-type-container"><p class="board-p">Type: {{creature.type}}</p></div>
+
+          </ion-col>
           <ion-col class="img-col">
-            <img class="creatureImg" src="{{'assets/creature_imgs/' + creature.type + '.png'}}">
+            <img class="creature-img" src="{{'assets/creature_imgs/' + creature.type + '.png'}}">
           </ion-col>
+          <ion-col>
 
-          <ion-col class="attributes-col">
-            <ion-row class="attributes-row">
-              <ion-card class="attributes-card">
-                <ion-card-content>
-                  <ion-row class="attr-row">
-                    <ion-col size="2" class="attr-icon-col">
-                      <img class="attr-icon" src="assets/icons/placeholder.png" />
-                    </ion-col>
-                    <ion-col class="attr-name">
-                      <ion-label>STRENGTH</ion-label>
-                    </ion-col>
-                    <ion-col class="attr-number">
-                      <ion-label>{{creature.str}}</ion-label>
-                    </ion-col>
-                  </ion-row>
-
-                  <ion-row class="attr-row">
-                    <ion-col size="2" class="attr-icon-col">
-                      <img class="attr-icon" src="assets/icons/placeholder.png" />
-                    </ion-col>
-                    <ion-col class="attr-name">
-                      <ion-label>AGILITY</ion-label>
-                    </ion-col>
-                    <ion-col class="attr-number">
-                      <ion-label>{{creature.agi}}</ion-label>
-                    </ion-col>
-                  </ion-row>
-
-                  <ion-row class="attr-row">
-                    <ion-col size="2" class="attr-icon-col">
-                      <img class="attr-icon" src="assets/icons/placeholder.png" />
-                    </ion-col>
-                    <ion-col class="attr-name">
-                      <ion-label>CONSTITUTION</ion-label>
-                    </ion-col>
-                    <ion-col class="attr-number">
-                      <ion-label>{{creature.con}}</ion-label>
-                    </ion-col>
-                  </ion-row>
-
-                  <ion-row class="attr-row">
-                    <ion-col size="2" class="attr-icon-col">
-                      <img class="attr-icon" src="assets/icons/placeholder.png" />
-                    </ion-col>
-                    <ion-col class="attr-name">
-                      <ion-label>STAMINA</ion-label>
-                    </ion-col>
-                    <ion-col class="attr-number">
-                      <ion-label>{{creature.stamina}}</ion-label>
-                    </ion-col>
-                  </ion-row>
-
-                  <ion-row class="attr-row">
-                    <ion-col size="2" class="attr-icon-col">
-                      <img class="attr-icon" src="assets/icons/placeholder.png" />
-                    </ion-col>
-                    <ion-col class="attr-name">
-                      <ion-label>INITIATIVE</ion-label>
-                    </ion-col>
-                    <ion-col class="attr-number">
-                      <ion-label>{{creature.ini}}</ion-label>
-                    </ion-col>
-                  </ion-row>
-                </ion-card-content>
-
-              </ion-card>
-            </ion-row>
           </ion-col>
-          
         </ion-row>
 
         <ion-row class="stats-container">
+
           <ion-col class="stats-col">
-            <ion-card class="stats-card">
-              <ion-card-content>
-                <ion-row class="lvl-row">
-                  <ion-col size="auto">
-                    <div>Level {{creature.level}}</div>
-                  </ion-col>
-                  <ion-col>
-                    <div class="progress-outer">
-                      <div class="progress-inner" [style.width]="creature.xp + '%'">{{creature.xp}} xp</div>
-                    </div>
-                  </ion-col>
-                </ion-row>
+            <ion-row class="stats-title">
+              <div>Stats</div>
+            </ion-row>
 
-              </ion-card-content>
-            </ion-card>
+            <ion-row>
+              <ion-card class="lvl-card">
+                <ion-card-content class="lvl-card-content">
+                  <ion-row>
+                    <ion-col size="auto">
+                      <div>Level {{creature.level}}</div>
+                    </ion-col>
+                    <ion-col>
+                      <div class="progress-outer">
+                        <div class="progress-inner" [style.width]="creature.xp + '%'">{{creature.xp}} xp</div>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                </ion-card-content>
+              </ion-card>
+            </ion-row>
+
+            <ion-row>
+              <ion-col class="attributes-col">
+                <ion-card class="attributes-card">
+                  <ion-card-content>
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>STRENGTH</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.str}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>AGILITY</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.agi}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>CONSTITUTION</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.con}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>STAMINA</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.stamina}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>INITIATIVE</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.ini}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+
+              <ion-col class="attributes-col">
+                <ion-card class="attributes-card">
+                  <ion-card-content>
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>STRENGTH</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.str}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>AGILITY</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.agi}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>CONSTITUTION</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.con}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>STAMINA</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.stamina}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+  
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>INITIATIVE</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.ini}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+            </ion-row>
           </ion-col>
-
+          
           <ion-col class="stats-filler" size="0"></ion-col>
 
           <ion-col class="stats-col">
-
+            <ion-row class="stats-title">
+              <div>Traits</div>
+            </ion-row>
+              <ion-card class="traits-card">
+                <ion-card-content class="traits-card-content">
+                  <ion-row class="traits-container">
+                    <ion-col *ngFor="let trait of creature.traits" size="auto" class="trait-container">
+                      <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
+                    </ion-col>
+                  </ion-row>
+                </ion-card-content>
+              </ion-card>
           </ion-col>
+
         </ion-row>
 
         <ion-row class="buts">
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="openSkills(creature.skills)" id="open-skills">open skills</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn()">learn</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills()">delete all skills</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" id="open-skills">open skills</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn(creature)">learn</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills(creature)">delete all skills</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="addTrait(creature)">get trait</ion-button>
         </ion-row>
 
         <ion-modal trigger="open-skills" class="skills-window">
@@ -141,6 +234,19 @@
 
           </ng-template>
         </ion-modal>
+
+        <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false">
+          <ng-template>
+            <ion-content class="ion-padding">
+              <div style="font-size: 20px; text-align: center; margin-bottom: 17px;">
+                {{traitToShow.name}}
+              </div>
+              <div>
+                {{traitToShow.description}}
+              </div>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
 
       </ion-grid>
 </ion-content>

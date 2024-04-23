@@ -5,17 +5,82 @@
     border-radius: 5px;
 }
 
-.creatureImg
+.creature-img
 {
     max-height: 250px;
-    margin-right: 25px;
-    margin-left: 25px;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 10px;
+}
+
+.board-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.name-board
+{
+    height: 200px;
+    width: 250px;
+    min-height: 200px;
+    min-width: 250px;
+}
+
+.board-p
+{
+    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 3px;
+    padding-bottom: 1px;
+    padding-top: 1px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.board-name-container
+{
+    display: flex;
+    align-items: flex-start;
+    position: absolute;
+    top: 50%;
+    left: 18%;
+    width: 63%;
+    font-size: 20px;
+
+}
+
+.board-age-container
+{
+    display: flex;
+    align-items: start;
+    position: absolute;
+    top: 63%;
+    left: 21.5%;
+    width: 63%;
+    font-size: 20px;
+
+}
+
+.board-type-container
+{
+    display: flex;
+    align-items: start;
+    position: absolute;
+    top: 76%;
+    left: 16%;
+    width: 63%;
+    font-size: 20px;
+
 }
 
 .image-row
 {
     display: flex;
-    background-color: rgba(0, 0, 0, 0.3);
     border-radius: 5px;
 }
 
@@ -23,15 +88,30 @@
 {
     display: flex;
     align-items: center;
-    justify-content: right;
+    justify-content: center;
 
 }
 
-.skill-icon
+.attributes-col
 {
-    width: 45px;
-    height: 45px;
-    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}
+
+.attributes-card
+{
+    margin-top: 0;
+    margin-bottom: 8px;
+    margin-right: 4px;
+    margin-left: 4px;
+    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    color: black;
+    min-width: 250px;
+    width: auto;
+
 }
 
 .attr-icon-col
@@ -39,12 +119,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.attributes-col
-{
-    display: flex;
-    justify-content: left;
 }
 
 .attr-row
@@ -73,29 +147,6 @@
     justify-content: center;
 }
 
-.attributes-card
-{
-    margin-bottom: auto;
-    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
-    border-style: solid;
-    border-color: black;
-    border-width: 2px;
-    color: black;
-    min-width: 250px;
-}
-
-.skills-card
-{
-    background-color: rgba(255, 255, 255, 0.3);
-    border-style: solid;
-    border-color: black;
-    border-width: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 1000px;
-}
-
 .card-container
 {
     margin: 0px;
@@ -118,15 +169,29 @@
 
 .stats-container
 {
-    margin-top: 10px;
+    margin-top: 5px;
     display: flex;
+    justify-content: center;
 }
 
 .stats-col
-{
+{   
+    margin-top: 5px;
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 5px;
+    color: black;
+    min-width: 500px;
+    max-width: 800px;
+}
 
+.stats-title
+{
+    color: rgb(103, 166, 182);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    font-size: 25px;
+    align-items: center;
+    justify-content: center;
 }
 
 .stats-filler
@@ -142,14 +207,25 @@
     border-style: solid;
     border-color: black;
     border-width: 2px;
-    color: black;
-    min-width: 250px;
-    max-width: 600px;
 }
 
-.lvl-row
+.lvl-card
 {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    color: black;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    width: 100%;
     align-items: center;
+}
+
+.lvl-card-content
+{
     font-size: 18px;
 }
 
@@ -173,7 +249,52 @@
     background-image: linear-gradient(to right, rgb(56, 199, 139), rgb(13, 114, 75));
 }
 
-ion-content
+.traits-card
+{
+    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 1000px;
+}
+
+.traits-card-content
+{
+    margin: auto;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.traits-container
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trait-container
+{
+    padding: 0;
+}
+
+.trait-icon
+{
+
+    width: 45px;
+    height: 45px;
+    padding: 3px;
+    cursor: pointer;
+}
+
+.page-content
 {
     --background: url(/assets/bg.png) center/cover fixed;
+}
+
+ion-popover
+{
+    --backdrop-opacity: 0;
 }

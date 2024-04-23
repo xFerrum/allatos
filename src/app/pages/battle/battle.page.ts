@@ -222,7 +222,6 @@ export class BattlePage implements OnInit
     this.showPlayedSkill = true;
     await this.delay(showFor);
     this.modal.dismiss();
-    this.showPlayedSkill = false;
   }
 
   async hitAnimation(action: any, showFor: number)

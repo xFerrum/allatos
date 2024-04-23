@@ -8,6 +8,7 @@ import { Skill } from 'src/classes/skill';
 import { PopUpService } from 'src/services/popup.service';
 import { SkillGenerator } from 'server/skillGenerator';
 import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard.component';
+import { Trait } from 'src/classes/trait';
 
 @Component({
   selector: 'app-creatures',
@@ -20,9 +21,12 @@ import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard
 export class CreaturesPage implements OnInit
 {
   @ViewChild(IonModal) modal!: IonModal;
+  @ViewChild('popover') popover: any;
   creatures: Creature[] = [];
   loadingDone = false;
   hovering = false;
+  traitShowing = false;
+  traitToShow!: Trait;
 
   constructor(public creatureService: CreatureService, public userService: UserService, public popupService: PopUpService)
   {}
@@ -42,30 +46,44 @@ export class CreaturesPage implements OnInit
     this.loadingDone = true;
   }
 
-  async learn()
+  async learn(cr: Creature)
   {
     let skillGenerator = new SkillGenerator;
     for (let index = 0; index < 2; index++)
     {
       const skillToLearn = skillGenerator.generateSkill(2, "block");
-      await this.creatureService.learnSkill(this.creatures[0].crID, skillToLearn);
+      await this.creatureService.learnSkill(cr.crID, skillToLearn);
     }
     for (let index = 0; index < 3; index++)
     {
       const skillToLearn = skillGenerator.generateSkill(2, "attack");
-      await this.creatureService.learnSkill(this.creatures[0].crID, skillToLearn);
+      await this.creatureService.learnSkill(cr.crID, skillToLearn);
     }
     console.log("done");
   }
 
-  async deleteSkills()
+  async deleteSkills(cr: Creature)
   {
-    this.creatureService.deleteAllSkills(this.creatures[0].crID);
+    this.creatureService.deleteAllSkills(cr.crID);
   }
 
-  openSkills(skills: Array<Skill>)
+  async addTrait(cr: Creature)
   {
+    await this.creatureService.addTrait(cr.crID, new Trait());
 
+    console.log("done");
+  }
+
+  calcAge(born: Date): number
+  {
+    return Math.floor(((new Date()).getTime() - born.getTime())/(1000 * 60 * 60 * 24));
+  }
+
+  traitClicked(e: Event, trait: Trait)
+  {
+    this.traitToShow = trait;
+    this.popover.event = e;
+    this.traitShowing = true;
   }
 
   closeSkills()

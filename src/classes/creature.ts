@@ -1,4 +1,5 @@
 import { Skill } from "./skill";
+import { Trait } from "./trait";
 
 export class Creature
 {
@@ -12,9 +13,10 @@ export class Creature
     stamina: number;
     ownedBy: string;
     skills: Array<Skill> = [];
+    traits: Array<Trait> = [];
     xp: number;
     level: number;
-    age?: number;
+    born: Date;
 
     HP?: number;
     block?: number;
@@ -24,7 +26,8 @@ export class Creature
     deck?: Array<Skill>;
     grave?: Array<Skill>;
 
-    constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number, ownedBy: string, skills: Array<Skill>, stamina: number, xp: number)
+    constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number,
+        ownedBy: string, skills: Array<Skill>, traits: Array<Trait>, stamina: number, xp: number, born: Date)
     {
         this.crID = crID;
         this.name = name;
@@ -35,9 +38,11 @@ export class Creature
         this.ini = ini;
         this.ownedBy = ownedBy;
         this.skills = skills;
+        this.traits = traits;
         this.stamina = stamina;
         this.xp = xp;
-        
+        this.born = born;
+
         this.level = 1;
     }
 }
