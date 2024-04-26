@@ -13,7 +13,7 @@
           <ion-col class="board-container">
             <img src="assets/nameboard.png" class="name-board">
             <div class="board-name-container"><p class="board-p">{{creature.name}}</p></div>
-            <div class="board-age-container"><p class="board-p">Age: {{calcAge(creature.born)}}</p></div>
+            <div class="board-age-container"><p class="board-p">{{calcAge(creature.born)}} days old</p></div>
             <div class="board-type-container"><p class="board-p">Type: {{creature.type}}</p></div>
 
           </ion-col>
@@ -204,7 +204,7 @@
         </ion-row>
 
         <ion-row class="buts">
-          <ion-button type="submit" color="primary" expand="block" class="but" id="open-skills">open skills</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" id="open-skills" (click)="updateSkills(creature)">open skills</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn(creature)">learn</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills(creature)">delete all skills</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="addTrait(creature)">get trait</ion-button>
@@ -225,8 +225,8 @@
             <ion-content>
               <ion-grid>
                 <ion-row class="cards-container">
-                  <ion-col *ngFor="let skill of creature.skills" size="auto" class="card-container">
-                    <app-skillcard [skill]="skill"></app-skillcard>
+                  <ion-col *ngFor="let skill of creature.skills; index as i" size="auto" class="card-container">
+                    <app-skillcard [skill]="skill" [index]="i"></app-skillcard>
                   </ion-col>
                 </ion-row>
               </ion-grid>

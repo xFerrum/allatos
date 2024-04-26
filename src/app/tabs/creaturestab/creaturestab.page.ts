@@ -6,16 +6,18 @@ import { UserService } from 'src/services/user.service';
 import { CommonModule } from '@angular/common';
 import { Skill } from 'src/classes/skill';
 import { PopUpService } from 'src/services/popup.service';
-import { SkillGenerator } from 'server/skillGenerator';
 import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard.component';
 import { Trait } from 'src/classes/trait';
+import { io } from 'socket.io-client';
+import { ModalController } from '@ionic/angular/standalone';
+import { SkillPickComponent } from 'src/app/small_components/skillpick/skillpick.component';
 
 @Component({
   selector: 'app-creatures',
   templateUrl: 'creaturestab.page.html',
   styleUrls: ['creaturestab.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, SkillcardComponent]
+  imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent]
 })
 
 export class CreaturesPage implements OnInit
@@ -27,8 +29,10 @@ export class CreaturesPage implements OnInit
   hovering = false;
   traitShowing = false;
   traitToShow!: Trait;
+  socket: any;
+  waitingForLearn = false;
 
-  constructor(public creatureService: CreatureService, public userService: UserService, public popupService: PopUpService)
+  constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController)
   {}
 
   async ngOnInit(): Promise<void>
@@ -46,20 +50,38 @@ export class CreaturesPage implements OnInit
     this.loadingDone = true;
   }
 
+  //socket disconnects on server side after skill is picked
   async learn(cr: Creature)
   {
-    let skillGenerator = new SkillGenerator;
-    for (let index = 0; index < 2; index++)
+    this.socket = io('http://localhost:3005');
+    this.socket.emit('crID', cr.crID);
+    this.socket.emit('skill-learn-requested', 2);
+
+    this.popUpService.loadingPopUp("Preparing the skills...");
+
+    this.socket.on('skills-generated', async (skillOptions: Array<Skill>) =>
     {
-      const skillToLearn = skillGenerator.generateSkill(2, "block");
-      await this.creatureService.learnSkill(cr.crID, skillToLearn);
-    }
-    for (let index = 0; index < 3; index++)
-    {
-      const skillToLearn = skillGenerator.generateSkill(2, "attack");
-      await this.creatureService.learnSkill(cr.crID, skillToLearn);
-    }
-    console.log("done");
+      await this.popUpService.dismissPopUp();
+      const pickModal = await this.modalCtrl.create(
+      {
+        component: SkillPickComponent,
+        componentProps:
+        {
+          'skills': skillOptions,
+          'socket': this.socket,
+          'confirmFunc': (() => {pickModal.dismiss()}),
+        },
+        backdropDismiss: false,
+      },
+    );
+
+      pickModal.present();
+    });
+  }
+
+  async updateSkills(cr: Creature)
+  {
+    cr.skills = await this.creatureService.fetchSkillsOf(cr.crID);
   }
 
   async deleteSkills(cr: Creature)

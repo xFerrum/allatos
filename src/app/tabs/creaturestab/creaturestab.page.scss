@@ -13,6 +13,7 @@
     padding-left: 15px;
     padding-right: 15px;
     border-radius: 10px;
+    border: 1px solid black;
 }
 
 .board-container
@@ -45,7 +46,6 @@
 .board-name-container
 {
     display: flex;
-    align-items: flex-start;
     position: absolute;
     top: 50%;
     left: 18%;
@@ -57,7 +57,6 @@
 .board-age-container
 {
     display: flex;
-    align-items: start;
     position: absolute;
     top: 63%;
     left: 21.5%;
@@ -69,7 +68,6 @@
 .board-type-container
 {
     display: flex;
-    align-items: start;
     position: absolute;
     top: 76%;
     left: 16%;
@@ -176,6 +174,7 @@
 
 .stats-col
 {   
+    border: 1px solid black;
     margin-top: 5px;
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 5px;

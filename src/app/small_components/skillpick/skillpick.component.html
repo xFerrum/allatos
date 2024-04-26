@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Pick a skill to learn</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row class="cards-container">
+      <ion-col *ngFor="let skill of skills; index as i" size="auto" class="card-container">
+        <app-skillcard [skill]="skill" [index]="i" pickable="true" (highlightEvent)="skillSelected($event)"></app-skillcard>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <div class="but-container">
+    <ion-button [disabled]="confirmEnabled ? 'false' : 'true'" (click)="confirmSkill()" class="confirm-but">Confirm</ion-button>
+  </div>
+</ion-content>

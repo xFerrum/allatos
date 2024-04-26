@@ -1,10 +1,12 @@
 {
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "commonjs",
+      "moduleResolution":"node",
     }
   },
   "compilerOptions": {
-    "module": "esnext"
+    "module": "esnext",
+    "moduleResolution":"node",
   }
 }

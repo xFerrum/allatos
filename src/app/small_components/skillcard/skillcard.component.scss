@@ -1,14 +1,25 @@
 $cardwidth: 160px;
 
-.skill-card
+ion-card
 {
     height: 220px;
     width: $cardwidth;
     color: black;
+    user-select: none;
     border-radius: 6px;
-    border-style: solid;
-    border-color: black;
-    background-color: rgb(224, 127, 127)
+}
+
+.skill-card
+{
+    border: 3px solid black;
+    background-color: rgb(224, 127, 127);
+}
+
+.skill-card-highlighted
+{
+    border: 3px solid yellow;
+    background-color: rgb(224, 127, 127);
+    cursor: pointer;
 }
 
 .thumbnail

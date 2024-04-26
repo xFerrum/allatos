@@ -1,16 +1,15 @@
 import { BattleSession } from "./battleSession";
 import { Creature } from "../src/classes/creature";
-import { Skill } from "../src/classes/skill";
 
 const battlesInProgress = new Map<string, BattleSession>;
 
 const io = require('socket.io')(3000,
+{
+  cors:
   {
-    cors:
-    {
-      origin: ['http://localhost:8100'],
-    }
-  });
+    origin: ['http://localhost:8100'],
+  }
+});
 
 io.on('connection', (socket: any) =>
 {

@@ -1,4 +1,4 @@
-<ion-card class="skill-card" [style.background-color]='bgColor'>
+<ion-card [ngClass]="highlighted ? 'skill-card-highlighted' : 'skill-card'" style.cursor="{{pickable ? 'pointer' : 'auto'}}" [style.background-color]='bgColor' (click)="highlightCard()">
   <img src="{{'assets/skills/thumbnails/' + skill.type + '.png'}}" class="thumbnail"/>
   <div class="fat-cost-container">
     <img src="assets/icons/fatigue_cost.png" class="fat-icon"/>
