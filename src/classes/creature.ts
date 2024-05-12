@@ -1,3 +1,4 @@
+import { Activity } from "./activity";
 import { Skill } from "./skill";
 import { Trait } from "./trait";
 
@@ -8,6 +9,7 @@ export class Creature
     type: string;
     str: number;
     agi: number;
+    int: number;
     con: number;
     ini: number;
     stamina: number;
@@ -17,6 +19,7 @@ export class Creature
     xp: number;
     level: number;
     born: Date;
+    currentAct?: Activity;
 
     HP?: number;
     block?: number;
@@ -26,7 +29,7 @@ export class Creature
     deck?: Array<Skill>;
     grave?: Array<Skill>;
 
-    constructor(crID: string, name: string, type: string, str: number, agi: number, con: number, ini: number,
+    constructor(crID: string, name: string, type: string, str: number, agi: number, int: number, con: number, ini: number,
         ownedBy: string, skills: Array<Skill>, traits: Array<Trait>, stamina: number, xp: number, born: Date)
     {
         this.crID = crID;
@@ -34,6 +37,7 @@ export class Creature
         this.type = type;
         this.str = str;
         this.agi = agi;
+        this.int = int;
         this.con = con;
         this.ini = ini;
         this.ownedBy = ownedBy;

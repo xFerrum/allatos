@@ -1,0 +1,30 @@
+.but-container
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.act-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.act-img
+{
+    opacity: 0.7;
+    max-height: 100px;
+    width: 100%;
+    margin-bottom: 6px;
+    margin-top: 6px;
+    margin-left: 3px;
+    margin-right: 3px;
+    cursor: pointer;
+}
+
+.act-img-highlighted
+{
+    opacity: 1;
+}

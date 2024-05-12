@@ -18,7 +18,7 @@ export class SkillPickComponent
   @Input() confirmFunc!: Function;
   selectedIndexes: Array<number> = [];
   confirmEnabled = false;
-  constructor() { }
+  constructor() {}
 
   skillSelected(index: number)
   {

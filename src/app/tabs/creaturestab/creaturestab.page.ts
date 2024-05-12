@@ -1,3 +1,4 @@
+/* tslint:disable:unknown-word */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonModal, IonicModule } from '@ionic/angular';
 import { Creature } from 'src/classes/creature';
@@ -11,13 +12,15 @@ import { Trait } from 'src/classes/trait';
 import { io } from 'socket.io-client';
 import { ModalController } from '@ionic/angular/standalone';
 import { SkillPickComponent } from 'src/app/small_components/skillpick/skillpick.component';
+import { Activity } from 'src/classes/activity';
+import { AdventureComponent } from 'src/app/small_components/adventure/adventure.component';
 
 @Component({
   selector: 'app-creatures',
   templateUrl: 'creaturestab.page.html',
   styleUrls: ['creaturestab.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent]
+  imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent]
 })
 
 export class CreaturesPage implements OnInit
@@ -31,6 +34,7 @@ export class CreaturesPage implements OnInit
   traitToShow!: Trait;
   socket: any;
   waitingForLearn = false;
+  tempActArray: Activity[] = [ new Activity("Galand", 3600), new Activity("Kaland", 5000) ];
 
   constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController)
   {}
@@ -77,6 +81,22 @@ export class CreaturesPage implements OnInit
 
       pickModal.present();
     });
+  }
+
+  async startAct(cr: Creature)
+  {
+    const actModal = await this.modalCtrl.create(
+    {
+      component: AdventureComponent,
+      componentProps:
+      {
+        'acts': this.tempActArray,
+        'confirmFunc': (() => {actModal.dismiss()}),
+      },
+    },
+  );
+
+    actModal.present();
   }
 
   async updateSkills(cr: Creature)

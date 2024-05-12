@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Pick an activity</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row class="act-container" *ngFor="let act of acts" size="auto">
+      <img src="assets/icons/placeholder.png" class="act-img" (click)="actClicked($event, act)"/>
+    </ion-row>
+  </ion-grid>
+
+  <div class="but-container">
+    <ion-button [disabled]="confirmEnabled ? 'false' : 'true'" (click)="confirmAct()" class="confirm-but">Confirm</ion-button>
+  </div>
+
+</ion-content>

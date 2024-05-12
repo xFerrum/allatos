@@ -82,6 +82,18 @@
                         <img class="attr-icon" src="assets/icons/placeholder.png" />
                       </ion-col>
                       <ion-col class="attr-name">
+                        <ion-label>INTELLIGENCE</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.int}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
                         <ion-label>CONSTITUTION</ion-label>
                       </ion-col>
                       <ion-col class="attr-number">
@@ -142,7 +154,19 @@
                         <ion-label>{{creature.agi}}</ion-label>
                       </ion-col>
                     </ion-row>
-  
+
+                    <ion-row class="attr-row">
+                      <ion-col size="2" class="attr-icon-col">
+                        <img class="attr-icon" src="assets/icons/placeholder.png" />
+                      </ion-col>
+                      <ion-col class="attr-name">
+                        <ion-label>INTELLIGENCE</ion-label>
+                      </ion-col>
+                      <ion-col class="attr-number">
+                        <ion-label>{{creature.int}}</ion-label>
+                      </ion-col>
+                    </ion-row>
+
                     <ion-row class="attr-row">
                       <ion-col size="2" class="attr-icon-col">
                         <img class="attr-icon" src="assets/icons/placeholder.png" />
@@ -208,6 +232,7 @@
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn(creature)">learn</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills(creature)">delete all skills</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="addTrait(creature)">get trait</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="startAct(creature)">start activity</ion-button>
         </ion-row>
 
         <ion-modal trigger="open-skills" class="skills-window">

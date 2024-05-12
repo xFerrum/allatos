@@ -21,7 +21,7 @@ export class CreatureService
     try
     {
       let data = (await getDoc(doc(db, "creatures", id))).data();
-      let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["con"], data!["ini"], data!["ownedBy"], data!["skills"], data!["traits"], data!["stamina"], data!["xp"], new Date(data!["born"].seconds*1000));
+      let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["int"], data!["con"], data!["ini"], data!["ownedBy"], data!["skills"], data!["traits"], data!["stamina"], data!["xp"], new Date(data!["born"].seconds*1000));
       return(creature);
     }
     catch (error)
