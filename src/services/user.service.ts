@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc } from 'firebase/firestore/lite';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { firebaseConfig } from "src/app/fbaseconfig";
-  
+import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
+
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
 const auth = getAuth();
@@ -14,11 +15,12 @@ const auth = getAuth();
 
 export class UserService
 {
-
-  //creates Firebase user auth, adds to users collection and returns true if succesful
-  registerUser(username: string, email: string, password: string)
+  constructor(private router: Router) {}
+  
+  //creates Firebase user auth, adds to users collection and returns true if successful
+  async registerUser(username: string, email: string, password: string)
   {
-    createUserWithEmailAndPassword(auth, email, password)
+    await createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredential) =>
     {
       await setDoc(doc(db, "users", userCredential.user.uid),
@@ -49,6 +51,7 @@ export class UserService
         console.error(error.code + ": " + error.message);
         return false;
       }); 
+
       return uid;
   }
 
@@ -69,7 +72,7 @@ export class UserService
 
   isLoggedIn(): boolean
   {
-    if (localStorage.getItem("loggedInID") == null)
+    if (auth.currentUser === null)
     {
       return false;
     }
@@ -92,4 +95,28 @@ export class UserService
       else throw error;
     }
   }
+
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean>
+  {
+    return new Promise((resolve) =>
+    {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user)
+        {
+          resolve(true); // User is signed in, allow access
+        } else
+        { // Redirect to login if not signed in
+          this.router.navigate(['']);
+          resolve(false);
+        }
+      });
+    });
+
+  }
+}
+
+export const AuthGuard: CanActivateFn = (next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> =>
+{
+  return inject(UserService).canActivate(next, state);
 }

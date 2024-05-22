@@ -1,4 +1,4 @@
-import { Skill } from "../src/classes/skill";
+import { Skill } from "../../src/classes/skill";
 /*
 NOTES/IDEAS:
 - rarity: 0-3 minor, major, pro, mythical or smth idk WIP
@@ -79,6 +79,8 @@ export class SkillGenerator
                 this.loadBlocks(rarity);
 
                 break;
+
+
 
             case 'trick':
 

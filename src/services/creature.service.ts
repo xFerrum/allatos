@@ -52,20 +52,6 @@ export class CreatureService
     }
   }
 
-  async learnSkill(cid: string, skill: Skill)
-  {
-    let temp = (await this.getCreatureById(cid)).skills;
-    console.log(temp);
-    if (!temp) temp = [];
-    temp.push(skill);
-
-    const converted = temp.map((obj)=> {return Object.assign({}, obj)});
-    await updateDoc(doc(db, "creatures", cid),
-    {
-      skills: converted
-    });
-  }
-
   async deleteAllSkills(cid: string)
   {
     await updateDoc(doc(db, "creatures", cid),

@@ -34,7 +34,7 @@ export class CreaturesPage implements OnInit
   traitToShow!: Trait;
   socket: any;
   waitingForLearn = false;
-  tempActArray: Activity[] = [ new Activity("Galand", 3600), new Activity("Kaland", 5000) ];
+  tempActArray: Activity[] = [ new Activity("Galand", 3000), new Activity("Kaland", 12000) ];
 
   constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController)
   {}
@@ -83,7 +83,7 @@ export class CreaturesPage implements OnInit
     });
   }
 
-  async startAct(cr: Creature)
+  async startActClicked(cr: Creature)
   {
     const actModal = await this.modalCtrl.create(
     {
@@ -91,7 +91,7 @@ export class CreaturesPage implements OnInit
       componentProps:
       {
         'acts': this.tempActArray,
-        'confirmFunc': (() => {actModal.dismiss()}),
+        'confirmFunc': ((act: Activity) => { actModal.dismiss(); this.fireAct(cr, act)}),
       },
     },
   );
@@ -131,5 +131,13 @@ export class CreaturesPage implements OnInit
   closeSkills()
   {
     this.modal.dismiss(null, 'cancel');
+  }
+
+  fireAct(cr: Creature, act: Activity)
+  {
+    this.socket = io('http://localhost:3010');
+    act.startDate = new Date;
+    this.socket.emit('start-activity', cr.crID, act);
+    this.socket.on('start-activity-failed', () => { /*failed*/ });
   }
 }

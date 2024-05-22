@@ -21,6 +21,7 @@ export class Creature
     born: Date;
     currentAct?: Activity;
 
+    //for battle - TODO: creat separate model for battle server
     HP?: number;
     block?: number;
     fatigue?: number;

@@ -1,8 +1,8 @@
 import { Creature } from "../src/classes/creature";
 import { Skill } from "../src/classes/skill";
-import { SkillGenerator } from "./skillGenerator";
+import { SkillGenerator } from "./tools/skillGenerator";
 import { initializeApp } from "firebase/app";
-import { CrService } from "./crService";
+import { CrService } from "./db_services/crService";
 
 const io = require('socket.io')(3005,
 {

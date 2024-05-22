@@ -26,10 +26,8 @@ export class AdventureComponent
   {
     this.selectedAct = act;
     let elements = document.querySelectorAll('.act-img');
-    console.log(elements);
     for (let e of elements)
     {
-      console.log(e);
       this.renderer.removeClass(e, 'act-img-highlighted');
     }
     this.renderer.addClass(event.target, 'act-img-highlighted');
@@ -39,6 +37,6 @@ export class AdventureComponent
 
   confirmAct()
   {
-    this.confirmFunc();
+    this.confirmFunc(this.selectedAct);
   }
 }

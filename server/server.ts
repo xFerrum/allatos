@@ -64,8 +64,3 @@ io.on('connection', (socket: any) =>
     battle.skillPicked(owneruid, index, socket);
   });
 });
-
-function startOfAction()
-{
-
-}

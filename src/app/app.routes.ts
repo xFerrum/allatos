@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
-import { UserService } from 'src/services/user.service';
+import { AuthGuard } from 'src/services/user.service';
 
 export const routes: Routes = [
   {
@@ -10,7 +10,7 @@ export const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then(m => m.routes),
-    canActivate: [() => inject(UserService).isLoggedIn()]
+    canActivate: [AuthGuard]
   },
   {
     path: 'registration',
@@ -18,6 +18,11 @@ export const routes: Routes = [
   },
   {
     path: 'battle',
-    loadComponent: () => import('./pages/battle/battle.page').then( m => m.BattlePage)
+    loadComponent: () => import('./pages/battle/battle.page').then( m => m.BattlePage),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: '**',
+    redirectTo: ''
   },
 ];
