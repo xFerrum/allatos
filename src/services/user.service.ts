@@ -96,6 +96,11 @@ export class UserService
     }
   }
 
+  getLoggedInID(): string | undefined
+  {
+    return auth.currentUser?.uid;
+  }
+
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean>
   {
     return new Promise((resolve) =>

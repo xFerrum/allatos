@@ -1,11 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc} from 'firebase/firestore/lite';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, onSnapshot} from 'firebase/firestore';
 import { Injectable } from "@angular/core";
 import { firebaseConfig } from "src/app/fbaseconfig";
 import { Skill } from "src/classes/skill";
 import { Creature } from "src/classes/creature";
 import { Trait } from "src/classes/trait";
+import { UserService } from "./user.service";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -16,12 +16,14 @@ const db = getFirestore(fbase);
 
 export class CreatureService
 {
+  constructor(private userService: UserService) {}
+
   async getCreatureById(id: string, tries = 10): Promise<Creature>
   {
     try
     {
       let data = (await getDoc(doc(db, "creatures", id))).data();
-      let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["int"], data!["con"], data!["ini"], data!["ownedBy"], data!["skills"], data!["traits"], data!["stamina"], data!["xp"], new Date(data!["born"].seconds*1000));
+      let creature = this.convertDataToCreature(id, data);
       return(creature);
     }
     catch (error)
@@ -75,6 +77,33 @@ export class CreatureService
     {
       traits: converted
     });
+  }
+
+  async initCreatures(crArr: Array<Creature>)
+  {
+    await this.userService.getUserDetails(this.userService.getLoggedInID()!).then(async (data: any) =>
+      {
+        //add to array and set listeners for creature data changes
+        for (let i = 0; i < data["ownedCreatures"].length; i++)
+        {
+          const crID = data["ownedCreatures"][i];
+          crArr.push(await this.getCreatureById(crID));
+          onSnapshot(doc(db, "creatures", crID), (doc) =>
+          {
+            if (doc.exists())
+            {
+              crArr[i] = this.convertDataToCreature(crID, doc.data());
+            }
+            else delete crArr[i];
+          });
+        }
+      });
+  }
+
+  convertDataToCreature(crID: string, data: any): Creature
+  {
+    return new Creature(crID, data!["name"], data!["type"], data!["str"], data!["agi"], data!["int"], data!["con"], data!["ini"],
+      data!["ownedBy"], data!["skills"], data!["traits"], data!["stamina"], data!["xp"], new Date(data!["born"].seconds*1000));
   }
 
 /*   async getCreaturesOfOwner(ownerId: string)

@@ -39,7 +39,7 @@ Method of generation:
     - construct and return skill at end of generateSkill
 */
 
-//TODO: put variables inside generateSkill, load attack/block skills into different array and call those
+//TODO: downgrade from class to function (export)
 export class SkillGenerator
 {
     selfTarget!: boolean;
