@@ -6,6 +6,7 @@ import { Skill } from "src/classes/skill";
 import { Creature } from "src/classes/creature";
 import { Trait } from "src/classes/trait";
 import { UserService } from "./user.service";
+import { Activity } from "src/classes/activity";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -102,8 +103,15 @@ export class CreatureService
 
   convertDataToCreature(crID: string, data: any): Creature
   {
-    return new Creature(crID, data!["name"], data!["type"], data!["str"], data!["agi"], data!["int"], data!["con"], data!["ini"],
-      data!["ownedBy"], data!["skills"], data!["traits"], data!["stamina"], data!["xp"], new Date(data!["born"].seconds*1000));
+    let cAct = undefined;
+    if (data["currentAct"])
+    {
+      cAct = new Activity(data["currentAct"].name, data["currentAct"].duration);
+      cAct.startDate = data["currentAct"].startDate.toDate();
+    }
+
+    return new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
+      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), cAct);
   }
 
 /*   async getCreaturesOfOwner(ownerId: string)

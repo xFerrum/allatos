@@ -87,7 +87,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
 }
 
 .attributes-col
@@ -95,6 +94,43 @@
     margin: 0;
     padding: 0;
 }
+
+.away-col
+{
+    display: flex;
+    justify-content: left;
+}
+
+.away-container
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+    margin-bottom: 3%;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    border: solid 1px black;
+}
+
+.away-text
+{
+    color: rgb(103, 166, 182);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    padding: 4px;
+    border-bottom: solid 1px black;
+}
+
+.away-timer
+{
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    padding: 4px;
+    margin: 3px;
+}
+
 
 .attributes-card
 {

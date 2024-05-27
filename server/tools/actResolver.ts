@@ -11,6 +11,7 @@ import { Activity } from "../models/activity";
     - (will implement in future: item loot)
     - ("choose your own" style events?)
 */
+
 export function actResolver(cr: Creature, act: Activity)
 {
     

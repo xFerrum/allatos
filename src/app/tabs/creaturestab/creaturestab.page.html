@@ -17,11 +17,18 @@
             <div class="board-type-container"><p class="board-p">Type: {{creature.type}}</p></div>
 
           </ion-col>
-          <ion-col class="img-col">
+
+          <ion-col class="img-col" size="2.5">
             <img class="creature-img" src="{{'assets/creature_imgs/' + creature.type + '.png'}}">
           </ion-col>
-          <ion-col>
 
+          <ion-col class="away-col">
+            <div class="away-container">
+              <div *ngIf="creature.currentAct" class="away-text">Currently doing this: {{ creature.currentAct.name }}</div>
+              <div *ngIf="creature.currentAct" class="away-timer">{{ timers.get(creature.crID) | async | customTime }}</div>
+
+              <div *ngIf="!(creature.currentAct)" class="away-text">Currently idle.</div>
+            </div>
           </ion-col>
         </ion-row>
 
@@ -228,11 +235,11 @@
         </ion-row>
 
         <ion-row class="buts">
-          <ion-button type="submit" color="primary" expand="block" class="but" id="open-skills" (click)="updateSkills(creature)">open skills</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" id="open-skills">open skills</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn(creature)">learn</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills(creature)">delete all skills</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="addTrait(creature)">get trait</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="startActClicked(creature)">start activity</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
         </ion-row>
 
         <ion-modal trigger="open-skills" class="skills-window">

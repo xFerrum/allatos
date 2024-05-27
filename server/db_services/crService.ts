@@ -42,15 +42,16 @@ export class CrService
     return arr;
   }
 
-  async learnSkill(cid: string, skill: Skill)
+  async learnSkill(crID: string, skill: Skill)
   {
-    let temp = (await this.getCreatureById(cid)).skills;
-    console.log(temp);
+    let temp = (await this.getCreatureById(crID)).skills;
     if (!temp) temp = [];
     temp.push(skill);
+    delete skill.usedByID;
 
     const converted = temp.map((obj)=> {return Object.assign({}, obj)});
-    await updateDoc(doc(db, "creatures", cid),
+    console.log(converted);
+    await updateDoc(doc(db, "creatures", crID),
     {
       skills: converted
     });
@@ -64,9 +65,9 @@ export class CrService
     });
   }
 
-  async addTrait(cid: string, trait: Trait)
+  async addTrait(crID: string, trait: Trait)
   {
-    let temp = (await this.getCreatureById(cid)).traits;
+    let temp = (await this.getCreatureById(crID)).traits;
     console.log(temp);
 
     if (!temp) temp = [];
@@ -75,21 +76,10 @@ export class CrService
 
     const converted = temp.map((obj)=> {return Object.assign({}, obj)});
 
-    await updateDoc(doc(db, "creatures", cid),
+    await updateDoc(doc(db, "creatures", crID),
     {
       traits: converted
     });
   }
 
-/*   async getCreaturesOfOwner(ownerId: string)
-  {
-		const q = query(collection(db, "creatures"), where("ownedBy", "==", ownerId));
-		const querySnapshot = await getDocs(q);
-		
-		querySnapshot.forEach((doc) =>
-		{
-			console.log(doc.id, " => ", doc.data());
-		});
-	
-  } */
 }

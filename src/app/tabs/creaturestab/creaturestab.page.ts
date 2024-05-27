@@ -14,13 +14,15 @@ import { ModalController } from '@ionic/angular/standalone';
 import { SkillPickComponent } from 'src/app/small_components/skillpick/skillpick.component';
 import { Activity } from 'src/classes/activity';
 import { AdventureComponent } from 'src/app/small_components/adventure/adventure.component';
+import { TimerPipe } from 'src/services/timerPipe';
+import { BehaviorSubject, Observer } from 'rxjs';
 
 @Component({
   selector: 'app-creatures',
   templateUrl: 'creaturestab.page.html',
   styleUrls: ['creaturestab.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent]
+  imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent, TimerPipe]
 })
 
 export class CreaturesPage implements OnInit
@@ -34,6 +36,8 @@ export class CreaturesPage implements OnInit
   traitToShow!: Trait;
   socket: any;
   waitingForLearn = false;
+  timers = new Map<string, BehaviorSubject<number>>;
+
   tempActArray: Activity[] = [ new Activity("Galand", 3000), new Activity("Kaland", 12000) ];
 
   constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController)
@@ -41,7 +45,15 @@ export class CreaturesPage implements OnInit
 
   async ngOnInit(): Promise<void>
   {
-    this.creatureService.initCreatures(this.creatures);
+    await this.creatureService.initCreatures(this.creatures);
+    for (let cr of this.creatures)
+    {
+      if (cr.currentAct)
+      {
+        cr.currentAct.startTimer();
+        this.timers.set(cr.crID, cr.currentAct.timer$);
+      }
+    }
 
     this.loadingDone = true;
   }
@@ -91,11 +103,6 @@ export class CreaturesPage implements OnInit
     actModal.present();
   }
 
-  async updateSkills(cr: Creature)
-  {
-    cr.skills = await this.creatureService.fetchSkillsOf(cr.crID);
-  }
-
   async deleteSkills(cr: Creature)
   {
     this.creatureService.deleteAllSkills(cr.crID);
@@ -108,6 +115,7 @@ export class CreaturesPage implements OnInit
     console.log("done");
   }
 
+  //returns days
   calcAge(born: Date): number
   {
     return Math.floor(((new Date()).getTime() - born.getTime())/(1000 * 60 * 60 * 24));
