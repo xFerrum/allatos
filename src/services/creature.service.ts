@@ -7,6 +7,7 @@ import { Creature } from "src/classes/creature";
 import { Trait } from "src/classes/trait";
 import { UserService } from "./user.service";
 import { Activity } from "src/classes/activity";
+import { User } from "src/classes/user";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -82,12 +83,12 @@ export class CreatureService
 
   async initCreatures(crArr: Array<Creature>)
   {
-    await this.userService.getUserDetails(this.userService.getLoggedInID()!).then(async (data: any) =>
+    await this.userService.getUser(this.userService.getLoggedInID()!).then(async (user: User) =>
       {
         //add to array and set listeners for creature data changes
-        for (let i = 0; i < data["ownedCreatures"].length; i++)
+        for (let i = 0; i < user.ownedCreatures.length; i++)
         {
-          const crID = data["ownedCreatures"][i];
+          const crID = user.ownedCreatures[i];
           crArr.push(await this.getCreatureById(crID));
           onSnapshot(doc(db, "creatures", crID), (doc) =>
           {
@@ -107,22 +108,10 @@ export class CreatureService
     if (data["currentAct"])
     {
       cAct = new Activity(data["currentAct"].name, data["currentAct"].duration);
-      cAct.startDate = data["currentAct"].startDate.toDate();
+      cAct.startDate = new Date(data["currentAct"].startDate);
     }
 
     return new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
-      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), cAct);
+      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], cAct);
   }
-
-/*   async getCreaturesOfOwner(ownerId: string)
-  {
-		const q = query(collection(db, "creatures"), where("ownedBy", "==", ownerId));
-		const querySnapshot = await getDocs(q);
-		
-		querySnapshot.forEach((doc) =>
-		{
-			console.log(doc.id, " => ", doc.data());
-		});
-	
-  } */
 }

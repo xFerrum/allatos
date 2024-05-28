@@ -1,5 +1,7 @@
 import { Creature } from "../../src/classes/creature";
 import { Activity } from "../models/activity";
+import { ModifyCreature } from "./modifyCreature";
+import { Notification } from "../models/notification";
 
 /*
     for now you get xp | traits | skills from activities
@@ -12,7 +14,38 @@ import { Activity } from "../models/activity";
     - ("choose your own" style events?)
 */
 
-export function actResolver(cr: Creature, act: Activity)
+const modifyCreature = new ModifyCreature;
+
+//modify cr and return a notification
+export function resolveAct(cr: Creature, actName: string): Notification
 {
+    let actObj = selectAct(actName);
+    let notiDescription = '';
+
+    if (actObj.hasOwnProperty('xp'))
+    {
+        cr = modifyCreature.addXP(cr, actObj['xp']);
+        notiDescription += "Gained " + actObj['xp'] + " xp.\n";
+    }
+
+    return new Notification("Back from " + actName, notiDescription, 'activity-summary', new Date());
+}
+
+function selectAct(actName: string): Object
+{
+    switch (actName)
+    {
+        case 'Galand':
+            return({
+               xp: 35 
+            });
     
+        case 'Kaland':
+            return({
+                xp: 17 
+            });
+
+        default:
+            return null;
+    }
 }

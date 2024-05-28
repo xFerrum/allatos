@@ -1,5 +1,5 @@
 /* tslint:disable:unknown-word */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { IonModal, IonicModule } from '@ionic/angular';
 import { Creature } from 'src/classes/creature';
 import { CreatureService } from 'src/services/creature.service';
@@ -25,7 +25,7 @@ import { BehaviorSubject, Observer } from 'rxjs';
   imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent, TimerPipe]
 })
 
-export class CreaturesPage implements OnInit
+export class CreaturesPage implements OnInit, DoCheck
 {
   @ViewChild(IonModal) modal!: IonModal;
   @ViewChild('popover') popover: any;
@@ -56,6 +56,18 @@ export class CreaturesPage implements OnInit
     }
 
     this.loadingDone = true;
+  }
+
+  ngDoCheck(): void
+  {
+    for (let cr of this.creatures)
+      {
+        if (cr.currentAct)
+        {
+          cr.currentAct.startTimer();
+          this.timers.set(cr.crID, cr.currentAct.timer$);
+        }
+      }
   }
 
   //socket disconnects on server side after skill is picked

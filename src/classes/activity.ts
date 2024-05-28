@@ -21,12 +21,14 @@ export class Activity
         this.timer$ = new BehaviorSubject((this.startDate!.getTime() + this.duration) - new Date().getTime());
         this.timerID = setInterval(() =>
         {
-            this.timer$.next((this.startDate!.getTime() + this.duration) - new Date().getTime());
-            if (this.timer$.value <= 0) 
+            const nextVal = (this.startDate!.getTime() + this.duration) - new Date().getTime();
+            if (nextVal <= 0) 
             {
                 clearInterval(this.timerID);
                 this.timer$.complete();
             }
+            else this.timer$.next(nextVal);
+
         }, 1000);
     }
 }

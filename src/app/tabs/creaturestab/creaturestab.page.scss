@@ -129,6 +129,8 @@
     border-radius: 10px;
     padding: 4px;
     margin: 3px;
+    min-width: 110px;
+    text-align: center;
 }
 
 
@@ -264,9 +266,29 @@
     font-size: 18px;
 }
 
+.xp-text
+{
+    z-index: 10;
+    top: 1px;
+    font-size: 18px;
+    justify-content: center;
+    position: absolute;
+    height: 28px;
+}
+
+.progress-container
+{
+    position: absolute;
+}
+
 .progress-outer
 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     max-width: 400px;
+    height: 30px;
     margin: auto;
     text-align: center;
     background-color: rgba(88, 245, 179, 0.3);
@@ -277,6 +299,10 @@
 
 .progress-inner
 {
+    min-width: 7%;
+    left: 0;
+    height: 100%;
+    position: absolute;
     white-space: nowrap;
     overflow: hidden;
     padding: 0px;

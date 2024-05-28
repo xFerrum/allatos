@@ -42,8 +42,8 @@ export class ProfilePage implements OnInit {
 
   async loadProfileDetails()
   {
-    let userData = await this.userService.getUserDetails(localStorage.getItem("loggedInID")!);
-    this.username = userData!["username"];
-    this.email = userData!["email"];
+    let user = await this.userService.getUser(this.userService.getLoggedInID()!);
+    this.username = user.username;
+    this.email = user.email;
   }
 }

@@ -50,6 +50,7 @@ export class SkillGenerator
 
     skills!: Function[];
 
+    //TODO: separate functions for adding each effect, these could be used for modifying skills too (after theyve already been generated)
     generateSkill(rarity: number, type: string): Skill
     {
         this.effects = {};

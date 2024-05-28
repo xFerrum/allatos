@@ -46,9 +46,10 @@
                     <ion-col size="auto">
                       <div>Level {{creature.level}}</div>
                     </ion-col>
-                    <ion-col>
+                    <ion-col class="progress-container">
                       <div class="progress-outer">
-                        <div class="progress-inner" [style.width]="creature.xp + '%'">{{creature.xp}} xp</div>
+                        <p class="xp-text">{{creature.xp}} xp</p>
+                        <div class="progress-inner" [style.width]="creature.xp + '%'"></div>
                       </div>
                     </ion-col>
                   </ion-row>

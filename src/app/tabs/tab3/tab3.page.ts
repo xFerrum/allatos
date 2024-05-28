@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { Creature } from 'src/classes/creature';
+import { User } from 'src/classes/user';
 
 @Component({
   selector: 'app-tab3',
@@ -28,11 +29,11 @@ export class Tab3Page implements OnInit
   async ngOnInit(): Promise<void>
   {
     //add owned creatures to array (for list)
-    await this.userService.getUserDetails(localStorage.getItem("loggedInID")!).then(async (data: any) =>
+    await this.userService.getUser(this.userService.getLoggedInID()!).then(async (user: User) =>
     {
-      for (let i = 0; i < data["ownedCreatures"].length; i++)
+      for (let i = 0; i < user.ownedCreatures.length; i++)
       {
-        const crID = data["ownedCreatures"][i];
+        const crID = user.ownedCreatures[i];
         this.creatures.push(await this.creatureService.getCreatureById(crID));
       }
     });

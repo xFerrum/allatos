@@ -4,6 +4,9 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { Injectable, inject } from "@angular/core";
 import { firebaseConfig } from "src/app/fbaseconfig";
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
+import { PopUpService } from "./popup.service";
+import { User } from "src/classes/user";
+import { Timestamp } from "firebase/firestore/lite";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -15,7 +18,27 @@ const auth = getAuth();
 
 export class UserService
 {
-  constructor(private router: Router) {}
+
+  constructor(private router: Router, private popUpService: PopUpService)
+  {
+    onAuthStateChanged(auth, async (user) =>
+    {
+      if (user)
+      {
+        const userData = await this.getUser(user.uid);
+        for (let n of userData.notifications)
+        {
+          this.popUpService.addNotification(n);
+        }
+
+        if (this.popUpService.notifications.length > 0)
+        {
+          this.popUpService.showNextNotification();
+        }
+      }
+      else this.popUpService.clearNotifications();
+    });
+  }
   
   //creates Firebase user auth, adds to users collection and returns true if successful
   async registerUser(username: string, email: string, password: string)
@@ -26,16 +49,15 @@ export class UserService
       await setDoc(doc(db, "users", userCredential.user.uid),
       {
         email: email,
-        password: password,
         username: username
       });
       return true;
     })
-  .catch((error) =>
-  {
-    console.error(error.code + ": " + error.message);
-    return false;
-  });
+    .catch((error) =>
+    {
+      console.error(error.code + ": " + error.message);
+      return false;
+    });
   }
 
   async logUserIn(email: string, password: string)
@@ -79,21 +101,36 @@ export class UserService
     else return true;
   }
 
-  async getUserDetails(uid: string, tries = 10): Promise<any>
+  async getUser(uid: string, tries = 10): Promise<any>
   {
     try
     {
-      let data = await getDoc(doc(db, "users", uid));
-      return(data.data());
+      let data = (await getDoc(doc(db, "users", uid))).data();
+      return(this.convertDataToUser(uid, data));
     }
     catch (error)
     {
       if (tries > 0)
       {
-        return await this.getUserDetails(uid, tries-1)
+        return await this.getUser(uid, tries-1)
       }
       else throw error;
     }
+  }
+
+  convertDataToUser(uid: string, data: any): User
+  {
+    let notis = data["notifications"];
+    if (notis)
+    {
+      for (let n of notis)
+      {
+        n.date = n.date.toDate();
+      }
+    }
+    else notis = [];
+
+    return new User(uid, data["email"], data["username"], notis, data["ownedCreatures"]);
   }
 
   getLoggedInID(): string | undefined

@@ -4,6 +4,7 @@ import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { Skill } from "../../src/classes/skill";
 import { Creature } from "../../src/classes/creature";
 import { Trait } from "../../src/classes/trait";
+import { Activity } from "../models/activity";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -15,8 +16,7 @@ export class CrService
     try
     {
       let data = (await getDoc(doc(db, "creatures", id))).data();
-      let creature = new Creature(id, data!["name"], data!["type"], data!["str"], data!["agi"], data!["int"], data!["con"],
-        data!["ini"], data!["ownedBy"], data!["skills"], data!["traits"], data!["stamina"], data!["xp"], new Date(data!["born"].seconds*1000));
+      let creature = this.convertDataToCreature(id, data);
       return(creature);
     }
     catch (error)
@@ -35,11 +35,38 @@ export class CrService
     const arr: Array<Creature> = [];
     snapshot.forEach((doc) =>
     {
-      arr.push(new Creature(doc.id, doc.data()["name"],doc.data()["type"], doc.data()["str"], doc.data()["agi"], doc.data()["int"], doc.data()["con"],
-        doc.data()["ini"], doc.data()["ownedBy"], doc.data()["skills"], doc.data()["traits"], doc.data()["stamina"], doc.data()["xp"], new Date(doc.data()["born"].seconds*1000)));
+      let data = doc.data();
+      arr.push(this.convertDataToCreature(doc.id, data));
     });
 
     return arr;
+  }
+
+  //DOES NOT UPDATE: currentAct, ownedBy, type
+  async updateCreature(crID: string, cr: Creature)
+  {
+    for (let s of cr.skills)
+    {
+      delete s.usedByID;
+    }
+    const skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj)});
+    const traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj)});
+
+    await updateDoc(doc(db, "creatures", crID),
+    {
+      agi: cr.agi,
+      born: cr.born,
+      con: cr.con,
+      ini: cr.ini,
+      int: cr.int,
+      level: cr.level,
+      name: cr.name,
+      skills: skillsConverted,
+      stamina: cr.stamina,
+      str: cr.str,
+      traits: traitsConverted,
+      xp: cr.xp,
+    });
   }
 
   async learnSkill(crID: string, skill: Skill)
@@ -48,9 +75,8 @@ export class CrService
     if (!temp) temp = [];
     temp.push(skill);
     delete skill.usedByID;
-
     const converted = temp.map((obj)=> {return Object.assign({}, obj)});
-    console.log(converted);
+    
     await updateDoc(doc(db, "creatures", crID),
     {
       skills: converted
@@ -68,12 +94,8 @@ export class CrService
   async addTrait(crID: string, trait: Trait)
   {
     let temp = (await this.getCreatureById(crID)).traits;
-    console.log(temp);
-
     if (!temp) temp = [];
     temp.push(trait);
-    console.log(temp);
-
     const converted = temp.map((obj)=> {return Object.assign({}, obj)});
 
     await updateDoc(doc(db, "creatures", crID),
@@ -82,4 +104,24 @@ export class CrService
     });
   }
 
+  async setAct(crID: string, act: Activity = null)
+  {
+    await updateDoc(doc(db, "creatures", crID),
+    {
+      currentAct: act
+    });
+  }
+
+  convertDataToCreature(crID: string, data: any): Creature
+  {
+    let cAct = undefined;
+    if (data["currentAct"])
+    {
+      cAct = new Activity(data["currentAct"].name, data["currentAct"].duration);
+      cAct.startDate = new Date(data["currentAct"].startDate);
+    }
+
+    return new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
+      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],cAct);
+  }
 }

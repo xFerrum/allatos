@@ -4,6 +4,8 @@ import { firebaseConfig } from "../src/app/fbaseconfig";
 import { CrService } from "./db_services/crService";
 import { Creature } from "../src/classes/creature";
 import { Activity } from "../src/classes/activity";
+import { resolveAct } from "./tools/actResolver";
+import { UserService } from "./db_services/userService";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -16,24 +18,25 @@ const io = require('socket.io')(3010,
 });
 const schedule = require('node-schedule');
 const crService = new CrService;
+const userService = new UserService;
 
-const actMap = new Map<String, any>;
+const actMap = new Map<string, any>;
 rebuildOngoingActs();
 
 io.on('connection', (socket: any) =>
 {
-    socket.on('start-activity', (crID: String, act: Activity) =>
+    socket.on('start-activity', async (crID: string, act: Activity) =>
     {
-        if (canGo(crID))
+        if (canGo(crID, act))
         {
-            scheduleAct(crID, act);
+            await scheduleAct(crID, act);
         }
         else io.to(socket.id).emit('start-activity-failed');
         socket.disconnect();
     });
 });
 
-function canGo(crID: String): boolean
+function canGo(crID: string, act: Activity): boolean
 {
     if (actMap.has(crID))
     {
@@ -50,7 +53,7 @@ async function rebuildOngoingActs()
         if (cr.currentAct)
         {
             const endDate = calcEndDate(cr.currentAct.startDate, cr.currentAct.duration);
-            if (endDate < new Date)
+            if (endDate > new Date())
             {
                 scheduleAct(cr.crID, cr.currentAct);
             }
@@ -59,9 +62,10 @@ async function rebuildOngoingActs()
     });
 }
 
-function scheduleAct(crID, act: Activity)
+async function scheduleAct(crID, act: Activity)
 {
     actMap.set(crID, schedule.scheduleJob(calcEndDate(act.startDate, act.duration), () => { finishAct(crID, act) }));
+    await crService.setAct(crID, act);
 }
 
 function calcEndDate(startDate: Date, duration: number): Date
@@ -69,8 +73,15 @@ function calcEndDate(startDate: Date, duration: number): Date
     return new Date(new Date(startDate).getTime() + duration);
 }
 
-function finishAct(crID: String, act: Activity)
+async function finishAct(crID: string, act: Activity)
 {
-    console.log("Done.");
+    let cr = await crService.getCreatureById(crID);
+    const noti = resolveAct(cr, act.name);
+    console.log(noti);
+    await crService.updateCreature(crID, cr);
+    await userService.sendNotification(cr.ownedBy, noti);
+
+    console.log(act.name + " done.");
     actMap.delete(crID);
+    await crService.setAct(crID);
 }

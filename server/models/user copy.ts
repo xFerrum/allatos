@@ -7,9 +7,9 @@ export class User
     email: string;
     username: string;
     notifications: Array<Notification>;
-    ownedCreatures: Array<string>;
+    ownedCreatures: Array<Creature>;
 
-    constructor(uid: string, email: string, username: string, notifications: Array<Notification>, ownedCreatures: Array<string>)
+    constructor(uid: string, email: string, username: string, notifications: Array<Notification>, ownedCreatures: Array<Creature>)
     {
         this.uid = uid;
         this.email = email;
