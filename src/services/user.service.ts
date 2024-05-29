@@ -1,12 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { Injectable, inject } from "@angular/core";
 import { firebaseConfig } from "src/app/fbaseconfig";
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { PopUpService } from "./popup.service";
 import { User } from "src/classes/user";
-import { Timestamp } from "firebase/firestore/lite";
+import { Notification } from "src/classes/notification";
+import { CreatureService } from "./creature.service";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -18,25 +19,34 @@ const auth = getAuth();
 
 export class UserService
 {
+  userUnsub: any;
 
-  constructor(private router: Router, private popUpService: PopUpService)
+  constructor(private router: Router, private popUpService: PopUpService, private creatureService: CreatureService)
   {
     onAuthStateChanged(auth, async (user) =>
     {
       if (user)
       {
         const userData = await this.getUser(user.uid);
-        for (let n of userData.notifications)
-        {
-          this.popUpService.addNotification(n);
-        }
+        await this.popUpService.loadNotifications(userData.notifications);
+        this.clearNotifications();
 
-        if (this.popUpService.notifications.length > 0)
+        this.userUnsub = onSnapshot(doc(db, "users", user.uid), (doc) =>
         {
-          this.popUpService.showNextNotification();
-        }
+          if (doc.exists())
+          {
+            let notis = this.convertNotifications(doc.data()["notifications"]);
+            this.popUpService.loadNotifications(notis);
+            this.clearNotifications();
+          }
+        });
       }
-      else this.popUpService.clearNotifications();
+      else
+      {
+        this.popUpService.clearNotifications();
+        if(this.userUnsub) this.userUnsub();
+        if(this.creatureService.crUnsub) this.creatureService.crUnsub();
+      }
     });
   }
   
@@ -121,21 +131,33 @@ export class UserService
   convertDataToUser(uid: string, data: any): User
   {
     let notis = data["notifications"];
-    if (notis)
-    {
-      for (let n of notis)
-      {
-        n.date = n.date.toDate();
-      }
-    }
+    if (notis) this.convertNotifications(notis);
     else notis = [];
 
     return new User(uid, data["email"], data["username"], notis, data["ownedCreatures"]);
   }
 
-  getLoggedInID(): string | undefined
+  convertNotifications(arr: any): Array<Notification>
   {
-    return auth.currentUser?.uid;
+    for (let n of arr)
+    {
+      n.date = n.date.toDate();
+    }
+
+    return arr;
+  }
+
+  getLoggedInID(): string
+  {
+    return auth.currentUser!.uid;
+  }
+
+  async clearNotifications()
+  {
+    await updateDoc(doc(db, "users", this.getLoggedInID()),
+    {
+      notifications: []
+    });
   }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean>

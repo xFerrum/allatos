@@ -9,12 +9,13 @@ import { Notification } from "src/classes/notification";
  
 export class PopUpService
 {
+  noti!: any;
   effect!: any;
   popup!: any;
   isLoading!: boolean; //needed in case popup needs to be dismissed before it has loaded, might get stuck otherwise
   notifications: Array<Notification> = [];
   
-  constructor(public alertController: AlertController, public loadingController: LoadingController){}
+  constructor(private alertController: AlertController, private loadingController: LoadingController){}
 
   async loadingPopUp(message: string)
   {
@@ -33,32 +34,42 @@ export class PopUpService
     this.isLoading = false;
     this.popup?.dismiss();
     this.effect?.dismiss();
+    this.noti?.dismiss();
+  }
 
-    if (this.notifications.length > 0)
+  async showNotifications()
+  {
+    if (this.notifications.length > 1)
     {
-      this.showNextNotification();
+      this.notifications.sort(function(a,b)
+      {
+        return (b.date.getTime() - b.date.getTime());
+      });
     }
+    let preparedNotis = [...this.notifications];
+    this.clearNotifications();
+
+    await this.showNextNotification(preparedNotis);
   }
 
-  showNextNotification()
+  async showNextNotification(preparedNotis: Array<Notification>)
   {
-    this.notifications.sort(function(a,b)
-    {
-      return (b.date.getTime() - b.date.getTime());
-    });
-    console.log(this.notifications);
+    if (preparedNotis.length === 0) return;
+  
+    const noti = preparedNotis.shift(); // Get the first notification
+    await this.notificationPopUp(noti!.description, noti!.title, preparedNotis);
   }
 
-  async notificationPopUp(description: string, header?: string)
+  async notificationPopUp(description: string, header: string, preparedNotis: Array<Notification>)
   {
-    this.effect?.dismiss();
-    this.effect = await this.alertController.create
+    this.noti = await this.alertController.create
     ({
       header: header,
       message: description,
+      buttons: ['Ok'],
     });
-
-    await this.effect.present();
+    await this.noti.present();
+    this.noti.onDidDismiss().then(() => { this.showNextNotification(preparedNotis) });
   }
 
   async effectPopUp(description: string, cssClass: string, header?: string)
@@ -87,9 +98,14 @@ export class PopUpService
     await this.effect.present();
   }
 
-  addNotification(noti: Notification)
+  async loadNotifications(notis: Array<Notification>)
   {
-    this.notifications.push(noti);
+    for (let noti of notis)
+    {
+      this.notifications.push(noti);
+    }
+    if (this.notifications.length > 0) await this.showNotifications();
+
   }
 
   clearNotifications()

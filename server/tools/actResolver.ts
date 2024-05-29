@@ -28,7 +28,7 @@ export function resolveAct(cr: Creature, actName: string): Notification
         notiDescription += "Gained " + actObj['xp'] + " xp.\n";
     }
 
-    return new Notification("Back from " + actName, notiDescription, 'activity-summary', new Date());
+    return new Notification(cr.name + " back from " + actName, notiDescription, 'activity-summary', new Date());
 }
 
 function selectAct(actName: string): Object
@@ -37,12 +37,12 @@ function selectAct(actName: string): Object
     {
         case 'Galand':
             return({
-               xp: 35 
+               xp: 3 
             });
     
         case 'Kaland':
             return({
-                xp: 17 
+                xp: 16 
             });
 
         default:

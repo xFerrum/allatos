@@ -45,7 +45,7 @@ export class CreaturesPage implements OnInit, DoCheck
 
   async ngOnInit(): Promise<void>
   {
-    await this.creatureService.initCreatures(this.creatures);
+    await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()!));
     for (let cr of this.creatures)
     {
       if (cr.currentAct)

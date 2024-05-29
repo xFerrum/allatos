@@ -5,7 +5,6 @@ import { firebaseConfig } from "src/app/fbaseconfig";
 import { Skill } from "src/classes/skill";
 import { Creature } from "src/classes/creature";
 import { Trait } from "src/classes/trait";
-import { UserService } from "./user.service";
 import { Activity } from "src/classes/activity";
 import { User } from "src/classes/user";
 
@@ -18,7 +17,9 @@ const db = getFirestore(fbase);
 
 export class CreatureService
 {
-  constructor(private userService: UserService) {}
+  crUnsub: any;
+
+  constructor() {}
 
   async getCreatureById(id: string, tries = 10): Promise<Creature>
   {
@@ -81,25 +82,22 @@ export class CreatureService
     });
   }
 
-  async initCreatures(crArr: Array<Creature>)
+  async initCreatures(localArr: Array<Creature>, user: User)
   {
-    await this.userService.getUser(this.userService.getLoggedInID()!).then(async (user: User) =>
+    //add to array and set listeners for creature data changes
+    for (let i = 0; i < user.ownedCreatures.length; i++)
+    {
+      const crID = user.ownedCreatures[i];
+      localArr.push(await this.getCreatureById(crID));
+      this.crUnsub = onSnapshot(doc(db, "creatures", crID), (doc) =>
       {
-        //add to array and set listeners for creature data changes
-        for (let i = 0; i < user.ownedCreatures.length; i++)
+        if (doc.exists())
         {
-          const crID = user.ownedCreatures[i];
-          crArr.push(await this.getCreatureById(crID));
-          onSnapshot(doc(db, "creatures", crID), (doc) =>
-          {
-            if (doc.exists())
-            {
-              crArr[i] = this.convertDataToCreature(crID, doc.data());
-            }
-            else delete crArr[i];
-          });
+          localArr[i] = this.convertDataToCreature(crID, doc.data());
         }
+        else delete localArr[i];
       });
+    }
   }
 
   convertDataToCreature(crID: string, data: any): Creature
