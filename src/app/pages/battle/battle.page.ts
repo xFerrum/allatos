@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonModal, IonicModule, ModalController } from '@ionic/angular';
-import { Creature } from 'src/classes/creature';
-import { Skill } from 'src/classes/skill';
+import { Creature } from 'src/models/creature';
+import { Skill } from 'src/models/skill';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { FormsModule } from '@angular/forms';

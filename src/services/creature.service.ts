@@ -2,11 +2,11 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, onSnapshot} from 'firebase/firestore';
 import { Injectable } from "@angular/core";
 import { firebaseConfig } from "src/app/fbaseconfig";
-import { Skill } from "src/classes/skill";
-import { Creature } from "src/classes/creature";
-import { Trait } from "src/classes/trait";
-import { Activity } from "src/classes/activity";
-import { User } from "src/classes/user";
+import { Skill } from "src/models/skill";
+import { Creature } from "src/models/creature";
+import { Trait } from "src/models/trait";
+import { Activity } from "src/models/activity";
+import { User } from "src/models/user";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);

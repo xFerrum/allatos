@@ -1,4 +1,4 @@
-import { Creature } from "../../src/classes/creature";
+import { Creature } from "../../src/models/creature";
 
 export class ModifyCreature
 {

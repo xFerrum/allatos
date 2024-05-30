@@ -1,8 +1,7 @@
-import { Creature } from "../src/classes/creature";
-import { Skill } from "../src/classes/skill";
-import { SkillGenerator } from "./tools/skillGenerator";
-import { initializeApp } from "firebase/app";
+import { Creature } from "../src/models/creature";
+import { Skill } from "../src/models/skill";
 import { CrService } from "./db_services/crService";
+import { generateSkill } from "./tools/skillGenerator";
 
 const io = require('socket.io')(3005,
 {
@@ -27,8 +26,6 @@ io.on('connection', (socket: any) =>
 
         for (let i = 0; i < 3; i++)
         {
-            let skillGenerator = new SkillGenerator;
-
             const t = Math.floor(Math.random() * 2);
             let type = 'unknown';
             switch (t)
@@ -45,7 +42,7 @@ io.on('connection', (socket: any) =>
                     break;
             }
 
-            const randomSkill = skillGenerator.generateSkill(rarity, type);
+            const randomSkill = generateSkill(rarity, type);
             skillOptions.push(randomSkill);
         }
 
@@ -58,7 +55,6 @@ io.on('connection', (socket: any) =>
     {
         if (userSkillOptions.get(crID))
         {
-            console.log(crID, index);
             crService.learnSkill(crID, userSkillOptions.get(crID)[index]);
             userSkillOptions.delete(crID);
             socket.disconnect();

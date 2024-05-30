@@ -5,8 +5,8 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
-import { Creature } from 'src/classes/creature';
-import { User } from 'src/classes/user';
+import { Creature } from 'src/models/creature';
+import { User } from 'src/models/user';
 
 @Component({
   selector: 'app-tab3',

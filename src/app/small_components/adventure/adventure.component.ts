@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { Activity } from 'src/classes/activity';
+import { Activity } from 'src/models/activity';
 import { Renderer2 } from '@angular/core';
 
 @Component({

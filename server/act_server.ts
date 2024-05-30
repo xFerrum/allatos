@@ -2,8 +2,8 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../src/app/fbaseconfig";
 import { CrService } from "./db_services/crService";
-import { Creature } from "../src/classes/creature";
-import { Activity } from "../src/classes/activity";
+import { Creature } from "../src/models/creature";
+import { Activity } from "../src/models/activity";
 import { resolveAct } from "./tools/actResolver";
 import { UserService } from "./db_services/userService";
 

@@ -1,5 +1,5 @@
 import { BattleSession } from "./battleSession";
-import { Creature } from "../src/classes/creature";
+import { Creature } from "../src/models/creature";
 
 const battlesInProgress = new Map<string, BattleSession>;
 

@@ -6,6 +6,7 @@ import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { User } from "../models/user";
 import { Notification } from "../models/notification";
+import { Skill } from "../models/skill";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -33,6 +34,20 @@ export class UserService
   }
 
   async sendNotification(uid: string, noti: Notification)
+  {
+    let temp = (await this.getUser(uid)).notifications;
+    console.log(temp);
+    if (!temp) temp = [];
+    temp.push(noti);
+    const converted = temp.map((obj)=> {return Object.assign({}, obj)});
+
+    await updateDoc(doc(db, "users", uid),
+    {
+      notifications: converted
+    });
+  }
+
+  async sendSkillPick(uid: string, array: Array<Skill>)
   {
     let temp = (await this.getUser(uid)).notifications;
     console.log(temp);

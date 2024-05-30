@@ -1,9 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
-import { Skill } from "../../src/classes/skill";
-import { Creature } from "../../src/classes/creature";
-import { Trait } from "../../src/classes/trait";
+import { Skill } from "../../src/models/skill";
+import { Creature } from "../../src/models/creature";
+import { Trait } from "../../src/models/trait";
 import { Activity } from "../models/activity";
 
 const fbase = initializeApp(firebaseConfig);

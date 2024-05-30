@@ -287,7 +287,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    max-width: 400px;
+    max-width: 300px;
     height: 30px;
     margin: auto;
     text-align: center;
@@ -299,7 +299,7 @@
 
 .progress-inner
 {
-    min-width: 7%;
+    min-width: 26px;
     left: 0;
     height: 100%;
     position: absolute;

@@ -1,18 +1,18 @@
 /* tslint:disable:unknown-word */
 import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { IonModal, IonicModule } from '@ionic/angular';
-import { Creature } from 'src/classes/creature';
+import { Creature } from 'src/models/creature';
 import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { CommonModule } from '@angular/common';
-import { Skill } from 'src/classes/skill';
+import { Skill } from 'src/models/skill';
 import { PopUpService } from 'src/services/popup.service';
 import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard.component';
-import { Trait } from 'src/classes/trait';
+import { Trait } from 'src/models/trait';
 import { io } from 'socket.io-client';
 import { ModalController } from '@ionic/angular/standalone';
 import { SkillPickComponent } from 'src/app/small_components/skillpick/skillpick.component';
-import { Activity } from 'src/classes/activity';
+import { Activity } from 'src/models/activity';
 import { AdventureComponent } from 'src/app/small_components/adventure/adventure.component';
 import { TimerPipe } from 'src/services/timerPipe';
 import { BehaviorSubject, Observer } from 'rxjs';

@@ -1,5 +1,5 @@
-import { Creature } from "../src/classes/creature";
-import { Skill } from "../src/classes/skill";
+import { Creature } from "../src/models/creature";
+import { Skill } from "../src/models/skill";
 
 export class BattleSession
 {

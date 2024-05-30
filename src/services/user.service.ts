@@ -5,8 +5,8 @@ import { Injectable, inject } from "@angular/core";
 import { firebaseConfig } from "src/app/fbaseconfig";
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { PopUpService } from "./popup.service";
-import { User } from "src/classes/user";
-import { Notification } from "src/classes/notification";
+import { User } from "src/models/user";
+import { Notification } from "src/models/notification";
 import { CreatureService } from "./creature.service";
 
 const fbase = initializeApp(firebaseConfig);

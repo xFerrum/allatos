@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { Skill } from 'src/classes/skill';
+import { Skill } from 'src/models/skill';
 import { SkillcardComponent } from '../skillcard/skillcard.component';
 
 @Component({

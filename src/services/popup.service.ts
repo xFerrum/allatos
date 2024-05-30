@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AlertController } from "@ionic/angular";
 import { LoadingController } from "@ionic/angular/standalone";
-import { Notification } from "src/classes/notification";
+import { Notification } from "src/models/notification";
 
 @Injectable({
   providedIn: 'root',

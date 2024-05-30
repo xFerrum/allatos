@@ -1,7 +1,9 @@
-import { Creature } from "../../src/classes/creature";
+import { Creature } from "../../src/models/creature";
 import { Activity } from "../models/activity";
 import { ModifyCreature } from "./modifyCreature";
 import { Notification } from "../models/notification";
+import { generateSkill } from "./skillGenerator";
+import { UserService } from "../db_services/userService";
 
 /*
     for now you get xp | traits | skills from activities
@@ -16,6 +18,7 @@ import { Notification } from "../models/notification";
 
 const modifyCreature = new ModifyCreature;
 
+
 //modify cr and return a notification
 export function resolveAct(cr: Creature, actName: string): Notification
 {
@@ -28,16 +31,31 @@ export function resolveAct(cr: Creature, actName: string): Notification
         notiDescription += "Gained " + actObj['xp'] + " xp.\n";
     }
 
+    if (actObj.hasOwnProperty('skill'))
+    {
+        for (let i = 0; i < actObj['skill'][0]; i++)
+        {
+            const rand = Math.floor(Math.random()*2);
+            let type = 'attack';
+            if (rand >= 1) type = 'block'; 
+
+            let skill = generateSkill(actObj['skill'][1], type);
+        }
+        notiDescription += "Gained " + actObj['xp'] + " xp.\n";
+    }
+
     return new Notification(cr.name + " back from " + actName, notiDescription, 'activity-summary', new Date());
 }
 
+//skill reward: [how many to pick from] [rarity]
 function selectAct(actName: string): Object
 {
     switch (actName)
     {
         case 'Galand':
             return({
-               xp: 3 
+               xp: 3,
+               skill: [3, 1]
             });
     
         case 'Kaland':
