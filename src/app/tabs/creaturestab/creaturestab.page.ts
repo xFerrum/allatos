@@ -74,12 +74,12 @@ export class CreaturesPage implements OnInit, DoCheck
   async learn(cr: Creature)
   {
     this.socket = io('http://localhost:3005');
-    this.socket.emit('crID', cr.crID);
-    this.socket.emit('skill-learn-requested', 2);
+    //validate cr belongs to user (firebase rule)
+    this.socket.emit('skill-learn-requested', (await this.creatureService.getCreatureById(cr.crID)).crID);
 
     this.popUpService.loadingPopUp("Preparing the skills...");
 
-    this.socket.on('skills-generated', async (skillOptions: Array<Skill>) =>
+    this.socket.on('skill-pick-ready', async (skillOptions: Array<Skill>) =>
     {
       await this.popUpService.dismissPopUp();
       const pickModal = await this.modalCtrl.create(

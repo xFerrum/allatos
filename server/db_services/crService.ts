@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc} from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, deleteField} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { Skill } from "../../src/models/skill";
 import { Creature } from "../../src/models/creature";
@@ -112,6 +112,39 @@ export class CrService
     });
   }
 
+  async addSkillPick(crID: string, arr: Array<Skill>)
+  {
+    let temp = (await this.getCreatureById(crID)).skillPicks;
+    if (!temp) temp = {};
+    arr = arr.map((obj)=> {return Object.assign({}, obj)});
+    temp[(new Date().getTime())] = arr;
+
+    await updateDoc(doc(db, "creatures", crID),
+    {
+      skillPicks: temp
+    });
+  }
+
+  async replaceSkillPicks(crID: string, skillPicks: Object)
+  {
+    for (let arr in skillPicks)
+    {
+      skillPicks[arr] = skillPicks[arr].map((obj)=> {return Object.assign({}, obj)});
+    }
+
+    if (Object.keys(skillPicks).length === 0)
+    {
+      await updateDoc(doc(db, "creatures", crID),
+      {
+        skillPicks: deleteField()
+      });
+    }
+    else await updateDoc(doc(db, "creatures", crID),
+    {
+      skillPicks: skillPicks
+    });
+  }
+
   convertDataToCreature(crID: string, data: any): Creature
   {
     let cAct = undefined;
@@ -122,6 +155,6 @@ export class CrService
     }
 
     return new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
-      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],cAct);
+      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], cAct);
   }
 }

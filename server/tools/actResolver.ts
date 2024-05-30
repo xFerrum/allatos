@@ -1,9 +1,8 @@
 import { Creature } from "../../src/models/creature";
-import { Activity } from "../models/activity";
 import { ModifyCreature } from "./modifyCreature";
 import { Notification } from "../models/notification";
 import { generateSkill } from "./skillGenerator";
-import { UserService } from "../db_services/userService";
+import { CrService } from "../db_services/crService";
 
 /*
     for now you get xp | traits | skills from activities
@@ -17,6 +16,7 @@ import { UserService } from "../db_services/userService";
 */
 
 const modifyCreature = new ModifyCreature;
+const crService = new CrService;
 
 
 //modify cr and return a notification
@@ -28,20 +28,22 @@ export function resolveAct(cr: Creature, actName: string): Notification
     if (actObj.hasOwnProperty('xp'))
     {
         cr = modifyCreature.addXP(cr, actObj['xp']);
-        notiDescription += "Gained " + actObj['xp'] + " xp.\n";
+        notiDescription += "Gained " + actObj['xp'] + " xp. ";
     }
 
     if (actObj.hasOwnProperty('skill'))
     {
+        let skillPick = [];
         for (let i = 0; i < actObj['skill'][0]; i++)
         {
             const rand = Math.floor(Math.random()*2);
             let type = 'attack';
             if (rand >= 1) type = 'block'; 
 
-            let skill = generateSkill(actObj['skill'][1], type);
+            skillPick.push(generateSkill(actObj['skill'][1], type));
         }
-        notiDescription += "Gained " + actObj['xp'] + " xp.\n";
+        crService.addSkillPick(cr.crID, skillPick);
+        notiDescription += "You can learn a skill! ";
     }
 
     return new Notification(cr.name + " back from " + actName, notiDescription, 'activity-summary', new Date());

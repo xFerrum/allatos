@@ -7,7 +7,7 @@ export class Skill
     fatCost: number;
     rarity: number;
     name: string;
-    usedByID?: string;
+    usedByID = '';
     
     constructor(type: string, selfTarget: boolean, effects: Object, fatCost: number, rarity: number, name: string, description?: string)
     {

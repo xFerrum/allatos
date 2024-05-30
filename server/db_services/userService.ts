@@ -47,20 +47,6 @@ export class UserService
     });
   }
 
-  async sendSkillPick(uid: string, array: Array<Skill>)
-  {
-    let temp = (await this.getUser(uid)).notifications;
-    console.log(temp);
-    if (!temp) temp = [];
-    temp.push(noti);
-    const converted = temp.map((obj)=> {return Object.assign({}, obj)});
-
-    await updateDoc(doc(db, "users", uid),
-    {
-      notifications: converted
-    });
-  }
-
   convertDataToUser(uid: string, data: any): User
   {
     return new User(uid, data["email"], data["username"], data["notifications"], data["ownedCreatures"]);

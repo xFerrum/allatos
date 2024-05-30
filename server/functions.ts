@@ -16,48 +16,26 @@ let userSkillOptions = new Map<string, Skill[]>;
 
 io.on('connection', (socket: any) =>
 {
-    let crID: string;
-    socket.on('crID', (id: string) => {crID = id});
-
-    //generate 3 random skills, store the array in socket data (user will emit an index for the skill they picked)
-    socket.on('skill-learn-requested', (rarity: number) =>
+    //TODO: make skill pick less spaghett :<
+    socket.on('skill-learn-requested', async (crID: string) =>
     {
-        let skillOptions: Skill[] = [];
-
-        for (let i = 0; i < 3; i++)
+        let skillPicks = (await crService.getCreatureById(crID)).skillPicks;
+        let dates = Object.keys(skillPicks);
+        let earliest = new Date().getTime();
+        for (const d of dates)
         {
-            const t = Math.floor(Math.random() * 2);
-            let type = 'unknown';
-            switch (t)
-            {
-                case 0:
-                    type = 'attack';
-                    break;
-
-                case 1:
-                    type = 'block';
-                    break;
-
-                default:
-                    break;
-            }
-
-            const randomSkill = generateSkill(rarity, type);
-            skillOptions.push(randomSkill);
+            console.log(d);
+            if (Number(d) < earliest) earliest = Number(d);
         }
+        const options = [...skillPicks[earliest]];
+        delete skillPicks[earliest];
+        socket.emit('skill-pick-ready', options);
 
-        userSkillOptions.set(crID, skillOptions);
-        socket.emit('skills-generated', skillOptions);
+        socket.on('skill-option-selected', async (index: number) =>
+        {
+            await crService.learnSkill(crID, options[index]);
+            await crService.replaceSkillPicks(crID, skillPicks);
+        });
     });
 
-    //when user chose from the 3 options from skill-learn-requested
-    socket.on('skill-option-selected', async (index: number) =>
-    {
-        if (userSkillOptions.get(crID))
-        {
-            crService.learnSkill(crID, userSkillOptions.get(crID)[index]);
-            userSkillOptions.delete(crID);
-            socket.disconnect();
-        }
-    });
 });

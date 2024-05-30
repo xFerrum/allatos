@@ -237,7 +237,7 @@
 
         <ion-row class="buts">
           <ion-button type="submit" color="primary" expand="block" class="but" id="open-skills">open skills</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn(creature)">learn</ion-button>
+          <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills(creature)">delete all skills</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="addTrait(creature)">get trait</ion-button>
           <ion-button type="submit" color="primary" expand="block" class="but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
