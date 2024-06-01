@@ -7,6 +7,7 @@ import { Creature } from "src/models/creature";
 import { Trait } from "src/models/trait";
 import { Activity } from "src/models/activity";
 import { User } from "src/models/user";
+import { applyTraits } from "./applyTraits";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -100,6 +101,7 @@ export class CreatureService
     }
   }
 
+  //convert from firebase model to frontend model, apply traits
   convertDataToCreature(crID: string, data: any): Creature
   {
     let cAct = undefined;
@@ -109,7 +111,11 @@ export class CreatureService
       cAct.startDate = new Date(data["currentAct"].startDate);
     }
 
-    return new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
+    let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
       data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], cAct);
+
+    applyTraits(cr);
+
+    return cr;
   }
 }

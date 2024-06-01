@@ -122,7 +122,7 @@ export class CreaturesPage implements OnInit, DoCheck
 
   async addTrait(cr: Creature)
   {
-    await this.creatureService.addTrait(cr.crID, new Trait());
+    await this.creatureService.addTrait(cr.crID, new Trait('Strong', 'This creature is very strong.', false));
 
     console.log("done");
   }

@@ -154,7 +154,10 @@ export class CrService
       cAct.startDate = new Date(data["currentAct"].startDate);
     }
 
-    return new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
+    let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
       data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], cAct);
+    applyTraits(cr);
+    
+    return cr;
   }
 }
