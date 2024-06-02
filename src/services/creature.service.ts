@@ -69,11 +69,9 @@ export class CreatureService
   async addTrait(cid: string, trait: Trait)
   {
     let temp = (await this.getCreatureById(cid)).traits;
-    console.log(temp);
 
     if (!temp) temp = [];
     temp.push(trait);
-    console.log(temp);
 
     const converted = temp.map((obj)=> {return Object.assign({}, obj)});
 
@@ -94,28 +92,26 @@ export class CreatureService
       {
         if (doc.exists())
         {
-          localArr[i] = this.convertDataToCreature(crID, doc.data());
+          localArr[i] = this.convertDataToCreature(crID, doc.data(), false);
         }
         else delete localArr[i];
       });
     }
   }
 
-  //convert from firebase model to frontend model, apply traits
-  convertDataToCreature(crID: string, data: any): Creature
+  //convert from firebase model to frontend model, apply traits if requested
+  convertDataToCreature(crID: string, data: any, baseStats = true): Creature
   {
     let cAct = undefined;
     if (data["currentAct"])
     {
-      cAct = new Activity(data["currentAct"].name, data["currentAct"].duration);
-      cAct.startDate = new Date(data["currentAct"].startDate);
+      cAct = new Activity(data['currentAct'].name, data['currentAct'].description, data['currentAct'].duration, new Date(data["currentAct"].startDate.toDate()));
     }
 
     let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
       data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], cAct);
-
-    applyTraits(cr);
-
+    if (!baseStats) applyTraits(cr);
+    
     return cr;
   }
 }

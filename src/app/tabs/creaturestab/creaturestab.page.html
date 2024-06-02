@@ -25,7 +25,7 @@
           <ion-col class="away-col">
             <div class="away-container">
               <div *ngIf="creature.currentAct" class="away-text">Currently doing this: {{ creature.currentAct.name }}</div>
-              <div *ngIf="creature.currentAct" class="away-timer">{{ timers.get(creature.crID) | async | customTime }}</div>
+              <div *ngIf="creature.currentAct" class="away-timer">{{ creature.currentAct.timer$ | async | customTime }}</div>
 
               <div *ngIf="!(creature.currentAct)" class="away-text">Currently idle.</div>
             </div>

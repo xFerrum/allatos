@@ -2,16 +2,21 @@ import { BehaviorSubject } from "rxjs";
 
 export class Activity
 {
+    //no "props" property on client side
     name: string; //unique identifier
+    description: string;
     duration: number; //milliseconds
     startDate?: Date;
     timerID!: any;
     timer$!: BehaviorSubject<number>;
 
-    constructor(name: string, duration: number)
+    constructor(name: string, description: string, duration: number, startDate?: Date)
     {
         this.name = name;
+        this.description = description;
         this.duration = duration;
+        this.startDate = startDate;
+        if (this.startDate) this.startTimer();
     }
 
     //initializes timer$ to be an observable  emitting time left until act completion every second

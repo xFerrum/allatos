@@ -1,10 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, deleteField} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
-import { Skill } from "../../src/models/skill";
-import { Creature } from "../../src/models/creature";
-import { Trait } from "../../src/models/trait";
+import { Skill } from "../models/skill";
+import { Creature } from "..//models/creature";
+import { Trait } from "../models/trait";
 import { Activity } from "../models/activity";
+import { applyTraits } from "../tools/applyTraits";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -45,12 +46,18 @@ export class CrService
   //DOES NOT UPDATE: currentAct, ownedBy, type
   async updateCreature(crID: string, cr: Creature)
   {
-    for (let s of cr.skills)
+    let skillsConverted = [];
+    if (cr.skills)
     {
-      delete s.usedByID;
+      for (let s of cr.skills)
+      {
+        delete s.usedByID;
+      }
+      skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj)});
     }
-    const skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj)});
-    const traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj)});
+
+    let traitsConverted = [];
+    if (cr.traits) traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj)});
 
     await updateDoc(doc(db, "creatures", crID),
     {
@@ -106,6 +113,8 @@ export class CrService
 
   async setAct(crID: string, act: Activity = null)
   {
+    console.log(act);
+    if(act) act = Object.assign({}, act);
     await updateDoc(doc(db, "creatures", crID),
     {
       currentAct: act
@@ -145,18 +154,35 @@ export class CrService
     });
   }
 
-  convertDataToCreature(crID: string, data: any): Creature
+  async getTrait(name: string, tries = 10): Promise<Trait>
+  {
+    try
+    {
+      let docu = await getDoc(doc(db, "traits", name));
+      return(new Trait(docu.id, docu.data()['description'], docu.data()['scaling']));
+    }
+    catch (error)
+    {
+      if (tries > 0)
+      {
+        return await this.getTrait(name, tries-1)
+      }
+      else throw error;
+    }
+  }
+
+  //convert from firebase model to frontend model, apply traits if requested
+  convertDataToCreature(crID: string, data: any, baseStats = true): Creature
   {
     let cAct = undefined;
     if (data["currentAct"])
     {
-      cAct = new Activity(data["currentAct"].name, data["currentAct"].duration);
-      cAct.startDate = new Date(data["currentAct"].startDate);
+      cAct = new Activity(data['currentAct'].name, data['currentAct'].description, data['currentAct'].duration, data['currentAct'].props, new Date(data['currentAct'].startDate.toDate()));
     }
 
     let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
       data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], cAct);
-    applyTraits(cr);
+    if (!baseStats) applyTraits(cr);
     
     return cr;
   }

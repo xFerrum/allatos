@@ -8,7 +8,7 @@
 
   <ion-grid>
     <ion-row class="act-container" *ngFor="let act of acts" size="auto">
-      <img src="assets/icons/placeholder.png" class="act-img" (click)="actClicked($event, act)"/>
+      <img src="{{'assets/activities/' + act.name + '.png'}}" class="act-img" (click)="actClicked($event, act)"/>
     </ion-row>
   </ion-grid>
 

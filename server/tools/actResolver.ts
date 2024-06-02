@@ -1,8 +1,9 @@
-import { Creature } from "../../src/models/creature";
+import { Creature } from "../models/creature";
 import { ModifyCreature } from "./modifyCreature";
 import { Notification } from "../models/notification";
 import { generateSkill } from "./skillGenerator";
 import { CrService } from "../db_services/crService";
+import { Activity } from "../models/activity";
 
 /*
     for now you get xp | traits | skills from activities
@@ -20,52 +21,40 @@ const crService = new CrService;
 
 
 //modify cr and return a notification
-export function resolveAct(cr: Creature, actName: string): Notification
+export async function resolveAct(cr: Creature, act: Activity): Promise<Notification>
 {
-    let actObj = selectAct(actName);
     let notiDescription = '';
 
-    if (actObj.hasOwnProperty('xp'))
+    //TODO: randomly modify props
+
+    if (act.props.hasOwnProperty('xp'))
     {
-        cr = modifyCreature.addXP(cr, actObj['xp']);
-        notiDescription += "Gained " + actObj['xp'] + " xp. ";
+        cr = modifyCreature.addXP(cr, act.props['xp']);
+        notiDescription += "Gained " + act.props['xp'] + " xp. ";
     }
 
-    if (actObj.hasOwnProperty('skill'))
+    // [ how many, rarity ]
+    if (act.props.hasOwnProperty('skill'))
     {
         let skillPick = [];
-        for (let i = 0; i < actObj['skill'][0]; i++)
+        for (let i = 0; i < act.props['skill'][0]; i++)
         {
             const rand = Math.floor(Math.random()*2);
             let type = 'attack';
             if (rand >= 1) type = 'block'; 
 
-            skillPick.push(generateSkill(actObj['skill'][1], type));
+            skillPick.push(generateSkill(act.props['skill'][1], type));
         }
         crService.addSkillPick(cr.crID, skillPick);
         notiDescription += "You can learn a skill! ";
     }
 
-    return new Notification(cr.name + " back from " + actName, notiDescription, 'activity-summary', new Date());
-}
-
-//skill reward: [how many to pick from] [rarity]
-function selectAct(actName: string): Object
-{
-    switch (actName)
+    if (act.props.hasOwnProperty('trait'))
     {
-        case 'Galand':
-            return({
-               xp: 3,
-               skill: [3, 1]
-            });
-    
-        case 'Kaland':
-            return({
-                xp: 16 
-            });
 
-        default:
-            return null;
+        crService.addTrait(cr.crID, await crService.getTrait(act.props['trait']));
+        notiDescription += "Gained a trait: " + act.props['trait']  + ". ";
     }
+
+    return new Notification(cr.name + " back from " + act.name, notiDescription, 'activity-summary', new Date());
 }

@@ -1,5 +1,5 @@
 /* tslint:disable:unknown-word */
-import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
+import { Component, DoCheck, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IonModal, IonicModule } from '@ionic/angular';
 import { Creature } from 'src/models/creature';
 import { CreatureService } from 'src/services/creature.service';
@@ -16,6 +16,7 @@ import { Activity } from 'src/models/activity';
 import { AdventureComponent } from 'src/app/small_components/adventure/adventure.component';
 import { TimerPipe } from 'src/services/timerPipe';
 import { BehaviorSubject, Observer } from 'rxjs';
+import { ActService } from 'src/services/act.service';
 
 @Component({
   selector: 'app-creatures',
@@ -25,7 +26,7 @@ import { BehaviorSubject, Observer } from 'rxjs';
   imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent, TimerPipe]
 })
 
-export class CreaturesPage implements OnInit, DoCheck
+export class CreaturesPage implements OnInit
 {
   @ViewChild(IonModal) modal!: IonModal;
   @ViewChild('popover') popover: any;
@@ -36,38 +37,15 @@ export class CreaturesPage implements OnInit, DoCheck
   traitToShow!: Trait;
   socket: any;
   waitingForLearn = false;
-  timers = new Map<string, BehaviorSubject<number>>;
 
-  tempActArray: Activity[] = [ new Activity("Galand", 3000), new Activity("Kaland", 12000) ];
-
-  constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController)
+  constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService)
   {}
 
   async ngOnInit(): Promise<void>
   {
     await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()!));
-    for (let cr of this.creatures)
-    {
-      if (cr.currentAct)
-      {
-        cr.currentAct.startTimer();
-        this.timers.set(cr.crID, cr.currentAct.timer$);
-      }
-    }
 
     this.loadingDone = true;
-  }
-
-  ngDoCheck(): void
-  {
-    for (let cr of this.creatures)
-      {
-        if (cr.currentAct)
-        {
-          cr.currentAct.startTimer();
-          this.timers.set(cr.crID, cr.currentAct.timer$);
-        }
-      }
   }
 
   //socket disconnects on server side after skill is picked
@@ -106,7 +84,7 @@ export class CreaturesPage implements OnInit, DoCheck
       component: AdventureComponent,
       componentProps:
       {
-        'acts': this.tempActArray,
+        'acts': await this.actService.getAllActs(),
         'confirmFunc': ((act: Activity) => { actModal.dismiss(); this.fireAct(cr, act)}),
       },
     },
