@@ -31,7 +31,7 @@ export class SkillcardComponent  implements OnInit
       {
         this.bgColor = 'rgb(224, 127, 127)';
       }
-      else this.bgColor = 'rgb(134, 185, 206)';
+      else this.bgColor = 'rgb(131, 167, 182);';
   }
 
   highlightCard()

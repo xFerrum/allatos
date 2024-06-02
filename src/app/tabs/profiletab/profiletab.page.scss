@@ -25,11 +25,15 @@
 
 .profile-card
 {
-    background-color: rgba(78, 119, 146, 0.85);
+    background-color: rgba(78, 119, 146, 0.9);
     color: black;
 }
 
 ion-content
 {
-    --background: url(/assets/bg.png) center/cover fixed;
+    --background: url(/assets/bg3.png) center/cover fixed;
+    &::part(background)
+    {
+        opacity: 0.35;
+    }
 }

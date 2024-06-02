@@ -1,7 +1,9 @@
+$font1: 'Mouse';
+$containerbg: linear-gradient(to bottom right, rgba(90, 150, 179, 0.9), rgba(40, 104, 136, 0.9));
+
 .main-container
 {
     margin: 7px;
-    margin-top: 27px;
     border-radius: 5px;
 }
 
@@ -9,7 +11,7 @@
 {
     max-height: 250px;
     background-color: rgba(0, 0, 0, 0.3);
-    padding: 10px;
+    padding: 5px;
     padding-left: 15px;
     padding-right: 15px;
     border-radius: 10px;
@@ -18,6 +20,8 @@
 
 .board-container
 {
+    font-family: 'Permanent Marker';
+    user-select: none;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,7 +29,7 @@
 
 .name-board
 {
-    height: 200px;
+    height: 230px;
     width: 250px;
     min-height: 200px;
     min-width: 250px;
@@ -58,7 +62,7 @@
 {
     display: flex;
     position: absolute;
-    top: 63%;
+    top: 64%;
     left: 21.5%;
     width: 63%;
     font-size: 20px;
@@ -69,7 +73,7 @@
 {
     display: flex;
     position: absolute;
-    top: 76%;
+    top: 78%;
     left: 16%;
     width: 63%;
     font-size: 20px;
@@ -84,6 +88,7 @@
 
 .img-col
 {
+    user-select: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,6 +102,8 @@
 
 .away-col
 {
+    font-size: 20px;
+    font-family: $font1;
     display: flex;
     justify-content: left;
 }
@@ -125,10 +132,13 @@
 
 .away-timer
 {
+    font-family: 'Alba';
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 10px;
     padding: 4px;
     margin: 3px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     min-width: 110px;
     text-align: center;
 }
@@ -140,7 +150,7 @@
     margin-bottom: 8px;
     margin-right: 4px;
     margin-left: 4px;
-    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    background: $containerbg;
     border-style: solid;
     border-color: black;
     border-width: 2px;
@@ -170,14 +180,23 @@
 
 .attr-name
 {
+    font-size: 20px;
+    font-family: $font1;
     min-width: 120px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
 }
 
 .attr-number
 {
+    max-width: 60px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.3);
+    font-size: 18px;
+    font-family: 'Alba';
     display: flex;
     align-items: center;
     justify-content: center;
@@ -203,6 +222,16 @@
     align-items: center;
 }
 
+.but
+{
+    font-size: 20px;
+    font-family: $font1;
+    color: black;
+    border-radius: 5px;
+    margin: 10px;
+    --background: #79b4b6;
+}
+
 .stats-container
 {
     margin-top: 5px;
@@ -211,22 +240,23 @@
 }
 
 .stats-col
-{   
+{    
     border: 1px solid black;
     margin-top: 5px;
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     color: black;
     min-width: 500px;
-    max-width: 800px;
+    max-width: 700px;
 }
 
 .stats-title
 {
+    font-family: $font1;
     color: rgb(103, 166, 182);
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 5px;
-    font-size: 25px;
+    font-size: 30px;
     align-items: center;
     justify-content: center;
 }
@@ -240,7 +270,7 @@
 .stats-card
 {
     margin-bottom: auto;
-    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    background: $containerbg;
     border-style: solid;
     border-color: black;
     border-width: 2px;
@@ -248,6 +278,7 @@
 
 .lvl-card
 {
+    font-family: $font1;
     margin-left: 4px;
     margin-right: 4px;
     margin-top: 8px;
@@ -256,24 +287,24 @@
     border-style: solid;
     border-color: black;
     border-width: 2px;
-    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    background: $containerbg;
     width: 100%;
     align-items: center;
 }
 
 .lvl-card-content
 {
-    font-size: 18px;
+    font-size: 22px;
 }
 
 .xp-text
 {
+    margin: 0;
+    font-family: $font1;
     z-index: 10;
-    top: 1px;
-    font-size: 18px;
+    font-size: 20px;
     justify-content: center;
     position: absolute;
-    height: 28px;
 }
 
 .progress-container
@@ -300,7 +331,7 @@
 
 .progress-inner
 {
-    min-width: 26px;
+    min-width: 27px;
     left: 0;
     height: 100%;
     position: absolute;
@@ -313,7 +344,7 @@
 
 .traits-card
 {
-    background-image: linear-gradient(to bottom right, rgb(90, 150, 179), rgb(123, 124, 123));
+    background: $containerbg;
     border-style: solid;
     border-color: black;
     border-width: 2px;
@@ -340,11 +371,14 @@
 .trait-container
 {
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .trait-icon
 {
-
+    margin: auto;
     width: 45px;
     height: 45px;
     padding: 3px;
@@ -354,9 +388,31 @@
 .page-content
 {
     --background: url(/assets/bg.png) center/cover fixed;
+    &::part(background)
+    {
+        opacity: 0.75;
+    }
+}
+
+.trait-title
+{
+    font-family: 'AlbaS';
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.trait-description
+{
+    font-size: 15px;
 }
 
 ion-popover
 {
     --backdrop-opacity: 0;
+}
+
+ion-content
+{
+    background-color: white;
 }

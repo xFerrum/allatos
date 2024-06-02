@@ -9,6 +9,7 @@
   <ion-grid>
     <ion-row class="act-container" *ngFor="let act of acts" size="auto">
       <img src="{{'assets/activities/' + act.name + '.png'}}" class="act-img" (click)="actClicked($event, act)"/>
+      <div class="act-title">{{ act.name }}</div>
     </ion-row>
   </ion-grid>
 

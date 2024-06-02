@@ -25,6 +25,40 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
+@font-face {
+    font-family: 'Permanent Marker';
+    font-style: normal;
+    font-weight: normal;
+    src: url('./assets/fonts/PermanentMarker-Regular.ttf')
+}
+
+@font-face {
+    font-family: 'Alba';
+    font-style: normal;
+    font-weight: normal;
+    src: url('./assets/fonts/ALBA.ttf')
+}
+
+@font-face {
+    font-family: 'AlbaS';
+    font-style: normal;
+    font-weight: normal;
+    src: url('./assets/fonts/ALBAS.ttf')
+}
+
+@font-face {
+    font-family: 'Kerosene';
+    font-style: normal;
+    font-weight: normal;
+    src: url('./assets/fonts/kerosene.ttf')
+}
+
+@font-face {
+    font-family: 'Mouse';
+    font-style: normal;
+    font-weight: normal;
+    src: url('./assets/fonts/MouseMemoirs.ttf')
+}
 .skill-pop-up
 {
     --background: rgb(102, 115, 133);
@@ -57,4 +91,47 @@
 .hit-popup
 {
     --backdrop-opacity: 0;
+}
+
+.act-modal
+{
+    &::part(content)
+    {
+        border: 1px solid black;
+        border-radius: 10px;
+    }
+}
+
+.trait-popover
+{
+    &::part(content)
+    {
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 10px;
+        background-color: #79b4b6;
+
+        padding-top: 5px;
+
+
+    }
+
+    ion-content::part(background)
+    {
+        background-color: #79b4b6;
+    }
+}
+
+.notification
+{
+    .alert-head
+    {
+        text-align: center;
+        font-family: 'Mouse';
+
+        .alert-title
+        {
+            font-size: 25px;
+        }
+    }
 }

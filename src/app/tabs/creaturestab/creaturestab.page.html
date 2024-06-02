@@ -236,11 +236,9 @@
         </ion-row>
 
         <ion-row class="buts">
-          <ion-button type="submit" color="primary" expand="block" class="but" id="open-skills">open skills</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="deleteSkills(creature)">delete all skills</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="addTrait(creature)">get trait</ion-button>
-          <ion-button type="submit" color="primary" expand="block" class="but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
+          <ion-button type="submit" expand="block" class="but" id="open-skills">open skills</ion-button>
+          <ion-button type="submit" expand="block" class="but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
+          <ion-button type="submit" expand="block" class="but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
         </ion-row>
 
         <ion-modal trigger="open-skills" class="skills-window">
@@ -268,13 +266,13 @@
           </ng-template>
         </ion-modal>
 
-        <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false">
+        <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false" class="trait-popover">
           <ng-template>
-            <ion-content class="ion-padding">
-              <div style="font-size: 20px; text-align: center; margin-bottom: 17px;">
+            <ion-content>
+              <div class="trait-title">
                 {{traitToShow.name}}
               </div>
-              <div>
+              <div class="trait-description">
                 {{traitToShow.description}}
               </div>
             </ion-content>

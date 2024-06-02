@@ -40,47 +40,6 @@ export class CreatureService
     }
   }
 
-  async fetchSkillsOf(id: string, tries = 10): Promise<Skill[]>
-  {
-    try
-    {
-      let data = (await getDoc(doc(db, "creatures", id))).data();
-      let skills = data!["skills"];
-      return(skills);
-    }
-    catch (error)
-    {
-      if (tries > 0)
-      {
-        return await this.fetchSkillsOf(id, tries-1)
-      }
-      else throw error;
-    }
-  }
-
-  async deleteAllSkills(cid: string)
-  {
-    await updateDoc(doc(db, "creatures", cid),
-    {
-      skills: []
-    });
-  }
-
-  async addTrait(cid: string, trait: Trait)
-  {
-    let temp = (await this.getCreatureById(cid)).traits;
-
-    if (!temp) temp = [];
-    temp.push(trait);
-
-    const converted = temp.map((obj)=> {return Object.assign({}, obj)});
-
-    await updateDoc(doc(db, "creatures", cid),
-    {
-      traits: converted
-    });
-  }
-
   async initCreatures(localArr: Array<Creature>, user: User)
   {
     //add to array and set listeners for creature data changes

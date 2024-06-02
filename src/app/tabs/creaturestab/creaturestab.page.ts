@@ -1,5 +1,5 @@
 /* tslint:disable:unknown-word */
-import { Component, DoCheck, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, DoCheck, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IonModal, IonicModule } from '@ionic/angular';
 import { Creature } from 'src/models/creature';
 import { CreatureService } from 'src/services/creature.service';
@@ -10,13 +10,14 @@ import { PopUpService } from 'src/services/popup.service';
 import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard.component';
 import { Trait } from 'src/models/trait';
 import { io } from 'socket.io-client';
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController, ViewWillLeave } from '@ionic/angular/standalone';
 import { SkillPickComponent } from 'src/app/small_components/skillpick/skillpick.component';
 import { Activity } from 'src/models/activity';
 import { AdventureComponent } from 'src/app/small_components/adventure/adventure.component';
 import { TimerPipe } from 'src/services/timerPipe';
 import { BehaviorSubject, Observer } from 'rxjs';
 import { ActService } from 'src/services/act.service';
+import { IonPopover } from '@ionic/angular/common';
 
 @Component({
   selector: 'app-creatures',
@@ -26,10 +27,10 @@ import { ActService } from 'src/services/act.service';
   imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent, TimerPipe]
 })
 
-export class CreaturesPage implements OnInit
+export class CreaturesPage implements OnInit, ViewWillLeave
 {
   @ViewChild(IonModal) modal!: IonModal;
-  @ViewChild('popover') popover: any;
+  @ViewChild('popover') popover!: IonPopover;
   creatures: Creature[] = [];
   loadingDone = false;
   hovering = false;
@@ -38,7 +39,8 @@ export class CreaturesPage implements OnInit
   socket: any;
   waitingForLearn = false;
 
-  constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService)
+  constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService,
+    public cdr: ChangeDetectorRef)
   {}
 
   async ngOnInit(): Promise<void>
@@ -46,6 +48,11 @@ export class CreaturesPage implements OnInit
     await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()!));
 
     this.loadingDone = true;
+  }
+
+  ionViewWillLeave(): void
+  {
+    this.popover.dismiss();
   }
 
   //socket disconnects on server side after skill is picked
@@ -87,22 +94,11 @@ export class CreaturesPage implements OnInit
         'acts': await this.actService.getAllActs(),
         'confirmFunc': ((act: Activity) => { actModal.dismiss(); this.fireAct(cr, act)}),
       },
+      cssClass: 'act-modal'
     },
   );
 
     actModal.present();
-  }
-
-  async deleteSkills(cr: Creature)
-  {
-    this.creatureService.deleteAllSkills(cr.crID);
-  }
-
-  async addTrait(cr: Creature)
-  {
-    await this.creatureService.addTrait(cr.crID, new Trait('Strong', 'This creature is very strong.', false));
-
-    console.log("done");
   }
 
   //returns days
@@ -113,7 +109,7 @@ export class CreaturesPage implements OnInit
 
   traitClicked(e: Event, trait: Trait)
   {
-    this.traitToShow = trait;
+    this.traitToShow = {...trait};
     this.popover.event = e;
     this.traitShowing = true;
   }

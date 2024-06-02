@@ -61,31 +61,19 @@ export class PopUpService
   }
 
   async notificationPopUp(description: string, header: string, preparedNotis: Array<Notification>)
-  {
+  {    
     this.noti = await this.alertController.create
     ({
       header: header,
       message: description,
       buttons: ['Ok'],
+      cssClass: 'notification'
     });
     await this.noti.present();
     this.noti.onDidDismiss().then(() => { this.showNextNotification(preparedNotis) });
   }
 
   async effectPopUp(description: string, cssClass: string, header?: string)
-  {
-    this.effect?.dismiss();
-    this.effect = await this.alertController.create
-    ({
-      header: header,
-      message: description,
-      cssClass: cssClass
-    });
-
-    await this.effect.present();
-  }
-
-  async traitPopUp(description: string, cssClass: string, header?: string)
   {
     this.effect?.dismiss();
     this.effect = await this.alertController.create
