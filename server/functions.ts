@@ -39,6 +39,12 @@ io.on('connection', (socket: any) =>
                 await crService.replaceSkillPicks(crID, skillPicks);
                 socket.disconnect();
             });
+
+            socket.on('skill-pick-skipped', async () =>
+            {
+                await crService.replaceSkillPicks(crID, skillPicks);
+                socket.disconnect();
+            });
         }
         else socket.disconnect();
     })

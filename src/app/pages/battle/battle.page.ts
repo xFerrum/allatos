@@ -69,7 +69,6 @@ export class BattlePage implements OnInit
     //connect to server socket, join room
     this.socket.on('connect', async () =>
     {
-      console.log("Connected with id:" + this.socket.id);
       await this.socket.emit('join-room', this.myCr, this.roomID, (joinSuccessful: boolean) => {
         if (joinSuccessful)
         {
@@ -79,17 +78,14 @@ export class BattlePage implements OnInit
       });
     });
 
-    //TODO: rewrite here and on server side not to share whole opp creature object
     this.socket.on('players-ready', () =>
     {
       this.socket.emit('game-state-requested');
-      this.loadingDone = true;
     });
 
     this.socket.on('player-rejoin', () =>
     {
       this.socket.emit('game-state-requested');
-      this.loadingDone = true;
     });
 
     this.socket.on('game-state-sent', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number, gameState: number) =>
@@ -129,6 +125,7 @@ export class BattlePage implements OnInit
 
       this.myCr.turnInfo.fatigued = myCr.turnInfo.fatigued;
       this.opCr.turnInfo.fatigued = opCr.turnInfo.fatigued;
+      this.loadingDone = true;
     });
 
     this.socket.on('log-sent', (log: string) =>
@@ -206,7 +203,8 @@ export class BattlePage implements OnInit
     this.modal.dismiss();
   }
 
-  //animation stuff
+  /*---------------------------------------------------------------ANIMATION STUFF---------------------------------------------------------------*/
+
   async cardAnimation(s: Skill, showFor: number, what: string)
   {
     this.what = what;

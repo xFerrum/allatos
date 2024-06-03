@@ -24,19 +24,27 @@
               <p class="total-blocks-text">{{opBlock}}</p>
             </div>
           </ion-col>
+
           <ion-col class="bars" size="6.5">
             <ion-row>
-              <div class="progress-outer">
-                <div class="progress-inner" [style.width]="(opCr.HP*100)/opCr.con + '%'">{{opCr.HP}}</div>
-              </div>
+              <ion-col class="progress-container">
+                <div class="progress-outer">
+                  <p class="progress-text">{{opCr.HP}}</p>
+                  <div class="progress-inner" [style.width]="(opCr.HP*100)/opCr.con + '%'"></div>
+                </div>
+              </ion-col>
             </ion-row>
   
             <ion-row>
-              <div class="progress-outer">
-                <div class="progress-inner fatigue-bar" [style.width]="(opCr.fatigue*100)/opCr.stamina + '%'">{{opCr.fatigue}}</div>
-              </div>
+              <ion-col class="progress-container">
+                <div class="progress-outer">
+                  <p class="progress-text">{{opCr.fatigue}}</p>
+                  <div class="progress-inner fatigue-bar" [style.width]="(opCr.fatigue*100)/opCr.stamina + '%'"></div>
+                </div>
+              </ion-col>
             </ion-row>
           </ion-col>
+
         </ion-row>
 
         <ion-row>
@@ -70,19 +78,27 @@
               <p class="total-blocks-text">{{myBlock}}</p>
             </div>
           </ion-col>
+
           <ion-col class="bars" size="6.5">
             <ion-row>
-              <div class="progress-outer">
-                <div class="progress-inner" [style.width]="(myCr.HP*100)/myCr.con + '%'">{{myCr.HP}}</div>
-              </div>
+              <ion-col class="progress-container">
+                <div class="progress-outer">
+                  <p class="progress-text">{{myCr.HP}}</p>
+                  <div class="progress-inner" [style.width]="(myCr.HP*100)/myCr.con + '%'"></div>
+                </div>
+              </ion-col>
             </ion-row>
   
             <ion-row>
-              <div class="progress-outer">
-                <div class="progress-inner fatigue-bar" [style.width]="(myCr.fatigue*100)/myCr.stamina + '%'">{{myCr.fatigue}}</div>
-              </div>
+              <ion-col class="progress-container">
+                <div class="progress-outer">
+                  <p class="progress-text">{{myCr.fatigue}}</p>
+                  <div class="progress-inner fatigue-bar" [style.width]="(myCr.fatigue*100)/myCr.stamina + '%'"></div>
+                </div>
+              </ion-col>
             </ion-row>
           </ion-col>
+
         </ion-row>
 
         <ion-row>

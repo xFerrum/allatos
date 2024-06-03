@@ -41,4 +41,10 @@ export class SkillPickComponent
     this.socket.emit('skill-option-selected', this.selectedIndexes[0]);
     this.confirmFunc();
   }
+
+  skipSkill()
+  {
+    this.socket.emit('skill-pick-skipped');
+    this.confirmFunc();
+  }
 }

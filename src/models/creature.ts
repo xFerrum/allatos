@@ -7,9 +7,9 @@ export class Creature
     crID: string;
     name: string;
     type: string;
-    str: number;
-    agi: number;
-    int: number;
+    str: number; //influences generated attack strength?
+    agi: number; //influences generated block strength?
+    int: number; //influences xp gain?
     con: number;
     ini: number;
     stamina: number;

@@ -1,13 +1,22 @@
 .but-container
 {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
 }
 
 .confirm-but
 {
+    position: relative;
+    margin-right: auto;
+    margin-left: auto;
+}
 
+.skip-but
+{
+    position: absolute;
+    align-self: flex-end;
+    bottom: 0;
+    margin: 15px;
 }
 
 .cards-container

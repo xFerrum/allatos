@@ -21,7 +21,8 @@ TYPES:
     base: 4-5-6-8
     keywords:
         stance: extra block if previous was block too
-        retaliate: deal damage if opponent attacked and all damage blocked (heavier fatigue cost on blocker?)
+        retaliate: deal damage if opponent attacked and all damage blocked
+        steadfast: keep remaining block for next turn
         heal
 
 - DEBUFF
@@ -92,16 +93,16 @@ export function generateSkill(rarity: number, type: string): Skill
 
 function loadAttacks(r: number)
 {
-    //+3-13 dmg
+    //+4-13 dmg
     skills.push(() =>
     {
         name = "Strike";
 
-        const dmgArr = [0, 2, 4, 7];
+        const dmgArr = [1, 2, 4, 7];
         effects['dmg'] += rndInt(3, 6) + dmgArr[r];
     });
 
-    //+0-7 dmg, +heavy 4-10 
+    //+0-7 dmg, +4-10 heavy
     skills.push(() =>
     {
         name = "Heavy Attack";
@@ -112,7 +113,7 @@ function loadAttacks(r: number)
         effects['heavy'] = rndInt(4, 6) + heavyArr[r];
     });
 
-    //+0-6 dmg, +shred 4-10
+    //+0-6 dmg, +4-10 shred
     skills.push(() =>
     {
         name = "Shred";
@@ -131,6 +132,26 @@ function loadAttacks(r: number)
         const comboDmgArr = [0, 2, 4, 7];
         effects['combo'] = {dmg: rndInt(7, 11) + comboDmgArr[r]};
     });
+
+    //comb: +7-17 heavy
+    skills.push(() =>
+    {
+        name = "Overwhelm";
+
+        const comboFatArr = [0, 2, 4, 7];
+        effects['combo'] = {heavy: rndInt(7, 10) + comboFatArr[r]};
+    });
+
+    if (r = 3)
+    {
+        //+25-31 dmg +10 fatcost
+        skills.push(() =>
+        {
+            name = "Brutal Swing";
+            fatCost = 20;
+            effects['dmg'] += rndInt(25, 31);
+        });
+    }
 }
 
 function loadBlocks(r: number)
