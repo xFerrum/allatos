@@ -18,13 +18,14 @@ import { TimerPipe } from 'src/services/timerPipe';
 import { BehaviorSubject, Observer } from 'rxjs';
 import { ActService } from 'src/services/act.service';
 import { IonPopover } from '@ionic/angular/common';
+import { ProgressbarComponent } from 'src/app/small_components/progressbar/progressbar.component';
 
 @Component({
   selector: 'app-creatures',
   templateUrl: 'creaturestab.page.html',
   styleUrls: ['creaturestab.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent, TimerPipe]
+  imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent, TimerPipe, ProgressbarComponent]
 })
 
 export class CreaturesPage implements OnInit, ViewWillLeave

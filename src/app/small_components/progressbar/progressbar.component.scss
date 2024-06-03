@@ -1,0 +1,91 @@
+.progress-container
+{
+    padding: 0;
+    position: relative;
+    display: flex;
+    height: 100%;
+    user-select: none;
+}
+
+.progress-outer
+{
+    border-radius: 50px;
+    margin: 0;
+    width: 100%;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #000000;
+}
+
+.edge-left
+{
+    margin: 0;
+    z-index: 50;
+    position: absolute;
+    left: 0;
+    height: 100%;
+}
+
+.edge-right
+{
+    margin: 0;
+    z-index: 50;
+    position: absolute;
+    right: 0;
+    height: 100%;
+}
+
+.progress-inner
+{
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0px;
+}
+
+.fill-left
+{
+    z-index: 100;
+    left: 0;
+    position: absolute;
+    margin-right: auto;
+    height: 100%;
+}
+
+.fill-right
+{
+    z-index: 100;
+    right: 0;
+    position: absolute;
+    margin-left: auto;
+    height: 100%;
+}
+
+.fill
+{
+    left: 0;
+    position: absolute;
+    height: 100%;
+    z-index: 25;
+}
+
+.progress-text
+{
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+
+    margin: 0;
+    font-family: 'Mouse';
+    z-index: 30;
+    font-size: 25px;
+    justify-self: center;
+    align-self: center;
+    position: absolute;
+}

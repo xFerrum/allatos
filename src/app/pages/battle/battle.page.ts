@@ -11,13 +11,14 @@ import { io } from 'socket.io-client';
 import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard.component';
 import { AnimationController } from '@ionic/angular/standalone';
 import { PopUpService } from 'src/services/popup.service';
+import { ProgressbarComponent } from 'src/app/small_components/progressbar/progressbar.component';
 
 @Component({
   selector: 'app-battle',
   templateUrl: './battle.page.html',
   styleUrls: ['./battle.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, SkillcardComponent]
+  imports: [IonicModule, CommonModule, FormsModule, SkillcardComponent, ProgressbarComponent]
 })
 
 export class BattlePage implements OnInit

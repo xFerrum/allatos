@@ -88,53 +88,9 @@ $font1: 'Mouse';
     margin: auto;
 }
 
-.progress-container
+.bar-img
 {
-    left: 0;
-}
-
-.progress-outer
-{
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 80%;
     height: 30px;
-    margin: auto;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 1px solid #000000;
-    color: #000000;
-    border-radius: 20px;
-  }
-
-.progress-inner
-{
-    min-width: 27px;
-    left: 0;
-    height: 100%;
-    position: absolute;
-    white-space: nowrap;
-    overflow: hidden;
-    padding: 0px;
-    border-radius: 20px;
-    background-image: linear-gradient(to bottom right, rgb(218, 0, 0), rgb(255, 93, 93));
-}
-
-.fatigue-bar
-{
-    background-image: linear-gradient(to bottom right, rgb(219, 188, 9), rgb(255, 232, 30))
-}
-
-.progress-text
-{
-    margin: 0;
-    font-family: $font1;
-    z-index: 10;
-    font-size: 20px;
-    justify-content: center;
-    position: absolute;
 }
 
 .battle-content
@@ -173,6 +129,8 @@ $font1: 'Mouse';
 
 .bars
 {
+    display: flex;
+    flex-direction: column;
 }
 
 .blocks-icon

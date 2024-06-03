@@ -26,23 +26,8 @@
           </ion-col>
 
           <ion-col class="bars" size="6.5">
-            <ion-row>
-              <ion-col class="progress-container">
-                <div class="progress-outer">
-                  <p class="progress-text">{{opCr.HP}}</p>
-                  <div class="progress-inner" [style.width]="(opCr.HP*100)/opCr.con + '%'"></div>
-                </div>
-              </ion-col>
-            </ion-row>
-  
-            <ion-row>
-              <ion-col class="progress-container">
-                <div class="progress-outer">
-                  <p class="progress-text">{{opCr.fatigue}}</p>
-                  <div class="progress-inner fatigue-bar" [style.width]="(opCr.fatigue*100)/opCr.stamina + '%'"></div>
-                </div>
-              </ion-col>
-            </ion-row>
+            <app-progressbar type="hp" [current]="opCr.HP" [total]="opCr.con" style="height: 40px;"></app-progressbar>
+            <app-progressbar type="fat" [current]="opCr.fatigue" [total]="opCr.stamina" style="height: 40px;"></app-progressbar>
           </ion-col>
 
         </ion-row>
@@ -80,23 +65,8 @@
           </ion-col>
 
           <ion-col class="bars" size="6.5">
-            <ion-row>
-              <ion-col class="progress-container">
-                <div class="progress-outer">
-                  <p class="progress-text">{{myCr.HP}}</p>
-                  <div class="progress-inner" [style.width]="(myCr.HP*100)/myCr.con + '%'"></div>
-                </div>
-              </ion-col>
-            </ion-row>
-  
-            <ion-row>
-              <ion-col class="progress-container">
-                <div class="progress-outer">
-                  <p class="progress-text">{{myCr.fatigue}}</p>
-                  <div class="progress-inner fatigue-bar" [style.width]="(myCr.fatigue*100)/myCr.stamina + '%'"></div>
-                </div>
-              </ion-col>
-            </ion-row>
+            <app-progressbar type="hp" [current]="myCr.HP" [total]="myCr.con" style="height: 40px;"></app-progressbar>
+            <app-progressbar type="fat" [current]="myCr.fatigue" [total]="myCr.stamina" style="height: 40px;"></app-progressbar>
           </ion-col>
 
         </ion-row>

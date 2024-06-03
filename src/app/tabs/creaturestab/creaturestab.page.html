@@ -41,16 +41,13 @@
 
             <ion-row>
               <ion-card class="lvl-card">
-                <ion-card-content class="lvl-card-content">
-                  <ion-row>
+                <ion-card-content>
+                  <ion-row class="lvl-card-content">
                     <ion-col size="auto">
                       <div>Level {{creature.level}}</div>
                     </ion-col>
-                    <ion-col class="progress-container">
-                      <div class="progress-outer">
-                        <p class="xp-text">{{creature.xp}} xp</p>
-                        <div class="progress-inner" [style.width]="creature.xp + '%'"></div>
-                      </div>
+                    <ion-col style="height: 50px;">
+                      <app-progressbar type="xp" [current]="creature.xp" [total]="'100'" style="height: 50px;"></app-progressbar>
                     </ion-col>
                   </ion-row>
                 </ion-card-content>

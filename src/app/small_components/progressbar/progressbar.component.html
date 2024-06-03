@@ -1,0 +1,16 @@
+<ion-col class="progress-container">
+  <img class="edge-left" src="{{'assets/bars/' + type + '/edge_left.png'}}"/>
+  <div class="progress-outer" [style.background-image]="outerBg">
+    <p *ngIf="type !== 'xp'" class="progress-text">{{current}}</p>
+    <p *ngIf="type === 'xp'" class="progress-text">{{current}} xp</p>
+
+    <div *ngIf="current > 0" class="progress-inner">
+
+      <img class="fill-left" src="{{'assets/bars/' + type + '/fill_left.png'}}"/>
+      <img class="fill" [style.width]="(current*100)/total + '%'" src="{{'assets/bars/' + type + '/fill.png'}}"/>
+      <img *ngIf="0.98 < current/total" class="fill-right" src="{{'assets/bars/' + type + '/fill_right.png'}}"/>
+
+    </div>
+  </div>
+  <img class="edge-right" src="{{'assets/bars/' + type + '/edge_right.png'}}"/>
+</ion-col>
