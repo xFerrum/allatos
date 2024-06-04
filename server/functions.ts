@@ -16,35 +16,63 @@ let userSkillOptions = new Map<string, Skill[]>;
 
 io.on('connection', (socket: any) =>
 {
-    //TODO: make skill pick less spaghett :<
-    socket.on('skill-learn-requested', async (crID: string) =>
+    socket.on('skill-learn-requested', async (uid: string, crID: string) =>
     {
-        let skillPicks = (await crService.getCreatureById(crID)).skillPicks;
-        if (Object.keys(skillPicks).length !== 0)
+        let cr = await crService.getCreatureById(crID);
+        if (uid === cr.ownedBy && Object.keys(cr.skillPicks).length !== 0)
         {        
-            let dates = Object.keys(skillPicks);
+            let dates = Object.keys(cr.skillPicks);
             let earliest = new Date().getTime();
             for (const d of dates)
             {
-                console.log(d);
                 if (Number(d) < earliest) earliest = Number(d);
             }
-            const options = [...skillPicks[earliest]];
-            delete skillPicks[earliest];
+            const options = [...cr.skillPicks[earliest]];
+            delete cr.skillPicks[earliest];
             socket.emit('skill-pick-ready', options);
 
             socket.on('skill-option-selected', async (index: number) =>
             {
                 await crService.learnSkill(crID, options[index]);
-                await crService.replaceSkillPicks(crID, skillPicks);
+                await crService.replaceSkillPicks(crID, cr.skillPicks);
                 socket.disconnect();
             });
 
             socket.on('skill-pick-skipped', async () =>
             {
-                await crService.replaceSkillPicks(crID, skillPicks);
+                await crService.replaceSkillPicks(crID, cr.skillPicks);
                 socket.disconnect();
             });
+        }
+        else socket.disconnect();
+    })
+
+    socket.on('attr-plus', async (uid: string, crID: string, which: string) =>
+    {
+        let cr = await crService.getCreatureById(crID);
+        if (cr.lvlup > 0 && cr.ownedBy === uid)
+        {        
+            switch (which)
+            {
+                case 'str':
+                    cr.str++;
+                    break;
+
+                case 'agi':
+                    cr.agi++;
+                    break;
+
+                case 'int':
+                    cr.int++;
+                    break;
+
+                default:
+                    break;
+            }
+            cr.lvlup--;
+
+            await crService.updateCreature(crID, cr);
+            socket.disconnect();
         }
         else socket.disconnect();
     })

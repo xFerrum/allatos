@@ -486,6 +486,8 @@ export class BattleSession
         let decoy2 = { ...this.cr2 };
         decoy1.skills = [];
         decoy2.skills = [];
+        decoy1.ownedBy = null;
+        decoy2.ownedBy = null;
 
         this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength, this.gameState);
         this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength, this.gameState);

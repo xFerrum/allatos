@@ -2,12 +2,14 @@ export class Trait
 {
     name: string;
     description: string;
-    scaling: boolean;
-    
-    constructor(name: string, description: string, scaling: boolean)
+    isScaling: boolean;
+    isBattle: boolean;
+
+    constructor(name: string, description: string, isScaling: boolean, isBattle: boolean)
     {
         this.name = name;
         this.description = description;
-        this.scaling = scaling;
+        this.isScaling = isScaling;
+        this.isBattle = isBattle;
     }
 }

@@ -34,7 +34,6 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   @ViewChild('popover') popover!: IonPopover;
   creatures: Creature[] = [];
   loadingDone = false;
-  hovering = false;
   traitShowing = false;
   traitToShow!: Trait;
   socket: any;
@@ -47,7 +46,6 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   async ngOnInit(): Promise<void>
   {
     await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()!));
-
     this.loadingDone = true;
   }
 
@@ -56,12 +54,11 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     this.popover.dismiss();
   }
 
-  //socket disconnects on server side after skill is picked
   async learn(cr: Creature)
   {
     this.socket = io('http://localhost:3005');
     //validate cr belongs to user (firebase rule)
-    this.socket.emit('skill-learn-requested', (await this.creatureService.getCreatureById(cr.crID)).crID);
+    this.socket.emit('skill-learn-requested', this.userService.getLoggedInID(), cr.crID);
 
     this.popUpService.loadingPopUp("Preparing the skills...");
 
@@ -126,5 +123,31 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     act.startDate = new Date;
     this.socket.emit('start-activity', cr.crID, act);
     this.socket.on('start-activity-failed', () => { /*failed*/ });
+  }
+
+  attrPlus(cr: Creature, which: string)
+  {
+    this.socket = io('http://localhost:3005');
+    this.socket.emit('attr-plus', this.userService.getLoggedInID(), cr.crID, which);
+
+    //calculated locally instantly so its more fluid
+    switch (which)
+    {
+      case 'str':
+        cr.str++;
+        break;
+
+      case 'agi':
+        cr.agi++;
+        break;
+
+      case 'int':
+        cr.int++;
+        break;
+
+      default:
+        break;
+    }
+    cr.lvlup--;
   }
 }

@@ -142,7 +142,7 @@ function loadAttacks(r: number)
         effects['combo'] = {heavy: rndInt(7, 10) + comboFatArr[r]};
     });
 
-    if (r = 3)
+    if (r === 3)
     {
         //+25-31 dmg +10 fatcost
         skills.push(() =>
@@ -194,16 +194,21 @@ function loadBlocks(r: number)
         const blockArr = [0, 1, 2, 4];
         effects['block'] += rndInt(0, 1) + blockArr[r];
     });
+
+    if (r === 3)
+    {
+        
+    }
 }
 
 function loadTricks(r: number)
 {
-    if (r = 1)
+    if (r === 1)
     {
         
     }
 
-    if (r = 2)
+    if (r === 2)
     {
         //disarm
         skills.push(() =>
@@ -213,7 +218,7 @@ function loadTricks(r: number)
         });
     }
 
-    if (r = 3)
+    if (r === 3)
     {
         
     }

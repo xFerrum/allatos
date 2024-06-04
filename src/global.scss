@@ -104,6 +104,8 @@
 
 .trait-popover
 {
+    --backdrop-opacity: 0;
+
     &::part(content)
     {
         border: 1px solid black;
@@ -116,6 +118,19 @@
 
     }
 
+    .trait-title
+    {
+        font-family: 'AlbaS';
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .trait-description
+    {
+        font-size: 15px;
+    }
+    
     ion-content::part(background)
     {
         background-color: #79b4b6;

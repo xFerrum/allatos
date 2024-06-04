@@ -7,9 +7,9 @@ export class Creature
     crID: string;
     name: string;
     type: string;
-    str: number; //influences generated attack strength?
-    agi: number; //influences generated block strength?
-    int: number; //influences xp gain?
+    str: number;
+    agi: number;
+    int: number;
     con: number;
     ini: number;
     stamina: number;
@@ -20,6 +20,7 @@ export class Creature
     level: number;
     born: Date;
     skillPicks: Object;
+    lvlup: number;
     currentAct?: Activity;
 
     //for battle
@@ -33,7 +34,7 @@ export class Creature
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, int: number, con: number, ini: number,
         ownedBy: string, skills: Array<Skill>, traits: Array<Trait>, stamina: number, xp: number, born: Date, level: number,
-        skillPicks: Object, currentAct?: Activity)
+        skillPicks: Object, lvlup: number, currentAct?: Activity)
     {
         this.crID = crID;
         this.name = name;
@@ -52,5 +53,6 @@ export class Creature
         this.currentAct = currentAct;
         this.skillPicks = skillPicks;
         this.level = level;
+        this.lvlup = lvlup;
     }
 }

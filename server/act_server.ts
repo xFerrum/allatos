@@ -84,11 +84,9 @@ async function finishAct(crID: string, act: Activity)
 {
     let cr = await crService.getCreatureById(crID);
     const noti = await resolveAct(cr, act);
-    console.log(noti);
     await crService.updateCreature(crID, cr);
     await userService.sendNotification(cr.ownedBy, noti);
 
-    console.log(act.name + " done.");
     actMap.delete(crID);
     await crService.setAct(crID);
 }

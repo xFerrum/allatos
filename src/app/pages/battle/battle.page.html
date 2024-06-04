@@ -24,18 +24,23 @@
               <p class="total-blocks-text">{{opBlock}}</p>
             </div>
           </ion-col>
-
           <ion-col class="bars" size="6.5">
             <app-progressbar type="hp" [current]="opCr.HP" [total]="opCr.con" style="height: 40px;"></app-progressbar>
             <app-progressbar type="fat" [current]="opCr.fatigue" [total]="opCr.stamina" style="height: 40px;"></app-progressbar>
           </ion-col>
-
         </ion-row>
 
-        <ion-row>
-          <ion-col>
-            <ion-img class="creature-img" src="{{'assets/creature_imgs/' + opCr.type + '.png'}}"></ion-img>
-          </ion-col>
+        <ion-row class="middle-row">
+          <ion-card *ngIf="opCr.traits" class="traits-card">
+            <ion-card-content class="traits-card-content">
+              <ion-row class="traits-container">
+                <ion-col *ngFor="let trait of opCr.traits" size="auto" class="trait-container">
+                  <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+          <ion-img class="creature-img" src="{{'assets/creature_imgs/' + opCr.type + '.png'}}"></ion-img>
         </ion-row>
 
         <ion-row>
@@ -68,24 +73,25 @@
             <app-progressbar type="hp" [current]="myCr.HP" [total]="myCr.con" style="height: 40px;"></app-progressbar>
             <app-progressbar type="fat" [current]="myCr.fatigue" [total]="myCr.stamina" style="height: 40px;"></app-progressbar>
           </ion-col>
-
         </ion-row>
 
-        <ion-row>
-          <ion-col size="4" class="turn-indicator-col">
+        <ion-row class="middle-row">
             <ion-card class="turn-indicator-card">
               <ion-card-content>
                 {{turnInfo}}
               </ion-card-content>
             </ion-card>
-          </ion-col>
-          <ion-col size="4">
+            <ion-card *ngIf="opCr.traits" class="traits-card">
+              <ion-card-content class="traits-card-content">
+                <ion-row class="traits-container">
+                  <ion-col *ngFor="let trait of myCr.traits" size="auto" class="trait-container">
+                    <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
             <ion-img class="creature-img" src="{{'assets/creature_imgs/' + myCr.type + '.png'}}"></ion-img>
-          </ion-col>
-          <ion-col size="4">
-            
-          </ion-col>
-        </ion-row>
+          </ion-row>
 
       <ion-grid>
           <ion-row class="cards-container">
@@ -127,5 +133,18 @@
       </ion-content>
     </ng-template>
   </ion-modal>
+
+  <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false" class="trait-popover">
+    <ng-template>
+      <ion-content>
+        <div class="trait-title">
+          {{traitToShow.name}}
+        </div>
+        <div class="trait-description">
+          {{traitToShow.description}}
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
 
 </ion-content>

@@ -2,8 +2,12 @@ $font1: 'Mouse';
 
 .creature-img
 {
-    height: 150px;
+    justify-self: center;
+    align-self: center;
+    position: relative;
     margin: auto;
+    margin-bottom: 5px;
+    height: 150px;
 }
 
 .skill-icon
@@ -24,6 +28,7 @@ $font1: 'Mouse';
     margin-right: auto;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 5px;
+    border: 1px solid black;
 }
 
 .hit-col
@@ -67,6 +72,7 @@ $font1: 'Mouse';
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.3);
+    border: 1px solid black;
 }
 
 .card-container
@@ -95,6 +101,7 @@ $font1: 'Mouse';
 
 .battle-content
 {
+    user-select: none;
     --background: rgba(0, 0, 0, 0);
     --overflow: hidden;
     overflow: auto;
@@ -102,10 +109,17 @@ $font1: 'Mouse';
     &::-webkit-scrollbar {
       display: none;
     }
+    position: relative;
+    justify-self: center;
+    align-self: center;
+    max-width: 1400px;
+    border: 5px solid black;
+    border-radius: 10px;
 }
 
 .background
 {
+    user-select: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -135,12 +149,14 @@ $font1: 'Mouse';
 
 .blocks-icon
 {
+    max-height: 100px;
     min-width: 65px;
     max-width: 100px;
 }
 
 .stats
 {
+    max-height: 150px;
     margin: auto;
     display: flex;
     align-items: center;
@@ -170,14 +186,51 @@ $font1: 'Mouse';
 
 .turn-indicator-card
 {
+    position: absolute;
+    align-self: flex-end;
     background: rgba(0, 0, 0, 0.5);
     color: white;
     text-align: center;
     margin: auto;
     margin-bottom: 0;
+    margin-left: 5px;
 }
 
-.turn-indicator-col
+.traits-card
 {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    left: 60%;
+    max-width: 30%;
+
+}
+
+.traits-card-content
+{
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.traits-container
+{
+    justify-content: center;
+}
+
+.trait-container
+{
+    padding: 0;
     display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trait-icon
+{
+    margin: auto;
+    width: 35px;
+    height: 35px;
+    padding: 2px;
+    cursor: pointer;
 }

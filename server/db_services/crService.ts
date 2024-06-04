@@ -59,6 +59,8 @@ export class CrService
     let traitsConverted = [];
     if (cr.traits) traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj)});
 
+    if (cr.skillPicks) await this.replaceSkillPicks(cr.crID, cr.skillPicks);
+
     await updateDoc(doc(db, "creatures", crID),
     {
       agi: cr.agi,
@@ -73,6 +75,7 @@ export class CrService
       str: cr.str,
       traits: traitsConverted,
       xp: cr.xp,
+      lvlup: cr.lvlup,
     });
   }
 
@@ -113,7 +116,6 @@ export class CrService
 
   async setAct(crID: string, act: Activity = null)
   {
-    console.log(act);
     if(act) act = Object.assign({}, act);
     await updateDoc(doc(db, "creatures", crID),
     {
@@ -159,7 +161,7 @@ export class CrService
     try
     {
       let docu = await getDoc(doc(db, "traits", name));
-      return(new Trait(docu.id, docu.data()['description'], docu.data()['scaling']));
+      return(new Trait(docu.id, docu.data()['description'], docu.data()['isScaling'], docu.data()['isBattle']));
     }
     catch (error)
     {
@@ -181,7 +183,7 @@ export class CrService
     }
 
     let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
-      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], cAct);
+      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], data["lvlup"], cAct);
     if (!baseStats) applyTraits(cr);
     
     return cr;

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, getDocs, collection} from 'firebase/firestore/lite';
+import { getFirestore, doc, getDoc, getDocs, collection, setDoc} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { Activity } from "../models/activity";
 
@@ -36,5 +36,15 @@ export class ActService
     });
 
     return arr;
+  }
+
+  async createAct(name: string, description: string, duration: number, props: Object)
+  {
+    await setDoc(doc(db, "activities", name),
+    {
+      description: description,
+      duration: duration,
+      props: props,
+    });
   }
 }

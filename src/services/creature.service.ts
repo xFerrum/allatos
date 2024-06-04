@@ -68,7 +68,7 @@ export class CreatureService
     }
 
     let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
-      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], cAct);
+      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], data["lvlup"], cAct);
     if (!baseStats) applyTraits(cr);
     
     return cr;

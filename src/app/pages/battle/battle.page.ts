@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonModal, IonicModule, ModalController } from '@ionic/angular';
+import { IonModal, IonPopover, IonicModule, ModalController } from '@ionic/angular';
 import { Creature } from 'src/models/creature';
 import { Skill } from 'src/models/skill';
 import { CreatureService } from 'src/services/creature.service';
@@ -12,6 +12,7 @@ import { SkillcardComponent } from 'src/app/small_components/skillcard/skillcard
 import { AnimationController } from '@ionic/angular/standalone';
 import { PopUpService } from 'src/services/popup.service';
 import { ProgressbarComponent } from 'src/app/small_components/progressbar/progressbar.component';
+import { Trait } from 'src/models/trait';
 
 @Component({
   selector: 'app-battle',
@@ -23,6 +24,7 @@ import { ProgressbarComponent } from 'src/app/small_components/progressbar/progr
 
 export class BattlePage implements OnInit
 {
+  @ViewChild('popover') popover!: IonPopover;
   loadingDone = false; //TODO: implement loading spinner while joining
   myCrID!: string;
   myCr!: Creature;
@@ -36,6 +38,8 @@ export class BattlePage implements OnInit
   myBlock = 0;
   opBlock = 0;
   turnInfo = "";
+  traitShowing = false;
+  traitToShow!: Trait;
 
   @ViewChild(IonModal) modal!: IonModal;
   
@@ -202,6 +206,13 @@ export class BattlePage implements OnInit
   closeSkill()
   {
     this.modal.dismiss();
+  }
+
+  traitClicked(e: Event, trait: Trait)
+  {
+    this.traitToShow = {...trait};
+    this.popover.event = e;
+    this.traitShowing = true;
   }
 
   /*---------------------------------------------------------------ANIMATION STUFF---------------------------------------------------------------*/

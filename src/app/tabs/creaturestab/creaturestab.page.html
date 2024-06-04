@@ -46,7 +46,7 @@
                     <ion-col size="auto">
                       <div>Level {{creature.level}}</div>
                     </ion-col>
-                    <ion-col style="height: 50px;">
+                    <ion-col style="height: 50px; max-width: 500px; margin: auto;">
                       <app-progressbar type="xp" [current]="creature.xp" [total]="'100'" style="height: 50px;"></app-progressbar>
                     </ion-col>
                   </ion-row>
@@ -65,6 +65,11 @@
                       <ion-col class="attr-name">
                         <ion-label>STRENGTH</ion-label>
                       </ion-col>
+                      
+                      <ion-col class="plus-col">
+                        <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'str')" src="assets/icons/plus.png" />
+                      </ion-col>
+
                       <ion-col class="attr-number">
                         <ion-label>{{creature.str}}</ion-label>
                       </ion-col>
@@ -77,6 +82,11 @@
                       <ion-col class="attr-name">
                         <ion-label>AGILITY</ion-label>
                       </ion-col>
+
+                      <ion-col class="plus-col">
+                        <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'agi')" src="assets/icons/plus.png" />
+                      </ion-col>
+
                       <ion-col class="attr-number">
                         <ion-label>{{creature.agi}}</ion-label>
                       </ion-col>
@@ -89,6 +99,11 @@
                       <ion-col class="attr-name">
                         <ion-label>INTELLIGENCE</ion-label>
                       </ion-col>
+
+                      <ion-col class="plus-col">
+                        <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'int')" src="assets/icons/plus.png" />
+                      </ion-col>
+
                       <ion-col class="attr-number">
                         <ion-label>{{creature.int}}</ion-label>
                       </ion-col>

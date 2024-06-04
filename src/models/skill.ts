@@ -49,7 +49,8 @@ export class Skill
 
                             case 'combo':
                                 this.description += "Combo: ";
-                                if ('dmg' in this.effects.combo) this.description += "+ " + this.effects.combo.dmg + " damage. ";
+                                if ('dmg' in this.effects.combo) this.description += "+" + this.effects.combo.dmg + " damage. ";
+                                if ('heavy' in this.effects.combo) this.description += "+" + this.effects.combo.heavy + " heavy. ";
                                 this.description += "\n";
                             break;
                         }
