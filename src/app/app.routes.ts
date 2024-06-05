@@ -1,11 +1,13 @@
 import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { AuthGuard } from 'src/services/user.service';
+import { LoginRegGuard } from 'src/services/user.service';
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
+    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage),
+    canActivate: [LoginRegGuard]
   },
   {
     path: 'tabs',
@@ -14,7 +16,8 @@ export const routes: Routes = [
   },
   {
     path: 'registration',
-    loadComponent: () => import('./pages/registration/registration.page').then( m => m.RegistrationPage)
+    loadComponent: () => import('./pages/registration/registration.page').then( m => m.RegistrationPage),
+    canActivate: [LoginRegGuard]
   },
   {
     path: 'battle',

@@ -21,4 +21,16 @@ const traitFuncs = new Map<string, Function>
             return(cr);
         }
     ],
+    ["Muscular", (cr: Creature): Creature =>
+        {
+            cr.str += 2;
+            return(cr);
+        }
+    ],
+    ["Absolutely Jacked", (cr: Creature): Creature =>
+        {
+            cr.str += 4;
+            return(cr);
+        }
+    ],
 ]);

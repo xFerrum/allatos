@@ -5,7 +5,7 @@ import { CrService } from "./db_services/crService";
 import { Activity } from "./models/activity";
 import { resolveAct } from "./tools/actResolver";
 import { UserService } from "./db_services/userService";
-import { ActService } from "./db_services/actService";
+import { GenericService } from "./db_services/genericService";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -19,7 +19,7 @@ const io = require('socket.io')(3010,
 const schedule = require('node-schedule');
 const crService = new CrService;
 const userService = new UserService;
-const actService = new ActService;
+const genericService = new GenericService;
 
 const actMap = new Map<string, any>;
 rebuildOngoingActs();
@@ -31,7 +31,7 @@ io.on('connection', (socket: any) =>
     {
         if (canGo(crID, act))
         {
-            let newAct = await actService.getAct(act.name)
+            let newAct = await genericService.getAct(act.name)
             newAct.startDate = new Date();
             await scheduleAct(crID, newAct);
         }

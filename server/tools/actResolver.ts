@@ -1,9 +1,8 @@
 import { Creature } from "../models/creature";
-import { ModifyCreature } from "./modifyCreature";
 import { Notification } from "../models/notification";
 import { generateSkill } from "./skillGenerator";
-import { CrService } from "../db_services/crService";
 import { Activity } from "../models/activity";
+import { GenericService } from "../db_services/genericService";
 
 /*
     for now you get xp | traits | skills from activities
@@ -15,51 +14,36 @@ import { Activity } from "../models/activity";
     - (will implement in future: item loot)
     - ("choose your own" style events?)
     - rerolls: players can acquire rerolls, use them for event skill check rr, skillpick rr etc.
+    - event fights: certain events can unlock AI fights
 */
 
-const modifyCreature = new ModifyCreature;
-const crService = new CrService;
+const genericService = new GenericService;
 
-
+let notiDescription = '';
 //modify cr and return a notification
 export async function resolveAct(cr: Creature, act: Activity): Promise<Notification>
 {
-    let notiDescription = '';
+    notiDescription = '';
 
-    //TODO: randomly modify props
+    for (const eventArr of actEventTable[act.name])
+    {
+        if (Math.random() <= eventArr[1])
+        {
+            await eventsMap.get(String([eventArr[0]]))(act, cr);
+        }
+    }
 
     if (act.props['xp'])
     {
         const rolledXP = rollXP(cr.int, act.props['xp']);
-        cr = modifyCreature.addXP(cr, rolledXP);
+        cr.addXP(rolledXP);
         notiDescription += "Gained " + rolledXP + " xp.\n";
-    }
-
-    //[ how many, rarity ]
-    if (act.props['skill'])
-    {
-        let skillPick = [];
-        for (let i = 0; i < act.props['skill'][0]; i++)
-        {
-            const rand = Math.floor(Math.random()*2);
-            let type = 'attack';
-            if (rand >= 1) type = 'block'; 
-
-            skillPick.push(generateSkill(act.props['skill'][1], type));
-        }
-        cr = modifyCreature.addSkillPick(cr, skillPick);
-        notiDescription += "You can learn a skill! ";
-    }
-
-    if (act.props['trait'])
-    {
-
-        cr.traits.push(await crService.getTrait(act.props['trait']));
-        notiDescription += "Gained a trait: " + act.props['trait']  + ". ";
     }
 
     return new Notification(cr.name + " back from " + act.name, notiDescription, 'activity-summary', new Date());
 }
+
+
 
 //give random number multiplied by between ~1 and ~2 (influenced by int stat)
 function rollXP(int: number, baseXP: number): number
@@ -79,8 +63,93 @@ function rollXP(int: number, baseXP: number): number
     return (Math.floor((modi/20 + 1) * baseXP));
 }
 
-
 function rndInt(min: number, max: number): number
 {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+/* -------------------------------------------------------------------------- EVENTS -------------------------------------------------------------------------- */
+
+/*
+    name:
+    [
+        [eventName, chance]
+        ...
+    ]
+*/
+
+//Object bc it might get uploaded to firestore at some point
+const actEventTable =
+{
+    'Climb the Mountains':
+    [
+        ['Become stronger', 0.13]
+    ],
+    'Explore the Jungle':
+    [
+        ['Hidden treasure', 0.2]
+    ],
+    'Visit the Magical Pond':
+    [
+        ['Blessed by spirit', 0.05]
+    ]
+}
+
+
+let eventsMap = new Map<string, Function>
+([
+    ['Blessed by spirit', (act: Activity, cr: Creature) =>
+        {
+            const randomSkill = generateSkill(3);
+            cr.addSkillPick([randomSkill]);
+
+            notiDescription += "You have been blessed by a magical spirit! You can learn a legendary skill: " + randomSkill.name + ". ";
+        }
+    ],
+    ['Become stronger', async (act: Activity, cr: Creature) =>
+        {
+            if (cr.getTraitNames().includes('Absolutely Jacked'))
+            {
+                return;
+            }
+            else if (cr.getTraitNames().includes('Muscular'))
+            {
+                cr.removeTrait('Muscular');
+                cr.addTrait(await genericService.getTrait('Absolutely Jacked'));
+
+                notiDescription += "Regular exercise has shaped " + cr.name + "'s physique into an exceptional form. Gained a new trait: Absolutely Jacked. " ;
+            }
+            else if (cr.getTraitNames().includes('Strong'))
+            {
+                cr.removeTrait('Strong');
+                cr.addTrait(await genericService.getTrait('Muscular'));
+
+                notiDescription += cr.name + " seems to get stronger with each trip. Gained a new trait: Muscular. " ;
+            }
+            else
+            {
+                cr.addTrait(await genericService.getTrait('Strong'));
+
+                notiDescription += "Mountain climbing turned out to be a decent workout. Gained a new trait: Strong. " ;
+            }
+        }
+    ],
+    ['Hidden treasure', (act: Activity, cr: Creature) =>
+        {
+            if (rndInt(0, 1))
+            {
+                const extraXP = rollXP(cr.int, 15);
+    
+                notiDescription += "You found a hidden stash of supplies. Gained " + extraXP + " extra XP. ";
+            }
+            else
+            {
+                let skills = [];
+                for (let i = 0; i < 3; i++) skills.push(generateSkill[0]);
+                cr.addSkillPick(skills);
+    
+                notiDescription += "You found a hidden stash of supplies. You can learn a common skill. ";
+            }
+        }
+    ],
+])

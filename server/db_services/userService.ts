@@ -36,7 +36,6 @@ export class UserService
   async sendNotification(uid: string, noti: Notification)
   {
     let temp = (await this.getUser(uid)).notifications;
-    console.log(temp);
     if (!temp) temp = [];
     temp.push(noti);
     const converted = temp.map((obj)=> {return Object.assign({}, obj)});

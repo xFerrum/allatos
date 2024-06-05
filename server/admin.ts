@@ -1,12 +1,11 @@
-import { ActService } from "./db_services/actService";
+import { GenericService } from "./db_services/genericService";
 
-const actService = new ActService;
+const actService = new GenericService;
 
 let props =
 {
     trait: null,
-    xp: 6,
-    skill: [3, 0]
+    xp: 6
 }
 
-actService.createAct('Explore the Jungle', '', 10000, props);
+actService.createAct('Visit the Magical Pond', '', 90000, props);

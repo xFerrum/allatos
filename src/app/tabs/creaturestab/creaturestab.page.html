@@ -152,74 +152,11 @@
                 <ion-card class="attributes-card">
                   <ion-card-content>
                     <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
                       <ion-col class="attr-name">
-                        <ion-label>STRENGTH</ion-label>
+                        <ion-label>Battles won:</ion-label>
                       </ion-col>
                       <ion-col class="attr-number">
-                        <ion-label>{{creature.str}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-  
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>AGILITY</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.agi}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>INTELLIGENCE</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.int}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>CONSTITUTION</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.con}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-  
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>STAMINA</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.stamina}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-  
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>INITIATIVE</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.ini}}</ion-label>
+                        <ion-label>{{creature.battlesWon}}</ion-label>
                       </ion-col>
                     </ion-row>
                   </ion-card-content>
@@ -277,19 +214,19 @@
 
           </ng-template>
         </ion-modal>
-
-        <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false" class="trait-popover">
-          <ng-template>
-            <ion-content>
-              <div class="trait-title">
-                {{traitToShow.name}}
-              </div>
-              <div class="trait-description">
-                {{traitToShow.description}}
-              </div>
-            </ion-content>
-          </ng-template>
-        </ion-popover>
-
       </ion-grid>
+
+      <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false" class="trait-popover">
+        <ng-template>
+          <ion-content>
+            <div class="trait-title">
+              {{traitToShow.name}}
+            </div>
+            <div class="trait-description">
+              {{traitToShow.description}}
+            </div>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+
 </ion-content>

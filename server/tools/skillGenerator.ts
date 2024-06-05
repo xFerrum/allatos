@@ -6,6 +6,8 @@ NOTES/IDEAS:
 - blocks: less comboable, but can counter opponent's attacks, takes priority to attacks in combat
 - fatigue: skills build up fatigue, have to rest after a certain amount
 - diminishing returns on creature attributes (ie: 10 str -> 100% dmg , 15 str -> 120% dmg , 20 str -> 130% dmg)
+
+- craft multiple cards of same rarity -> upgrade another card or smth
 */
 
 /*
@@ -48,11 +50,17 @@ let description = '';
 let skills = [];
 
 //TODO: separate functions for adding each effect, these could be used for modifying skills too (after theyve already been generated)
-export function generateSkill(rarity: number, type: string): Skill
+export function generateSkill(rarity: number, type = 'random'): Skill
 {
     effects = {};
     fatCost = 0;
     skills = [];
+
+    if (type === 'random')
+    {
+        const types = ['attack', 'block'];
+        type = types[rndInt(0, 1)];
+    }
 
     switch(type)
     {
@@ -144,11 +152,11 @@ function loadAttacks(r: number)
 
     if (r === 3)
     {
-        //+25-31 dmg +10 fatcost
+        //+25-31 dmg +30 fatcost
         skills.push(() =>
         {
             name = "Brutal Swing";
-            fatCost = 20;
+            fatCost += 30;
             effects['dmg'] += rndInt(25, 31);
         });
     }

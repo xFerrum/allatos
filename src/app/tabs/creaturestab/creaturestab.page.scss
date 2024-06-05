@@ -185,12 +185,11 @@ $containerbg: linear-gradient(to bottom right, rgba(90, 150, 179, 0.75), rgba(40
     min-width: 120px;
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .attr-number
 {
-    max-width: 60px;
     margin-top: 6px;
     margin-bottom: 6px;
     border-radius: 50px;
@@ -200,6 +199,7 @@ $containerbg: linear-gradient(to bottom right, rgba(90, 150, 179, 0.75), rgba(40
     display: flex;
     align-items: center;
     justify-content: center;
+    max-width: 50px;
     min-width: 50px;
 }
 
@@ -414,6 +414,7 @@ $containerbg: linear-gradient(to bottom right, rgba(90, 150, 179, 0.75), rgba(40
     --background: url(/assets/bg.png) center/cover fixed;
     &::part(background)
     {
+        background-position: left;
         opacity: 0.85;
     }
 }

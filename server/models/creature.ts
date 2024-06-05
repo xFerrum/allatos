@@ -1,6 +1,7 @@
 import { Activity } from "./activity";
 import { Skill } from "./skill";
 import { Trait } from "./trait";
+import { generateSkill } from "../tools/skillGenerator";
 
 export class Creature
 {
@@ -54,5 +55,58 @@ export class Creature
         this.skillPicks = skillPicks;
         this.level = level;
         this.lvlup = lvlup;
+    }
+
+    getTraitNames(): Array<string>
+    {
+        let nameArr = [];
+        for (let trait of this.traits) nameArr.push(trait.name);
+        
+        return nameArr;
+    }
+
+    addXP(gained: number)
+    {
+        if (this.xp + gained < 100)
+        {
+            this.xp += gained;
+        }
+        else
+        {
+            this.level++;
+            this.lvlup++;
+            this.xp = 0 + (this.xp + gained - 100);
+
+            let newSkillPick = [];
+            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(0));
+            this.addSkillPick(newSkillPick);
+        }
+    }
+
+    addSkillPick(skillPick: Array<Skill>)
+    {
+        if (!(this.skillPicks)) this.skillPicks = {};
+        this.skillPicks[(new Date().getTime())] = skillPick;
+    }
+
+    addTrait(trait: Trait)
+    {
+        if (!this.traits) this.traits = [];
+        this.traits.push(trait);
+
+    }
+
+    removeTrait(traitName: string)
+    {
+        if (!this.traits) return;
+
+        this.traits.forEach((t) =>
+        {
+            if (t.name === traitName)
+            {
+                console.log("asd");
+                this.traits.splice(this.traits.indexOf(t), 1);
+            }
+        });
     }
 }

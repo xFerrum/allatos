@@ -47,17 +47,11 @@ export class CrService
   async updateCreature(crID: string, cr: Creature)
   {
     let skillsConverted = [];
-    if (cr.skills)
-    {
-      for (let s of cr.skills)
-      {
-        delete s.usedByID;
-      }
-      skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj)});
-    }
+    if (cr.skills) { cr.skills.forEach((s) =>{ delete s.usedByID; });}
+    skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj);});
 
     let traitsConverted = [];
-    if (cr.traits) traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj)});
+    if (cr.traits) traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj);});
 
     if (cr.skillPicks) await this.replaceSkillPicks(cr.crID, cr.skillPicks);
 
@@ -85,7 +79,7 @@ export class CrService
     if (!temp) temp = [];
     temp.push(skill);
     delete skill.usedByID;
-    const converted = temp.map((obj)=> {return Object.assign({}, obj)});
+    const converted = temp.map((obj)=> {return Object.assign({}, obj);});
     
     await updateDoc(doc(db, "creatures", crID),
     {
@@ -154,23 +148,6 @@ export class CrService
     {
       skillPicks: skillPicks
     });
-  }
-
-  async getTrait(name: string, tries = 10): Promise<Trait>
-  {
-    try
-    {
-      let docu = await getDoc(doc(db, "traits", name));
-      return(new Trait(docu.id, docu.data()['description'], docu.data()['isScaling'], docu.data()['isBattle']));
-    }
-    catch (error)
-    {
-      if (tries > 0)
-      {
-        return await this.getTrait(name, tries-1)
-      }
-      else throw error;
-    }
   }
 
   //convert from firebase model to frontend model, apply traits if requested

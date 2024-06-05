@@ -21,6 +21,7 @@ export class Creature
     born: Date;
     skillPicks: Object;
     lvlup: number;
+    battlesWon: number;
     currentAct?: Activity;
 
     //for battle
@@ -34,7 +35,7 @@ export class Creature
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, int: number, con: number, ini: number,
         ownedBy: string, skills: Array<Skill>, traits: Array<Trait>, stamina: number, xp: number, born: Date, level: number,
-        skillPicks: Object, lvlup: number, currentAct?: Activity)
+        skillPicks: Object, lvlup: number, battlesWon: number, currentAct?: Activity)
     {
         this.crID = crID;
         this.name = name;
@@ -54,5 +55,6 @@ export class Creature
         this.skillPicks = skillPicks;
         this.level = level;
         this.lvlup = lvlup;
+        this.battlesWon = battlesWon;
     }
 }

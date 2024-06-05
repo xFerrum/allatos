@@ -27,7 +27,7 @@ export class UserService
     {
       if (user)
       {
-        const userData = await this.getUser(user.uid);
+        this.router.navigate(['tabs']);        const userData = await this.getUser(user.uid);
         await this.popUpService.loadNotifications(userData.notifications);
         this.clearNotifications();
 
@@ -176,7 +176,24 @@ export class UserService
         }
       });
     });
+  }
 
+  canActivateLoginReg(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean>
+  {
+    return new Promise((resolve) =>
+    {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user)
+        {
+          this.router.navigate(['tabs/creatures']);
+          resolve(false);
+        } else
+        {
+          resolve(true);
+        }
+      });
+    });
   }
 }
 
@@ -184,3 +201,8 @@ export const AuthGuard: CanActivateFn = (next: ActivatedRouteSnapshot, state: Ro
 {
   return inject(UserService).canActivate(next, state);
 }
+
+export const LoginRegGuard: CanActivateFn = (next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> =>
+  {
+    return inject(UserService).canActivateLoginReg(next, state);
+  }

@@ -1,5 +1,5 @@
 /* tslint:disable:unknown-word */
-import { ChangeDetectorRef, Component, DoCheck, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, DoCheck, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IonModal, IonicModule } from '@ionic/angular';
 import { Creature } from 'src/models/creature';
 import { CreatureService } from 'src/services/creature.service';
@@ -39,8 +39,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   socket: any;
   waitingForLearn = false;
 
-  constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService,
-    public cdr: ChangeDetectorRef)
+  constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService)
   {}
 
   async ngOnInit(): Promise<void>

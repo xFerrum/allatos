@@ -2,11 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc, getDocs, collection, setDoc} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { Activity } from "../models/activity";
+import { Trait } from "../models/trait";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
 
-export class ActService
+export class GenericService
 {
   async getAct(name: string, tries = 10): Promise<Activity>
   {
@@ -46,5 +47,22 @@ export class ActService
       duration: duration,
       props: props,
     });
+  }
+
+  async getTrait(name: string, tries = 10): Promise<Trait>
+  {
+    try
+    {
+      let docu = await getDoc(doc(db, "traits", name));
+      return(new Trait(docu.id, docu.data()['description'], docu.data()['isScaling'], docu.data()['isBattle']));
+    }
+    catch (error)
+    {
+      if (tries > 0)
+      {
+        return await this.getTrait(name, tries-1)
+      }
+      else throw error;
+    }
   }
 }
