@@ -11,6 +11,7 @@ export class BattleSession
     io: any;
     socket1: any;
     socket2: any;
+    gameOverCb: Function;
 
     //gameStates -> 0: initializing || 10: turn start || 20: 1-1 skills picked (reveal phase) || 30: 2-2 skills picked (action phase) || 40: turn ending
     gameState = 0; 
@@ -26,8 +27,10 @@ export class BattleSession
     combatLog = "";
     skillsOrdered: Skill[] = [];
 
-    constructor(roomID: string, cr: Creature, io: any)
+    constructor(roomID: string, cr: Creature, io: any, gameOverCb: Function)
     {
+        this.gameOverCb = gameOverCb;
+
         this.cr1 = cr;
         this.uid1 = cr.ownedBy;
         this.cr1.HP = cr.con;
@@ -310,6 +313,8 @@ export class BattleSession
     useSkill(actor: Creature, opponent: Creature, skill: Skill)
     {
         this.io.to(this.roomID).emit('action-happened', skill);
+        this.sendSnapshot();
+
         actor.fatigue += skill.fatCost;
         switch(skill.type)
         {
@@ -387,14 +392,18 @@ export class BattleSession
     {
         cr.block += amount;
         this.combatLog += cr.name + " is blocking " + amount + ".\n"
+
         this.io.to(this.roomID).emit('action-happened', {type: 'gain-block', block: amount, actorID: cr.crID});
+        this.sendSnapshot();
     }
 
     removeBlock(cr: Creature, amount: number)
     {
         if (amount > cr.block) amount = cr.block;
-        this.io.to(this.roomID).emit('action-happened', {type: 'gain-block', block: -1 * amount, actorID: cr.crID});
         cr.block -= amount;
+
+        this.io.to(this.roomID).emit('action-happened', {type: 'remove-block', block: -1 * amount, actorID: cr.crID});
+        this.sendSnapshot();
     }
 
     hit(actor: Creature, target: Creature, dmg: number)
@@ -416,6 +425,7 @@ export class BattleSession
 
         this.combatLog += target.name + " got hit for " + dmg + " damage.\n"
         this.io.to(this.roomID).emit('action-happened', {type: 'hit', dmg: dmg, targetID: target.crID});
+        this.sendSnapshot();
     }
 
     //discard hand, draw X skills from deck
@@ -475,7 +485,12 @@ export class BattleSession
 
     playerWon(uid: string)
     {
+        this.io.to(this.roomID).emit('turn-ended');
+        this.sendGameState();
         this.io.to(this.roomID).emit('player-won', uid);
+        this.socket1.disconnect();
+        this.socket2.disconnect();
+        this.gameOverCb();
     }
 
     sendGameState()
@@ -491,6 +506,21 @@ export class BattleSession
 
         this.socket1.emit('game-state-sent', this.cr1, this.p1CanPick, decoy2, cr2SkillsLength, this.gameState);
         this.socket2.emit('game-state-sent', this.cr2, this.p2CanPick, decoy1, cr1SkillsLength, this.gameState);
+    }
+
+    sendSnapshot()
+    {
+        const cr1SkillsLength = this.cr1.skills.length;
+        const cr2SkillsLength = this.cr2.skills.length;
+        let decoy1 = { ...this.cr1 };
+        let decoy2 = { ...this.cr2 };
+        decoy1.skills = [];
+        decoy2.skills = [];
+        decoy1.ownedBy = null;
+        decoy2.ownedBy = null;
+
+        this.socket1.emit('snapshot-sent', this.cr1, decoy2, cr2SkillsLength);
+        this.socket2.emit('snapshot-sent', this.cr2, decoy1, cr1SkillsLength);
     }
 
     gameStateRequested(socket: any)

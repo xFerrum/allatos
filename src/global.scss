@@ -79,17 +79,43 @@
 
 .skill-popup
 {
+    justify-content: flex-end;
+    margin-right: 30px;
+
+    ion-content::part(background)
+    {
+        background-color:rgba(0, 0, 0, 0)
+    }
+
     &::part(content)
     {
+        background-color:rgba(#79b4b6, 1);
         border-radius: 10px;
         width: 300px;
         height: 350px;
+        border: 1px solid black;
+
     }
+    
     --backdrop-opacity: 0;
 }
 
 .hit-popup
 {
+    justify-content: flex-end;
+    margin-right: 30px;
+
+    ion-content::part(background)
+    {
+        background-color:rgba(0, 0, 0, 0)
+    }
+
+    &::part(content)
+    {
+        background-color:rgba(#79b4b6, 1);
+        border: 1px solid black;
+    }
+
     --backdrop-opacity: 0;
 }
 

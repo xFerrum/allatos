@@ -5,14 +5,14 @@ import { LoginRegGuard } from 'src/services/user.service';
 
 export const routes: Routes = [
   {
-    path: '',
-    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage),
-    canActivate: [LoginRegGuard]
-  },
-  {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then(m => m.routes),
     canActivate: [AuthGuard]
+  },
+  {
+    path: '',
+    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage),
+    canActivate: [LoginRegGuard]
   },
   {
     path: 'registration',

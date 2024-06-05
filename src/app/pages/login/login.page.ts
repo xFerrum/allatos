@@ -47,7 +47,7 @@ export class LoginPage implements OnInit
     {
       if (await this.userService.logUserIn(this.form.get('email')!.value, this.form.get('password')!.value))
       {
-        this.router.navigate(['tabs']);
+        this.router.navigate(['tabs/creatures']);
       }
       else
       {

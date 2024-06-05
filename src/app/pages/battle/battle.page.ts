@@ -45,6 +45,7 @@ export class BattlePage implements OnInit
   
   //for animation
   actionChain: any[] = [];
+  snapshotChain: any[] = [];
   hitFor!: number;
   animating = false;
   skillToDisplay!: Skill;
@@ -165,6 +166,11 @@ export class BattlePage implements OnInit
       this.actionChain.push(action);
     });
 
+    this.socket.on('snapshot-sent', (myCr: Creature, opCr: Creature, opSkillsLength: number) =>
+    {
+      this.snapshotChain.push({ myCr: myCr, opCr: opCr, opSkillsLength: opSkillsLength });
+    });
+
     this.socket.on('turn-ended', async () =>
     {
       await this.EOTAnimations();
@@ -217,49 +223,11 @@ export class BattlePage implements OnInit
 
   /*---------------------------------------------------------------ANIMATION STUFF---------------------------------------------------------------*/
 
-  async cardAnimation(s: Skill, showFor: number, what: string)
-  {
-    this.what = what;
-    if (s.usedByID === this.myCrID)
-    {
-      this.who = this.myCr.name;
-    }
-    else
-    {
-      this.who = this.opCr.name;
-    }
-    this.skillToDisplay = s;
-    this.showPlayedSkill = true;
-    await this.delay(showFor);
-    await this.modal.dismiss();
-    this.showPlayedSkill = false;
-  }
-
-  async hitAnimation(action: any, showFor: number)
-  {
-    if (action.targetID === this.myCrID)
-    {
-      this.who = this.myCr.name;
-    }
-    else
-    {
-      this.who = this.opCr.name;
-    }
-    this.hitFor = action.dmg;
-
-    if (this.hitFor > 0)
-    {
-      await this.popUpService.effectPopUp(this.who + " got hit for " + this.hitFor + " damage!", 'hit-popup');
-    } else  this.popUpService.effectPopUp(this.who + " defended successfully!", 'hit-popup');
-    await this.delay(showFor);
-    await this.popUpService.dismissPopUp();
-  }
-
   async EOTAnimations()
   {
     this.animating = true;
-    const showCardFor = 1600;
-    const showEffectFor = 1200;
+    const showCardFor = 2700;
+    const showEffectFor = 2000;
     const inBetween = 500;
 
     for (let a of this.actionChain)
@@ -274,16 +242,18 @@ export class BattlePage implements OnInit
         await this.cardAnimation(a, showCardFor, "attacks");
         await this.delay(inBetween);
       }
-      else if (a.type === 'hit')
-      {
-        await this.hitAnimation(a, showCardFor);
-        await this.delay(inBetween);
-      }
       else if (a.type === 'gain-block')
       {
         this.updateBlock(a.block, a.actorID);
       }
+      else if (a.type === 'remove-block')
+      {
+        this.updateBlock(a.block, a.actorID);
+      }
 
+      const newStats = this.snapshotChain.shift();
+      this.updateMe(newStats.myCr, false);
+      this.updateOp(newStats.opCr, newStats.opSkillsLength);
     }
 
     if (this.myCr.turnInfo.fatigued)
@@ -304,8 +274,46 @@ export class BattlePage implements OnInit
     this.socket.emit('game-state-requested');
   }
 
+  async cardAnimation(s: Skill, showFor: number, what: string)
+  {
+    this.what = what;
+    if (s.usedByID === this.myCrID)
+    {
+      this.who = this.myCr.name;
+    }
+    else
+    {
+      this.who = this.opCr.name;
+    }
+    this.skillToDisplay = s;
+    this.showPlayedSkill = true;
+    await this.delay(showFor);
+    await this.modal.dismiss();
+    this.showPlayedSkill = false;
+  }
 
-  delay(ms: number) {
+/*   async hitAnimation(action: any, showFor: number)
+  {
+    if (action.targetID === this.myCrID)
+    {
+      this.who = this.myCr.name;
+    }
+    else
+    {
+      this.who = this.opCr.name;
+    }
+    this.hitFor = action.dmg;
+
+    if (this.hitFor > 0)
+    {
+      await this.popUpService.effectPopUp(this.who + " got hit for " + this.hitFor + " damage!", 'hit-popup');
+    } else  this.popUpService.effectPopUp(this.who + " defended successfully!", 'hit-popup');
+    await this.delay(showFor);
+    await this.popUpService.dismissPopUp();
+  } */
+
+  delay(ms: number)
+  {
     return new Promise( resolve => setTimeout(resolve, ms) );
-}
+  }
 }

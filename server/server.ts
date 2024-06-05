@@ -24,7 +24,7 @@ io.on('connection', (socket: any) =>
 
     if (!battlesInProgress.has(roomID)) //if it's the first user joining the room (for the first time)
     {
-      let newBattle = new BattleSession(roomID, cr, io);
+      let newBattle = new BattleSession(roomID, cr, io, () => { battlesInProgress.delete(roomID) } );
       newBattle.socket1 = socket;
 
       battlesInProgress.set(roomID, newBattle);
