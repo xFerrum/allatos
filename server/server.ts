@@ -1,6 +1,8 @@
 import { BattleSession } from "./battleSession";
-import { Creature } from "../src/models/creature";
+import { Creature } from "./models/creature";
+import { CrService } from "./db_services/crService";
 
+const crService = new CrService;
 const battlesInProgress = new Map<string, BattleSession>;
 
 const io = require('socket.io')(3000,
@@ -24,7 +26,11 @@ io.on('connection', (socket: any) =>
 
     if (!battlesInProgress.has(roomID)) //if it's the first user joining the room (for the first time)
     {
-      let newBattle = new BattleSession(roomID, cr, io, () => { battlesInProgress.delete(roomID) } );
+      let newBattle = new BattleSession(roomID, cr, io, async (winner: Creature) =>
+        {
+          crService.addWin(winner);
+          battlesInProgress.delete(roomID)
+        } );
       newBattle.socket1 = socket;
 
       battlesInProgress.set(roomID, newBattle);

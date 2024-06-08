@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, deleteField} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { Skill } from "../models/skill";
-import { Creature } from "..//models/creature";
+import { Creature } from "../models/creature";
 import { Trait } from "../models/trait";
 import { Activity } from "../models/activity";
 import { applyTraits } from "../tools/applyTraits";
@@ -87,11 +87,19 @@ export class CrService
     });
   }
 
-  async deleteAllSkills(cid: string)
+  async deleteAllSkills(crID: string)
   {
-    await updateDoc(doc(db, "creatures", cid),
+    await updateDoc(doc(db, "creatures", crID),
     {
       skills: []
+    });
+  }
+
+  async addWin(cr: Creature)
+  {
+    await updateDoc(doc(db, "creatures", cr.crID),
+    {
+      battlesWon: (cr.battlesWon++)
     });
   }
 
@@ -160,7 +168,8 @@ export class CrService
     }
 
     let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
-      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"], data["skillPicks"], data["lvlup"], cAct);
+      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],
+      data["skillPicks"], data["lvlup"], data["battlesWon"], cAct);
     if (!baseStats) applyTraits(cr);
     
     return cr;

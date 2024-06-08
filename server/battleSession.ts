@@ -1,5 +1,5 @@
-import { Creature } from "../src/models/creature";
-import { Skill } from "../src/models/skill";
+import { Creature } from "./models/creature";
+import { Skill } from "./models/skill";
 
 export class BattleSession
 {
@@ -458,22 +458,22 @@ export class BattleSession
     {
         if (this.cr1.HP <= 0)
         {
-            if (this.cr2.HP <= 0)
+/*             if (this.cr2.HP <= 0)
             {
                 //tie
             }
-            else
+            else */
             {
                 //p2 won
                 this.gameState = 666;
-                this.playerWon(this.uid2);
+                this.playerWon(this.cr2);
             }
         }
         else if (this.cr2.HP <= 0)
         {
             //p1 won
             this.gameState = 666;
-            this.playerWon(this.uid1);
+            this.playerWon(this.cr1);
         }
     }
 
@@ -483,14 +483,14 @@ export class BattleSession
         this.cr2.turnInfo = {retaliate: {}};
     }
 
-    playerWon(uid: string)
+    playerWon(cr: Creature)
     {
         this.io.to(this.roomID).emit('turn-ended');
         this.sendGameState();
-        this.io.to(this.roomID).emit('player-won', uid);
+        this.io.to(this.roomID).emit('player-won', cr.ownedBy);
         this.socket1.disconnect();
         this.socket2.disconnect();
-        this.gameOverCb();
+        this.gameOverCb(cr);
     }
 
     sendGameState()

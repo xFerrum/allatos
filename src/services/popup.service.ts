@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { AlertController } from "@ionic/angular";
-import { LoadingController } from "@ionic/angular/standalone";
+import { AlertButton, LoadingController } from "@ionic/angular/standalone";
 import { Notification } from "src/models/notification";
 
 @Injectable({
@@ -15,7 +16,7 @@ export class PopUpService
   isLoading!: boolean; //needed in case popup needs to be dismissed before it has loaded, might get stuck otherwise
   notifications: Array<Notification> = [];
   
-  constructor(private alertController: AlertController, private loadingController: LoadingController){}
+  constructor(private alertController: AlertController, private loadingController: LoadingController, private router: Router){}
 
   async loadingPopUp(message: string)
   {
@@ -84,6 +85,28 @@ export class PopUpService
     });
 
     await this.effect.present();
+  }
+
+  async gameOverPopUp(description: string, cssClass: string, header?: string)
+  {
+    this.dismissPopUp();
+    this.popup = await this.alertController.create
+    ({
+      header: header,
+      message: description,
+      cssClass: cssClass,
+      buttons:
+      [{
+          text: 'Leave match',
+          cssClass: 'secondary',
+          handler: () =>
+          {
+            this.router.navigate(['']);
+          }
+      }],
+    });
+
+    await this.popup.present();
   }
 
   async loadNotifications(notis: Array<Notification>)

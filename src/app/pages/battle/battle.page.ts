@@ -40,6 +40,9 @@ export class BattlePage implements OnInit
   turnInfo = "";
   traitShowing = false;
   traitToShow!: Trait;
+  playerWon: any;
+  hiddenMyCr!: Creature;
+  hiddenOpCr!: Creature;
 
   @ViewChild(IonModal) modal!: IonModal;
   
@@ -48,7 +51,7 @@ export class BattlePage implements OnInit
   snapshotChain: any[] = [];
   hitFor!: number;
   animating = false;
-  skillToDisplay!: Skill;
+  skillToDisplay = new Skill('', false, {}, 0, 0, '');
   who = "actor";
   what = "action";
 
@@ -96,6 +99,7 @@ export class BattlePage implements OnInit
 
     this.socket.on('game-state-sent', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number, gameState: number) =>
     {
+
       if (!this.animating)
       {
         this.updateMe(myCr, canPick);
@@ -127,10 +131,13 @@ export class BattlePage implements OnInit
             break;
         }
       }
-      else this.turnInfo = "Action!";
+      else
+      {
+        this.turnInfo = "Action!";
+        this.hiddenMyCr = myCr;
+        this.hiddenOpCr = opCr;
+      }
 
-      this.myCr.turnInfo.fatigued = myCr.turnInfo.fatigued;
-      this.opCr.turnInfo.fatigued = opCr.turnInfo.fatigued;
       this.loadingDone = true;
     });
 
@@ -175,6 +182,25 @@ export class BattlePage implements OnInit
     {
       await this.EOTAnimations();
       this.actionChain = [];
+
+      if (this.playerWon)
+      {
+        if (this.playerWon === this.myCr.ownedBy)
+        {
+          await this.popUpService.gameOverPopUp('', 'gameover', 'You won!');
+        }
+        else
+        {
+          await this.popUpService.gameOverPopUp('', 'gameover', 'You lost.');
+        }
+        this.playerWon = null;
+        this.socket.disconnect;
+      }
+    });
+
+    this.socket.on('player-won', (uid: string) =>
+    {
+      this.playerWon = uid;
     });
   }
 
@@ -223,6 +249,7 @@ export class BattlePage implements OnInit
 
   /*---------------------------------------------------------------ANIMATION STUFF---------------------------------------------------------------*/
 
+  //TODO: make played cards appear next to op or my side of the board
   async EOTAnimations()
   {
     this.animating = true;
@@ -256,14 +283,14 @@ export class BattlePage implements OnInit
       this.updateOp(newStats.opCr, newStats.opSkillsLength);
     }
 
-    if (this.myCr.turnInfo.fatigued)
+    if (this.hiddenMyCr.turnInfo.fatigued)
     {
       await this.popUpService.effectPopUp(this.myCr.name + " is fatigued and needs to rest!", 'hit-popup');
       await this.delay(showEffectFor);
       await this.popUpService.dismissPopUp();
     }
 
-    if (this.opCr.turnInfo.fatigued)
+    if (this.hiddenOpCr.turnInfo.fatigued)
     {
       await this.popUpService.effectPopUp(this.opCr.name + " is fatigued and needs to rest!", 'hit-popup');
       await this.delay(showEffectFor);

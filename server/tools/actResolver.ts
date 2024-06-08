@@ -145,7 +145,7 @@ let eventsMap = new Map<string, Function>
             else
             {
                 let skills = [];
-                for (let i = 0; i < 3; i++) skills.push(generateSkill[0]);
+                for (let i = 0; i < 3; i++) skills.push(generateSkill(0));
                 cr.addSkillPick(skills);
     
                 notiDescription += "You found a hidden stash of supplies. You can learn a common skill. ";

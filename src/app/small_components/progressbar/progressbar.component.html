@@ -1,8 +1,9 @@
 <ion-col class="progress-container">
   <img class="edge-left" src="{{'assets/bars/' + type + '/edge_left.png'}}"/>
   <div class="progress-outer" [style.background-image]="outerBg">
-    <p *ngIf="type !== 'xp'" class="progress-text">{{current}}</p>
+    <p *ngIf="type !== 'xp' && type !== 'fat'" class="progress-text">{{current}}</p>
     <p *ngIf="type === 'xp'" class="progress-text">{{current}} xp</p>
+    <p *ngIf="type === 'fat'" class="progress-text">{{current}}/{{total}}</p>
 
     <div *ngIf="current > 0" class="progress-inner">
 

@@ -105,7 +105,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-modal class="skill-popup" [isOpen]="showRevealedSkill" (willDismiss)="showRevealedSkill = false">
+  <ion-modal class="enemy-skill" [isOpen]="showRevealedSkill" (willDismiss)="showRevealedSkill = false">
     <ng-template>
       <ion-content>
         <ion-row class="revealed-skill-content">
@@ -121,7 +121,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal class="skill-popup" [isOpen]="showPlayedSkill">
+  <ion-modal [ngClass]="skillToDisplay.usedByID === myCr.crID ? 'my-skill' : 'enemy-skill'" [isOpen]="showPlayedSkill">
     <ng-template>
       <ion-content>
         <ion-row class="revealed-skill-content">
@@ -146,18 +146,5 @@
       </ion-content>
     </ng-template>
   </ion-popover>
-
-  <ion-modal class="gameover-popup" [isOpen]="gameOver">
-    <ng-template>
-      <ion-content>
-        <ion-row class="revealed-skill-content">
-          <p>{{who}} {{what}}:</p>
-        </ion-row>
-        <ion-row class="revealed-skill-content">
-          <app-skillcard [skill]="skillToDisplay"></app-skillcard>
-        </ion-row>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
 
 </ion-content>
