@@ -68,7 +68,6 @@ export class BattleSession
         if (socket.data.uid === this.uid1)
         {
             this.socket1 = socket;
-
         }
         else
         {
@@ -124,7 +123,7 @@ export class BattleSession
                     this.actionPhase();
                 
             }
-            else    this.sendGameState();
+            else this.sendGameState();
         }
 
     }

@@ -227,7 +227,7 @@ export class BattlePage implements OnInit
 
   useSkill(index: number)
   {
-    this.socket.emit('play-skill', localStorage.getItem('loggedInID'), index);
+    this.socket.emit('play-skill', this.userService.getLoggedInID(), index);
   }
 
   dummyArr(n: number)

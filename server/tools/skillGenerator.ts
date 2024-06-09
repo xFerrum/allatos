@@ -137,6 +137,7 @@ function loadAttacks(r: number)
     {
         name = "Twin Strike";
 
+        fatCost += 2;
         const comboDmgArr = [0, 2, 4, 7];
         effects['combo'] = {dmg: rndInt(7, 11) + comboDmgArr[r]};
     });
@@ -152,10 +153,11 @@ function loadAttacks(r: number)
 
     if (r === 3)
     {
-        //+25-31 dmg +30 fatcost
+        //+25-31 dmg
         skills.push(() =>
         {
             name = "Brutal Swing";
+
             fatCost += 30;
             effects['dmg'] += rndInt(25, 31);
         });
@@ -173,14 +175,14 @@ function loadBlocks(r: number)
         effects['block'] += rndInt(2, 5) + blockArr[r];
     });
 
-    //stance: 3-13 block, +1 fatCost
+    //stance: 3-13 block
     skills.push(() =>
     {
         name = "Barricade";
 
+        fatCost += 1;
         const stanceArr = [0, 2, 4, 7];
         effects['stance'] = rndInt(3, 6) + stanceArr[r];
-        fatCost += 1;
     });
 
     //+1-4 block, retaliate: 2-7 dmg
@@ -198,6 +200,7 @@ function loadBlocks(r: number)
     {
         name = "Stand Ready";
 
+        fatCost += 2;
         effects['steadfast'] = true;
         const blockArr = [0, 1, 2, 4];
         effects['block'] += rndInt(0, 1) + blockArr[r];

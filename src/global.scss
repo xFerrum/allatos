@@ -29,36 +29,30 @@
     font-family: 'Permanent Marker';
     font-style: normal;
     font-weight: normal;
-    src: url('./assets/fonts/PermanentMarker-Regular.ttf')
+    src: url('/assets/fonts/PermanentMarker-Regular.ttf')
 }
 
 @font-face {
     font-family: 'Alba';
     font-style: normal;
     font-weight: normal;
-    src: url('./assets/fonts/ALBA.ttf')
+    src: url('/assets/fonts/Alba.ttf')
 }
 
 @font-face {
     font-family: 'AlbaS';
     font-style: normal;
     font-weight: normal;
-    src: url('./assets/fonts/ALBAS.ttf')
-}
-
-@font-face {
-    font-family: 'Kerosene';
-    font-style: normal;
-    font-weight: normal;
-    src: url('./assets/fonts/kerosene.ttf')
+    src: url('/assets/fonts/Albas.ttf')
 }
 
 @font-face {
     font-family: 'Mouse';
     font-style: normal;
     font-weight: normal;
-    src: url('./assets/fonts/MouseMemoirs.ttf')
+    src: url('/assets/fonts/MouseMemoirs.ttf')
 }
+
 .skill-pop-up
 {
     --background: rgb(102, 115, 133);
