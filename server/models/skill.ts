@@ -1,7 +1,7 @@
 export class Skill
 {
     type: string;
-    description = "";
+    description = '';
     selfTarget: boolean; 
     effects: any = [];
     fatCost: number;
@@ -27,6 +27,18 @@ export class Skill
 
     buildDescription()
     {
+
+        //for cards with unique effects (add a base description)
+        switch(this.name)
+        {
+            case 'Throw Off Balance':
+                this.description = 'If your opponent used at least ' + this.effects.offBalanceReq + ' fatigue this turn, they become Vulnerable.';
+
+            default:
+                this.description = '';
+                break;
+        }
+
         switch(this.type)
         {
             case 'attack':

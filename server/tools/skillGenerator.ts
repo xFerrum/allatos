@@ -206,6 +206,26 @@ function loadBlocks(r: number)
         effects['block'] += rndInt(0, 1) + blockArr[r];
     });
 
+    if (r === 1)
+    {
+        //+1-7 block, if opponent used 20+ fatigue: apply 1 Vulnerable
+        skills.push(() =>
+        {
+            name = "Throw Off Balance";
+    
+            fatCost += 8;
+            const blockArr = [0, 1, 2, 4];
+            const x = rndInt(0, 6);
+            effects['block'] += x + blockArr[r];
+            effects['offBalanceReq'] = 17 + x;
+        });
+    }
+
+    if (r === 2)
+    {
+        
+    }
+
     if (r === 3)
     {
         

@@ -31,18 +31,18 @@ io.on('connection', (socket: any) =>
           crService.addWin(winner);
           battlesInProgress.delete(roomID)
         } );
-      newBattle.socket1 = socket;
+      newBattle.sockets[0] = socket;
 
       battlesInProgress.set(roomID, newBattle);
     }
-    else if (battlesInProgress.get(roomID)!.uid2 === undefined) //if joining user is the second one to connect (to new match)
+    else if (battlesInProgress.get(roomID)!.uids[1] === undefined) //if joining user is the second one to connect (to new match)
     {
       let battle = battlesInProgress.get(roomID);
-      battle.socket2 = socket;
+      battle.sockets[1] = socket;
 
       battle.addSecondPlayer(cr);
-      const cr1 = battle.cr1;
-      const cr2 = battle.cr2;
+      const cr1 = battle.crs[0];
+      const cr2 = battle.crs[1];
       io.to(roomID).emit('players-ready'); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
     }
     else //user is rejoining, check if its p1 or p2
