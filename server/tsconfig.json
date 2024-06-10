@@ -3,11 +3,13 @@
     "compilerOptions": {
       "module": "commonjs",
       "moduleResolution":"node",
+      "noImplicitReturns": false,
     }
   },
   "compilerOptions": {
     "target": "es2022",
     "module": "esnext",
     "moduleResolution":"node",
+    "noImplicitReturns": false,
   }
 }

@@ -71,7 +71,7 @@ export class Creature
 
     hasStatus(statusName: string): boolean
     {
-        this.statuses.forEach((s) =>
+        this.statuses!.forEach((s) =>
         {
             if (s.name === statusName) return true;
         });

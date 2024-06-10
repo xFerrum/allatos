@@ -25,7 +25,7 @@ export class BattleSession
     {
         this.gameOverCb = gameOverCb;
 
-        this.crs[0] = cr;
+        this.crs[0] = this.readClientCreature(cr);
         this.uids[0] = cr.ownedBy;
         this.crs[0].HP = cr.con;
         this.crs[0].fatigue = 0;
@@ -34,6 +34,7 @@ export class BattleSession
         this.crs[0].skills.splice(0, this.crs[0].skills.length);
         this.crs[0].grave = [];
         this.crs[0].lingering = {};
+        this.crs[0].statuses = [];
 
         this.roomID = roomID;
         this.io = io;
@@ -41,7 +42,7 @@ export class BattleSession
 
     addSecondPlayer(cr: Creature)
     {
-        this.crs[1] = cr;
+        this.crs[1] = this.readClientCreature(cr);
         this.uids[1] = cr.ownedBy;
         this.crs[1].HP = cr.con;
         this.crs[1].fatigue = 0;
@@ -50,6 +51,7 @@ export class BattleSession
         this.crs[1].skills.splice(0, this.crs[1].skills.length);
         this.crs[1].grave = [];
         this.crs[1].lingering = {};
+        this.crs[1].statuses = [];
 
         this.crs[0].block = 0;
         this.crs[1].block = 0;
@@ -332,6 +334,7 @@ export class BattleSession
 
     hit(actor: Creature, target: Creature, dmg: number)
     {
+        console.log(target.hasStatus);
         if (target.hasStatus('Vulnerable')) dmg = Math.floor(dmg * 1.25);
 
         if (dmg > target.block)
@@ -575,4 +578,11 @@ export class BattleSession
         [ "Vulnerable", new Status("Vulnerable", "You take 25% more damage from attacks.", 1) ],
         [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
     ]);
+
+    //different model : - ]
+    readClientCreature(cr: any): Creature
+    {
+        cr = new Creature(cr.crID, cr.name, cr.type, cr.str, cr.agi, cr.int, cr.con, cr.ini, cr.ownedBy, cr.skills, cr.traits, cr.stamina, cr.xp, cr.born, cr.level, cr.skillPicks, cr.lvlup, cr.battlesWon, cr?.currentAct);
+        return cr;
+    }
 }

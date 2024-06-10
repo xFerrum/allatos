@@ -58,4 +58,22 @@ export class Creature
         this.lvlup = lvlup;
         this.battlesWon = battlesWon;
     }
+
+    getTraitNames(): Array<string>
+    {
+        let nameArr = [];
+        for (let trait of this.traits) nameArr.push(trait.name);
+        
+        return nameArr;
+    }
+
+    hasStatus(statusName: string): boolean
+    {
+        this.statuses!.forEach((s) =>
+        {
+            if (s.name === statusName) return true;
+        });
+
+        return false;
+    }
 }
