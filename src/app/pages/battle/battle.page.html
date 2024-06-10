@@ -40,6 +40,15 @@
               </ion-row>
             </ion-card-content>
           </ion-card>
+          <ion-card *ngIf="opCr.statuses" class="statuses-card">
+            <ion-card-content class="statuses-card-content">
+              <ion-row class="statuses-container">
+                <ion-col *ngFor="let status of opCr.statuses" size="auto" class="status-container">
+                  <img class="status-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="statusClicked($event, status)"/>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
           <ion-img class="creature-img" src="{{'assets/creature_imgs/' + opCr.type + '.png'}}"></ion-img>
         </ion-row>
 
@@ -81,11 +90,20 @@
                 {{turnInfo}}
               </ion-card-content>
             </ion-card>
-            <ion-card *ngIf="opCr.traits" class="traits-card">
+            <ion-card *ngIf="myCr.traits" class="traits-card">
               <ion-card-content class="traits-card-content">
                 <ion-row class="traits-container">
                   <ion-col *ngFor="let trait of myCr.traits" size="auto" class="trait-container">
                     <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+            <ion-card *ngIf="myCr.statuses" class="statuses-card">
+              <ion-card-content class="statuses-card-content">
+                <ion-row class="statuses-container">
+                  <ion-col *ngFor="let status of myCr.statuses" size="auto" class="status-container">
+                    <img class="status-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="statusClicked($event, status)"/>
                   </ion-col>
                 </ion-row>
               </ion-card-content>

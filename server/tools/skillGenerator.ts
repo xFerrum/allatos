@@ -228,7 +228,13 @@ function loadBlocks(r: number)
 
     if (r === 3)
     {
-        
+        //steadfast, double the base block of previous block
+        skills.push(() =>
+        {
+            name = "Unrelenting Defence";
+    
+            effects['steadfast'] = true;
+        });
     }
 }
 

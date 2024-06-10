@@ -32,7 +32,7 @@ export class Creature
     lingering?: any;
     deck?: Array<Skill>;
     grave?: Array<Skill>;
-    status?: Array<Trait>; //pseudo traits
+    statuses?: Array<Trait>; //pseudo traits
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, int: number, con: number, ini: number,
         ownedBy: string, skills: Array<Skill>, traits: Array<Trait>, stamina: number, xp: number, born: Date, level: number,

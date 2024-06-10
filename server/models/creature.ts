@@ -2,6 +2,7 @@ import { Activity } from "./activity";
 import { Skill } from "./skill";
 import { Trait } from "./trait";
 import { generateSkill } from "../tools/skillGenerator";
+import { Status } from "./status";
 
 export class Creature
 {
@@ -33,7 +34,7 @@ export class Creature
     lingering?: any;
     deck?: Array<Skill>;
     grave?: Array<Skill>;
-    status?: Array<Trait>; //pseudo traits
+    statuses?: Array<Status>;
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, int: number, con: number, ini: number,
         ownedBy: string, skills: Array<Skill>, traits: Array<Trait>, stamina: number, xp: number, born: Date, level: number,
@@ -66,6 +67,16 @@ export class Creature
         for (let trait of this.traits) nameArr.push(trait.name);
         
         return nameArr;
+    }
+
+    hasStatus(statusName: string): boolean
+    {
+        this.statuses.forEach((s) =>
+        {
+            if (s.name === statusName) return true;
+        });
+
+        return false;
     }
 
     addXP(gained: number)
@@ -103,13 +114,6 @@ export class Creature
     {
         if (!this.traits) return;
 
-        this.traits.forEach((t) =>
-        {
-            if (t.name === traitName)
-            {
-                console.log("asd");
-                this.traits.splice(this.traits.indexOf(t), 1);
-            }
-        });
+        this.traits = this.traits.filter((t) => t.name !== traitName);
     }
 }

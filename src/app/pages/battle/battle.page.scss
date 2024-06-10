@@ -235,3 +235,42 @@ $font1: 'Mouse';
     padding: 2px;
     cursor: pointer;
 }
+
+.statuses-card
+{
+    background-color: rgba(255, 255, 255, 0);
+    position: fixed;
+    right: 60%;
+    max-width: 30%;
+
+}
+
+.statuses-card-content
+{
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.statuses-container
+{
+    justify-content: center;
+}
+
+.status-container
+{
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-icon
+{
+    margin: auto;
+    width: 35px;
+    height: 35px;
+    padding: 2px;
+    cursor: pointer;
+}

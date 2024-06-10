@@ -13,6 +13,7 @@ import { AnimationController } from '@ionic/angular/standalone';
 import { PopUpService } from 'src/services/popup.service';
 import { ProgressbarComponent } from 'src/app/small_components/progressbar/progressbar.component';
 import { Trait } from 'src/models/trait';
+import { Status } from 'src/models/status';
 
 @Component({
   selector: 'app-battle',
@@ -243,6 +244,14 @@ export class BattlePage implements OnInit
   traitClicked(e: Event, trait: Trait)
   {
     this.traitToShow = {...trait};
+    this.popover.event = e;
+    this.traitShowing = true;
+  }
+
+  //for now status popover uses same element as for traits for convenience
+  statusClicked(e: Event, status: Status)
+  {
+    this.traitToShow = {...status, isBattle: true, isScaling: false};
     this.popover.event = e;
     this.traitShowing = true;
   }

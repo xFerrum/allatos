@@ -1,5 +1,7 @@
 import { Creature } from "./models/creature";
 import { Skill } from "./models/skill";
+import { Status } from "./models/status";
+import { Trait } from "./models/trait";
 
 export class BattleSession
 {
@@ -14,7 +16,6 @@ export class BattleSession
     gameState = 0; 
     playerOneFirst: boolean; //who won ini roll, player one = players[0], player two = players[1]
     skillsUsed: Array<Array<Skill>> = [[], []];
-    skillLogs: Array<Array<Skill>> = [[], []];
     canPicks: Array<boolean> = [];
 
     combatLog = "";
@@ -131,11 +132,13 @@ export class BattleSession
         const randomNumber = iniTotal * Math.random();
         if (randomNumber > this.crs[0].ini)
         {
+            this.crs[1].statuses.push(this.statuses.get("First"));
             this.playerOneFirst = false;
             this.combatLog += this.crs[1].name + " won the initiative roll. (";
         }
         else
         {
+            this.crs[0].statuses.push(this.statuses.get("First"));
             this.playerOneFirst = true;
             this.combatLog += this.crs[0].name + " won the initiative roll. (";
         }
@@ -176,15 +179,13 @@ export class BattleSession
 
         this.gameState = 30;
         this.skillsOrdered = [];
-        this.skillLogs[0] = this.skillsUsed[0].slice();
-        this.skillLogs[1] = this.skillsUsed[1].slice();
 
-        //activate blocks, player order doesnt matter
+        //activate blocks
         for (let i = 0; i < this.skillsUsed[0].length; i++)
         {
             if (this.skillsUsed[0][i].type === 'block')
             {
-                this.useSkill(this.crs[0], this.crs[1], this.skillsUsed[0][i]);
+                this.useSkill(0, 1, this.skillsUsed[0][i]);
 
                 this.skillsUsed[0].splice(i, 1);
                 i--;
@@ -195,7 +196,7 @@ export class BattleSession
         {
             if (this.skillsUsed[1][i].type === 'block')
             {
-                this.useSkill(this.crs[1], this.crs[0], this.skillsUsed[1][i]);
+                this.useSkill(1, 0, this.skillsUsed[1][i]);
                 this.skillsUsed[1].splice(i, 1);
                 i--;
             }
@@ -205,10 +206,10 @@ export class BattleSession
 
         this.gameState = 35;
         //construct attack skill order and activate them
-        let P1turn = this.playerOneFirst;
+        let p1turn = this.playerOneFirst;
         while (0 < this.skillsUsed[0].length + this.skillsUsed[1].length)
         {
-            if (P1turn)
+            if (p1turn)
             {
                 if (this.skillsUsed[0].length > 0)
                 {
@@ -225,24 +226,24 @@ export class BattleSession
                 else this.skillsOrdered.push(this.skillsUsed[0].shift());
 
             }
-            P1turn = !P1turn;
+            p1turn = !p1turn;
         }
 
         for (let i = 0; i < this.skillsOrdered.length; i++)
         {
             let currentSkill = this.skillsOrdered[i];
-            let actor: Creature;
-            let opponent: Creature;
+            let actor: number;
+            let opponent: number;
 
             if (this.skillsOrdered[i].usedByID === this.crs[0].crID)
             {
-                actor = this.crs[0];
-                opponent = this.crs[1];
+                actor = 0;
+                opponent = 1;
             }
             else
             {
-                actor = this.crs[1];
-                opponent = this.crs[0];
+                actor = 1;
+                opponent = 0;
             }
 
             this.useSkill(actor, opponent, currentSkill);
@@ -250,73 +251,65 @@ export class BattleSession
             this.checkIfGameEnd();
         }
 
-        if (this.playerOneFirst)
-        {
-            this.afterActionPhase(this.crs[0], this.crs[1]);
-            this.afterActionPhase(this.crs[1], this.crs[0]);
-        }
-        else
-        {
-            this.afterActionPhase(this.crs[1], this.crs[0]);
-            this.afterActionPhase(this.crs[0], this.crs[1]);
-        }
-
         this.endOfTurn();
         this.startOfTurn();
         this.sendLog();
-    }
-
-    afterActionPhase(actor: Creature, opponent: Creature)
-    {
-
-        if (actor.turnInfo.retaliate && !(actor.turnInfo.gotHit) && opponent.turnInfo.attacked)
-        {
-            if ('dmg' in actor.turnInfo.retaliate)
-            {
-                this.hit(actor, opponent, actor.turnInfo.retaliate.dmg);
-            }
-        }
     }
 
     endOfTurn()
     {
         this.gameState = 40;
 
-        this.procTurnInfo();
+        this.turnEndEffects();
+
+        this.checkIfGameEnd();
 
         this.resetTurnInfo();
 
-        if (this.crs[0].fatigue >= this.crs[0].stamina)
+        for (let i = 0; i < 2; i++)
         {
-            this.crs[0].turnInfo.fatigued = true;
-
-            this.crs[0].fatigue -= this.crs[0].stamina;
-        }
-        if (this.crs[1].fatigue >= this.crs[1].stamina)
-        {
-            this.crs[1].turnInfo.fatigued = true;
-
-            this.crs[1].fatigue -= this.crs[1].stamina;
+            if (this.crs[i].fatigue >= this.crs[i].stamina)
+            {
+                this.crs[i].turnInfo.fatigued = true;
+                this.crs[i].fatigue -= this.crs[i].stamina;
+            }
         }
 
         this.io.to(this.roomID).emit('turn-ended');
     }
 
-    procTurnInfo()
+    turnEndEffects()
     {
-        if (!this.crs[0].turnInfo.steadfast) this.removeBlock(this.crs[0], this.crs[0].block);
-        if (!this.crs[1].turnInfo.steadfast) this.removeBlock(this.crs[1], this.crs[1].block);
+        let actor = this.playerOneFirst ? 0 : 1;
+        let opp = this.playerOneFirst ? 1 : 0;
 
-        if (this.crs[0].turnInfo.offBalance)
+        for (let i = 0; i < 2; i++)
         {
-            let fatSum = 0;
-            this.skillsUsed[0].forEach((s: Skill) =>
+            if (this.crs[actor].turnInfo.retaliate && !(this.crs[actor].turnInfo.gotHit) && this.crs[opp].turnInfo.attacked)
+            {
+                if ('dmg' in this.crs[actor].turnInfo.retaliate)
+                {
+                    this.hit(this.crs[actor], this.crs[opp], this.crs[actor].turnInfo.retaliate.dmg);
+                }
+            }
+
+            this.crs[actor].statuses.map((s) => s.duration--);
+            this.crs[actor].statuses = this.crs[actor].statuses.filter((s) => s.duration > 0);
+
+            if (this.crs[actor].turnInfo.offBalance)
+            {
+                let fatSum = 0;
+                this.skillsUsed[actor].forEach((s: Skill) =>
                 {
                     fatSum += s.fatCost;
-                }
-            );
-            if (this.crs[0].turnInfo.offBalance >= fatSum) {}//TODO: apply vulnerable
+                });
+                
+                if (this.crs[actor].turnInfo.offBalance >= fatSum) this.crs[actor].statuses.push(this.statuses.get("Vulnerable"));
+            }
+
+            if (!this.crs[actor].turnInfo.steadfast) this.removeBlock(this.crs[actor], this.crs[actor].block);
         }
+
     }
 
     addBlock(cr: Creature, amount: number)
@@ -339,6 +332,8 @@ export class BattleSession
 
     hit(actor: Creature, target: Creature, dmg: number)
     {
+        if (target.hasStatus('Vulnerable')) dmg = Math.floor(dmg * 1.25);
+
         if (dmg > target.block)
         {
             //hit
@@ -480,19 +475,25 @@ export class BattleSession
         this.combatLog = "";
     }
 
-    useSkill(actor: Creature, opponent: Creature, skill: Skill)
+    useSkill(actor: number, opponent: number, skill: Skill)
     {
         this.io.to(this.roomID).emit('action-happened', skill);
         this.sendSnapshot();
 
-        actor.fatigue += skill.fatCost;
+        this.crs[actor].fatigue += skill.fatCost;
 
         //for cards with unique effects
         switch(skill.name)
         {
             case 'Throw Off Balance':
-                opponent.turnInfo.offBalance = skill.effects.offBalanceReq;
+                this.crs[opponent].turnInfo.offBalance = skill.effects.offBalanceReq;
             
+            case 'Unrelenting Defence':
+                if (this.crs[actor].turnInfo?.lastSkill && 'block' === this.crs[actor].turnInfo.lastSkill.type)
+                {
+                    this.addBlock(this.crs[actor], this.crs[actor].turnInfo.lastSkill.effects.block)
+                }
+
             default:
                 break;
         }
@@ -500,72 +501,78 @@ export class BattleSession
         switch(skill.type)
         {
             case 'attack':
-                actor.turnInfo.attacked = true;
+                this.crs[actor].turnInfo.attacked = true;
 
                 //combo check
-                if (actor.turnInfo?.lastSkill && 'combo' in actor.turnInfo.lastSkill.effects)
+                if (this.crs[actor].turnInfo?.lastSkill && 'combo' in this.crs[actor].turnInfo.lastSkill.effects)
                 {
-                    for (let eff in actor.turnInfo.lastSkill.effects.combo)
+                    for (let eff in this.crs[actor].turnInfo.lastSkill.effects.combo)
                     {
                         if (eff in skill.effects)
                         {
-                            skill.effects[eff] += actor.turnInfo.lastSkill.effects.combo[eff];
+                            skill.effects[eff] += this.crs[actor].turnInfo.lastSkill.effects.combo[eff];
                         }
                         else
                         {
-                            skill.effects[eff] = actor.turnInfo.lastSkill.effects.combo[eff];
+                            skill.effects[eff] = this.crs[actor].turnInfo.lastSkill.effects.combo[eff];
                         }
                     }
                 }
 
                 if ('shred' in skill.effects)
                 {
-                    this.removeBlock(opponent, skill.effects.shred);
+                    this.removeBlock(this.crs[opponent], skill.effects.shred);
 
                 }
                 if ('heavy' in skill.effects)
                 {
-                    opponent.fatigue += skill.effects.heavy;
+                    this.crs[opponent].fatigue += skill.effects.heavy;
                 }
 
-                this.hit(actor, opponent, skill.effects.dmg);
+                this.hit(this.crs[actor], this.crs[opponent], skill.effects.dmg);
                 break;
             
                 
             case 'block':
                 if ('stance' in skill.effects)
                 {
-                    if (actor.turnInfo.lastSkill?.type === 'block')
+                    if (this.crs[actor].turnInfo.lastSkill?.type === 'block')
                     {
-                        this.addBlock(actor, skill.effects.stance);
+                        this.addBlock(this.crs[actor], skill.effects.stance);
                     }
                 }
                 if ('retaliate' in skill.effects)
                 {
                     for (let eff in skill.effects.retaliate)
                     {
-                        if (eff in actor.turnInfo.retaliate)
+                        if (eff in this.crs[actor].turnInfo.retaliate)
                         {
-                            actor.turnInfo.retaliate[eff] += skill.effects.retaliate[eff];    
+                            this.crs[actor].turnInfo.retaliate[eff] += skill.effects.retaliate[eff];    
                         }
                         else
                         {
-                            actor.turnInfo.retaliate[eff] = skill.effects.retaliate[eff];
+                            this.crs[actor].turnInfo.retaliate[eff] = skill.effects.retaliate[eff];
                         }
                     }
                 }
                 if ('steadfast' in skill.effects)
                 {
-                    actor.turnInfo.steadfast = true;
+                    this.crs[actor].turnInfo.steadfast = true;
                 }
 
-                this.addBlock(actor, skill.effects.block);
+                this.addBlock(this.crs[actor], skill.effects.block);
                 break;
         }
 
-        actor.turnInfo.lastSkill = skill;
-        actor.grave.push(skill);
+        this.crs[actor].turnInfo.lastSkill = skill;
+        this.crs[actor].grave.push(skill);
 
         this.sendLog();
     }
+
+    statuses = new Map<string, Status>
+    ([
+        [ "Vulnerable", new Status("Vulnerable", "You take 25% more damage from attacks.", 1) ],
+        [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
+    ]);
 }
