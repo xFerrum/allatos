@@ -74,10 +74,13 @@ export class CreaturesPage implements OnInit, ViewWillLeave
           'confirmFunc': (() => {pickModal.dismiss()}),
         },
         backdropDismiss: false,
-      },
-    );
-
+      });
       pickModal.present();
+    });
+
+    this.socket.on('disconnect', async () =>
+    {
+      await this.popUpService.dismissPopUp();
     });
   }
 
@@ -109,6 +112,18 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     this.traitToShow = {...trait};
     this.popover.event = e;
     this.traitShowing = true;
+  }
+
+  openSkills(cr: Creature)
+  {
+    cr.skills = cr.skills.sort((a, b) =>
+    {
+      if (a.name < b.name)
+      {
+        return -1;
+      }
+      else return 1;
+    });
   }
 
   closeSkills()

@@ -91,7 +91,7 @@ const actEventTable =
     ],
     'Visit the Magical Pond':
     [
-        ['Blessed by spirit', 1.05]
+        ['Blessed by spirit', 0.05]
     ]
 }
 
@@ -100,7 +100,7 @@ let eventsMap = new Map<string, Function>
 ([
     ['Blessed by spirit', (act: Activity, cr: ServerCreature) =>
         {
-            const randomSkill = generateSkill(3);
+            const randomSkill = generateSkill(false, false, true);
             cr.addSkillPick([randomSkill]);
 
             notiDescription += "You have been blessed by a magical spirit! You can learn a legendary skill: " + randomSkill.name + ". ";
@@ -146,7 +146,7 @@ let eventsMap = new Map<string, Function>
             else
             {
                 let skills = [];
-                for (let i = 0; i < 3; i++) skills.push(generateSkill(0));
+                for (let i = 0; i < 3; i++) skills.push(generateSkill(true, false, false));
                 cr.addSkillPick(skills);
     
                 notiDescription += "You found a hidden stash of supplies. You can learn a common skill. ";

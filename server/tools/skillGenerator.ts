@@ -49,9 +49,10 @@ let fatCost = 0;
 let name: string;
 let description = '';
 let skills = [];
+let rarity: number;
 
 //TODO: separate functions for adding each effect, these could be used for modifying skills too (after theyve already been generated)
-export function generateSkill(rarity: number, type = 'random'): Skill
+export function generateSkill(c: boolean, r: boolean, l: boolean, type = 'random'): Skill
 {
     effects = {};
     fatCost = 0;
@@ -66,24 +67,22 @@ export function generateSkill(rarity: number, type = 'random'): Skill
     switch(type)
     {
         case 'attack':
-            const dmgArr = [10, 11, 12, 15];
-            effects['dmg'] = dmgArr[rarity] 
-            fatCost = 12;
+            effects['dmg'] = 7; 
+            fatCost = 10;
             selfTarget = false;
 
-            loadAttacks(rarity);
+            loadAttacks(c, r, l);
 
             break;
 
 
 
         case 'block':
-            const blockArr = [7, 7, 8, 10];
-            effects['block'] = blockArr[rarity];
+            effects['block'] = 5;
             fatCost = 3;
             selfTarget = true;
 
-            loadBlocks(rarity);
+            loadBlocks(c, r, l);
 
             break;
 
@@ -91,7 +90,7 @@ export function generateSkill(rarity: number, type = 'random'): Skill
 
         case 'trick':
 
-            loadTricks(rarity);
+            loadTricks(c, r, l);
 
             break;
     }
@@ -100,69 +99,65 @@ export function generateSkill(rarity: number, type = 'random'): Skill
     return (new Skill(type, selfTarget, effects, fatCost, rarity, name));
 }
 
-function loadAttacks(r: number)
+function loadAttacks(c: boolean, r: boolean, l: boolean)
 {
-    //+4-13 dmg
-    skills.push(() =>
+    if (c)
     {
-        name = "Strike";
+        //+8-10 dmg
+        skills.push(() =>
+        {
+            name = "Strike";
+    
+            const x = rndInt(4, 6);
+            fatCost -= 6 - x;
+            effects['dmg'] += x + 4;
+        });
+    
+        //+4 dmg, +9-11 heavy
+        skills.push(() =>
+        {
+            name = "Heavy Attack";
+    
+            const x = rndInt(4, 6);
+            fatCost -= 6 - x;
+            effects['dmg'] += 4;
+            effects['heavy'] = x + 5;
+        });
+    
+        //+4 dmg, +6-9 shred
+        skills.push(() =>
+        {
+            name = "Shred";
+    
+            const x = rndInt(4, 7);
+            fatCost -= 6 - x;
+            effects['dmg'] += 4;
+            effects['shred'] = x + 2;
+        });
+    
+        //combo: +9-12 dmg
+        skills.push(() =>
+        {
+            name = "Twin Strike";
+    
+            fatCost += 2;
+            const x = rndInt(6, 9);
+            fatCost -= 9 - x;
+            effects['combo'] = {dmg: x + 3};
+        });
+    
+        //combo: +15-18 heavy
+        skills.push(() =>
+        {
+            name = "Overwhelm";
+    
+            const x = rndInt(11, 14);
+            fatCost -= 12 - x;
+            effects['combo'] = {heavy: x + 4};
+        });
+    }
 
-        const x = rndInt(3, 6);
-        fatCost -= 6 - x;
-        const dmgArr = [1, 2, 4, 7];
-        effects['dmg'] += x + dmgArr[r];
-    });
-
-    //+1-6 dmg, +6-12 heavy
-    skills.push(() =>
-    {
-        name = "Heavy Attack";
-
-        const x = rndInt(4, 6);
-        fatCost -= 6 - x;
-        const dmgArr = [1, 2, 4, 6];
-        effects['dmg'] += dmgArr[r];
-        const heavyArr = [2, 3, 4, 7];
-        effects['heavy'] = x + heavyArr[r];
-    });
-
-    //+1-5 dmg, +4-10 shred
-    skills.push(() =>
-    {
-        name = "Shred";
-
-        const x = rndInt(4, 6);
-        fatCost -= 6 - x;
-        const dmgArr = [1, 2, 3, 5];
-        effects['dmg'] += dmgArr[r];
-        const shredArr = [0, 1, 2, 4];
-        effects['shred'] = x + shredArr[r];
-    });
-
-    //combo: +6-16 dmg
-    skills.push(() =>
-    {
-        name = "Twin Strike";
-
-        fatCost += 2;
-        const x = rndInt(6, 9);
-        fatCost -= 9 - x;
-        const comboDmgArr = [0, 2, 4, 7];
-        effects['combo'] = {dmg: x + comboDmgArr[r]};
-    });
-
-    //combo: +9-19 heavy
-    skills.push(() =>
-    {
-        name = "Overwhelm";
-
-        const x = rndInt(9, 12);
-        fatCost -= 12 - x;
-        const comboFatArr = [0, 2, 4, 7];
-        effects['combo'] = {heavy: x + comboFatArr[r]};
-    });
-
-    if (r === 1)
+    if (r)
     {
         skills.push(() =>
         {
@@ -173,13 +168,8 @@ function loadAttacks(r: number)
             effects['dmg'] = 0;
         });
     }
-    
-    if (r === 2)
-    {
-        
-    }
 
-    if (r === 3)
+    if (l)
     {
         //+25-31 dmg
         skills.push(() =>
@@ -192,75 +182,68 @@ function loadAttacks(r: number)
     }
 }
 
-function loadBlocks(r: number)
+function loadBlocks(c: boolean, r: boolean, l: boolean)
 {
-    //+2-9 block
-    skills.push(() =>
+    if (c)
     {
-        name = "Block";
+        //+5-7 block
+        skills.push(() =>
+        {
+            name = "Block";
+    
+            const x = rndInt(3, 5);
+            fatCost -= 5 - x;
+            effects['block'] += x + 2;
+        });
+    
+        //stance: 7-9 block
+        skills.push(() =>
+        {
+            name = "Barricade";
+    
+            const x = rndInt(4, 6);
+            fatCost -= 5 - x;
+            effects['stance'] = x + 3;
+        });
+    
+        //+2-4 block, retaliate: 6-8 dmg
+        skills.push(() =>
+        {
+            name = "Riposte";
+    
+            const x = rndInt(2, 4);
+            fatCost -= 4 - x;
+            effects['block'] += x;
+            effects['retaliate'] = {dmg: (rndInt(4, 6) + 2)}; 
+        });
+    
+        //+3-4 block, steadfast
+        skills.push(() =>
+        {
+            name = "Stand Ready";
+    
+            const x = rndInt(1, 2);
+            fatCost += x;
+            effects['steadfast'] = true;
+            effects['block'] += x + 2;
+        });
+    }
 
-        const x = rndInt(2, 5);
-        fatCost -= 5 - x;
-        const blockArr = [0, 1, 2, 4];
-        effects['block'] += x + blockArr[r];
-    });
-
-    //stance: 3-13 block
-    skills.push(() =>
+    if (r)
     {
-        name = "Barricade";
-
-        const x = rndInt(3, 6);
-        fatCost -= 5 - x;
-        const stanceArr = [0, 2, 4, 7];
-        effects['stance'] = x + stanceArr[r];
-    });
-
-    //+1-4 block, retaliate: 2-7 dmg
-    skills.push(() =>
-    {
-        name = "Riposte";
-
-        const x = rndInt(1, 4);
-        fatCost -= 4 - x;
-        effects['block'] += x;
-        const riposteDmgArr = [0, 1, 2, 4];
-        effects['retaliate'] = {dmg: (rndInt(2, 3) + riposteDmgArr[r])}; 
-    });
-
-    //+0-5 block, steadfast
-    skills.push(() =>
-    {
-        name = "Stand Ready";
-
-        const x = rndInt(0, 1);
-        fatCost -= -1 - x;
-        effects['steadfast'] = true;
-        const blockArr = [0, 1, 2, 4];
-        effects['block'] += x + blockArr[r];
-    });
-
-    if (r === 1)
-    {
-        //+1-6 block, if opponent used N fatigue: apply 1 Vulnerable
+        //+2-4 block, if opponent used N fatigue: apply 1 Vulnerable
         skills.push(() =>
         {
             name = "Throw Off Balance";
     
-            fatCost += 8;
-            const blockArr = [0, 1, 2, 4];
+            fatCost += 3;
             const x = rndInt(0, 6);
-            effects['block'] += rndInt(0, 2) + blockArr[r];
-            effects['offBalanceReq'] = 20 + x;
+            effects['block'] += rndInt(0, 2) + 2;
+            effects['offBalanceReq'] = 18 + x;
         });
     }
 
-    if (r === 2)
-    {
-        
-    }
-
-    if (r === 3)
+    if (l)
     {
         //steadfast, double the base block of previous block
         skills.push(() =>
@@ -272,14 +255,14 @@ function loadBlocks(r: number)
     }
 }
 
-function loadTricks(r: number)
+function loadTricks(c: boolean, r: boolean, l: boolean)
 {
-    if (r === 1)
+    if (c)
     {
         
     }
 
-    if (r === 2)
+    if (r)
     {
         //disarm
         skills.push(() =>
@@ -289,7 +272,7 @@ function loadTricks(r: number)
         });
     }
 
-    if (r === 3)
+    if (l)
     {
         
     }

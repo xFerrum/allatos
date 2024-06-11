@@ -185,7 +185,7 @@
         </ion-row>
 
         <ion-row class="buts">
-          <ion-button type="submit" expand="block" class="but" id="open-skills">open skills</ion-button>
+          <ion-button type="submit" expand="block" class="but" id="open-skills" (click)="openSkills(creature)">open skills</ion-button>
           <ion-button type="submit" expand="block" class="but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
           <ion-button type="submit" expand="block" class="but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
         </ion-row>

@@ -93,7 +93,7 @@ export class ServerCreature
             this.xp = 0 + (this.xp + gained - 100);
 
             let newSkillPick = [];
-            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(2));
+            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(true, true, false));
             this.addSkillPick(newSkillPick);
         }
     }

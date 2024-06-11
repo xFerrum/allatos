@@ -65,8 +65,19 @@
 
 .skills-window
 {
-    &::part(content)
+    ion-title
     {
+        font-family: 'Mouse';
+    }
+
+    .button-clear
+    {
+        font-family: 'Mouse';
+    }
+
+    &::part(content)
+    {    font-family: 'Alba';
+
         width: 1000px;
     }
 }

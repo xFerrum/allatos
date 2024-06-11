@@ -293,6 +293,7 @@ export class BattleSession
             if (this.crs[i].fatigue >= this.crs[i].stamina)
             {
                 this.crs[i].statuses.push(this.statuses.get("Fatigued"));
+                this.crs[i].statuses.push(this.statuses.get("Vulnerable"));
                 this.crs[i].fatigue -= this.crs[i].stamina;
             }
 
@@ -578,6 +579,6 @@ export class BattleSession
     ([
         [ "Vulnerable", new Status("Vulnerable", "You take 25% more damage from attacks.", 1) ],
         [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
-        [ "Fatigued",  new Status("Fatigued", "You're exhausted and need to rest. You can only play 1 card this turn.", 1) ],
+        [ "Fatigued",  new Status("Fatigued", "You're exhausted and need to rest. You can only play 1 card this turn and you became Vulnerable.", 1) ],
     ]);
 }
