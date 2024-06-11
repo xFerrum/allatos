@@ -1,4 +1,4 @@
-import { Creature } from "../models/creature";
+import { ServerCreature } from "../models/serverCreature";
 import { Notification } from "../models/notification";
 import { generateSkill } from "./skillGenerator";
 import { Activity } from "../models/activity";
@@ -21,7 +21,7 @@ const genericService = new GenericService;
 
 let notiDescription = '';
 //modify cr and return a notification
-export async function resolveAct(cr: Creature, act: Activity): Promise<Notification>
+export async function resolveAct(cr: ServerCreature, act: Activity): Promise<Notification>
 {
     notiDescription = '';
 
@@ -91,14 +91,14 @@ const actEventTable =
     ],
     'Visit the Magical Pond':
     [
-        ['Blessed by spirit', 0.05]
+        ['Blessed by spirit', 1.05]
     ]
 }
 
 
 let eventsMap = new Map<string, Function>
 ([
-    ['Blessed by spirit', (act: Activity, cr: Creature) =>
+    ['Blessed by spirit', (act: Activity, cr: ServerCreature) =>
         {
             const randomSkill = generateSkill(3);
             cr.addSkillPick([randomSkill]);
@@ -106,7 +106,7 @@ let eventsMap = new Map<string, Function>
             notiDescription += "You have been blessed by a magical spirit! You can learn a legendary skill: " + randomSkill.name + ". ";
         }
     ],
-    ['Become stronger', async (act: Activity, cr: Creature) =>
+    ['Become stronger', async (act: Activity, cr: ServerCreature) =>
         {
             if (cr.getTraitNames().includes('Absolutely Jacked'))
             {
@@ -134,12 +134,13 @@ let eventsMap = new Map<string, Function>
             }
         }
     ],
-    ['Hidden treasure', (act: Activity, cr: Creature) =>
+    ['Hidden treasure', (act: Activity, cr: ServerCreature) =>
         {
             if (rndInt(0, 1))
             {
                 const extraXP = rollXP(cr.int, 15);
-    
+                cr.addXP(extraXP);
+
                 notiDescription += "You found a hidden stash of supplies. Gained " + extraXP + " extra XP. ";
             }
             else

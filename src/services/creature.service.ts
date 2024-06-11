@@ -67,9 +67,11 @@ export class CreatureService
       cAct = new Activity(data['currentAct'].name, data['currentAct'].description, data['currentAct'].duration, new Date(data["currentAct"].startDate.toDate()));
     }
 
+    const hasPicks = data["skillPicks"] ? true : false;
+
     let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
       data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],
-      data["skillPicks"], data["lvlup"], data["battlesWon"], cAct);
+      hasPicks, data["lvlup"], data["battlesWon"], cAct);
     if (!baseStats) applyTraits(cr);
     
     return cr;

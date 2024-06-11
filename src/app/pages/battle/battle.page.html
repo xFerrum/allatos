@@ -40,7 +40,7 @@
               </ion-row>
             </ion-card-content>
           </ion-card>
-          <ion-card *ngIf="opCr.statuses" class="statuses-card">
+          <ion-card *ngIf="opCr.statuses.length > 0" class="statuses-card">
             <ion-card-content class="statuses-card-content">
               <ion-row class="statuses-container">
                 <ion-col *ngFor="let status of opCr.statuses" size="auto" class="status-container">
@@ -99,7 +99,7 @@
                 </ion-row>
               </ion-card-content>
             </ion-card>
-            <ion-card *ngIf="myCr.statuses" class="statuses-card">
+            <ion-card *ngIf="myCr.statuses.length > 0" class="statuses-card">
               <ion-card-content class="statuses-card-content">
                 <ion-row class="statuses-container">
                   <ion-col *ngFor="let status of myCr.statuses" size="auto" class="status-container">

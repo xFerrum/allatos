@@ -7,14 +7,14 @@ export const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'profile',
-        loadComponent: () =>
-          import('./profiletab/profiletab.page').then((m) => m.ProfilePage),
-      },
-      {
         path: 'creatures',
         loadComponent: () =>
           import('./creaturestab/creaturestab.page').then((m) => m.CreaturesPage),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./profiletab/profiletab.page').then((m) => m.ProfilePage),
       },
       {
         path: 'tab3',
@@ -23,14 +23,14 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'profile',
+        redirectTo: 'creatures',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '',
-    redirectTo: 'profile',
+    redirectTo: 'creatures',
     pathMatch: 'full',
   },
 ];

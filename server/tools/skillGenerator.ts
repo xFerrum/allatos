@@ -8,6 +8,7 @@ NOTES/IDEAS:
 - diminishing returns on creature attributes (ie: 10 str -> 100% dmg , 15 str -> 120% dmg , 20 str -> 130% dmg)
 
 - craft multiple cards of same rarity -> upgrade another card or smth
+- "snap" keyword: free action (doesnt count as card played, but still has fat cost), small effect
 */
 
 /*
@@ -67,7 +68,7 @@ export function generateSkill(rarity: number, type = 'random'): Skill
         case 'attack':
             const dmgArr = [10, 11, 12, 15];
             effects['dmg'] = dmgArr[rarity] 
-            fatCost = 10;
+            fatCost = 12;
             selfTarget = false;
 
             loadAttacks(rarity);
@@ -106,50 +107,77 @@ function loadAttacks(r: number)
     {
         name = "Strike";
 
+        const x = rndInt(3, 6);
+        fatCost -= 6 - x;
         const dmgArr = [1, 2, 4, 7];
-        effects['dmg'] += rndInt(3, 6) + dmgArr[r];
+        effects['dmg'] += x + dmgArr[r];
     });
 
-    //+0-7 dmg, +4-10 heavy
+    //+1-6 dmg, +6-12 heavy
     skills.push(() =>
     {
         name = "Heavy Attack";
 
-        const dmgArr = [0, 2, 4, 7];
+        const x = rndInt(4, 6);
+        fatCost -= 6 - x;
+        const dmgArr = [1, 2, 4, 6];
         effects['dmg'] += dmgArr[r];
-        const heavyArr = [0, 1, 2, 4];
-        effects['heavy'] = rndInt(4, 6) + heavyArr[r];
+        const heavyArr = [2, 3, 4, 7];
+        effects['heavy'] = x + heavyArr[r];
     });
 
-    //+0-6 dmg, +4-10 shred
+    //+1-5 dmg, +4-10 shred
     skills.push(() =>
     {
         name = "Shred";
 
-        const dmgArr = [0, 2, 4, 6];
+        const x = rndInt(4, 6);
+        fatCost -= 6 - x;
+        const dmgArr = [1, 2, 3, 5];
         effects['dmg'] += dmgArr[r];
-        const shredArr = [1, 2, 3, 5];
-        effects['shred'] = rndInt(3, 6) + shredArr[r];
+        const shredArr = [0, 1, 2, 4];
+        effects['shred'] = x + shredArr[r];
     });
 
-    //combo: +7-18 dmg
+    //combo: +6-16 dmg
     skills.push(() =>
     {
         name = "Twin Strike";
 
         fatCost += 2;
+        const x = rndInt(6, 9);
+        fatCost -= 9 - x;
         const comboDmgArr = [0, 2, 4, 7];
-        effects['combo'] = {dmg: rndInt(7, 11) + comboDmgArr[r]};
+        effects['combo'] = {dmg: x + comboDmgArr[r]};
     });
 
-    //comb: +7-17 heavy
+    //combo: +9-19 heavy
     skills.push(() =>
     {
         name = "Overwhelm";
 
+        const x = rndInt(9, 12);
+        fatCost -= 12 - x;
         const comboFatArr = [0, 2, 4, 7];
-        effects['combo'] = {heavy: rndInt(7, 10) + comboFatArr[r]};
+        effects['combo'] = {heavy: x + comboFatArr[r]};
     });
+
+    if (r === 1)
+    {
+        skills.push(() =>
+        {
+            //deal damage equal to block
+            name = "Body Slam";
+    
+            fatCost += 2;
+            effects['dmg'] = 0;
+        });
+    }
+    
+    if (r === 2)
+    {
+        
+    }
 
     if (r === 3)
     {
@@ -171,8 +199,10 @@ function loadBlocks(r: number)
     {
         name = "Block";
 
+        const x = rndInt(2, 5);
+        fatCost -= 5 - x;
         const blockArr = [0, 1, 2, 4];
-        effects['block'] += rndInt(2, 5) + blockArr[r];
+        effects['block'] += x + blockArr[r];
     });
 
     //stance: 3-13 block
@@ -180,9 +210,10 @@ function loadBlocks(r: number)
     {
         name = "Barricade";
 
-        fatCost += 1;
+        const x = rndInt(3, 6);
+        fatCost -= 5 - x;
         const stanceArr = [0, 2, 4, 7];
-        effects['stance'] = rndInt(3, 6) + stanceArr[r];
+        effects['stance'] = x + stanceArr[r];
     });
 
     //+1-4 block, retaliate: 2-7 dmg
@@ -190,7 +221,9 @@ function loadBlocks(r: number)
     {
         name = "Riposte";
 
-        effects['block'] += rndInt(1, 4);
+        const x = rndInt(1, 4);
+        fatCost -= 4 - x;
+        effects['block'] += x;
         const riposteDmgArr = [0, 1, 2, 4];
         effects['retaliate'] = {dmg: (rndInt(2, 3) + riposteDmgArr[r])}; 
     });
@@ -200,15 +233,16 @@ function loadBlocks(r: number)
     {
         name = "Stand Ready";
 
-        fatCost += 2;
+        const x = rndInt(0, 1);
+        fatCost -= -1 - x;
         effects['steadfast'] = true;
         const blockArr = [0, 1, 2, 4];
-        effects['block'] += rndInt(0, 1) + blockArr[r];
+        effects['block'] += x + blockArr[r];
     });
 
     if (r === 1)
     {
-        //+1-7 block, if opponent used 20+ fatigue: apply 1 Vulnerable
+        //+1-6 block, if opponent used N fatigue: apply 1 Vulnerable
         skills.push(() =>
         {
             name = "Throw Off Balance";
@@ -216,8 +250,8 @@ function loadBlocks(r: number)
             fatCost += 8;
             const blockArr = [0, 1, 2, 4];
             const x = rndInt(0, 6);
-            effects['block'] += x + blockArr[r];
-            effects['offBalanceReq'] = 17 + x;
+            effects['block'] += rndInt(0, 2) + blockArr[r];
+            effects['offBalanceReq'] = 20 + x;
         });
     }
 

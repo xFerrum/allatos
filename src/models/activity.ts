@@ -23,10 +23,10 @@ export class Activity
     startTimer()
     {
         clearInterval(this.timerID);
-        this.timer$ = new BehaviorSubject((this.startDate!.getTime() + this.duration) - new Date().getTime());
+        this.timer$ = new BehaviorSubject((this.startDate!.getTime() + this.duration) - Date.now());
         this.timerID = setInterval(() =>
         {
-            const nextVal = (this.startDate!.getTime() + this.duration) - new Date().getTime();
+            const nextVal = (this.startDate!.getTime() + this.duration) - Date.now();
             if (nextVal <= 0) 
             {
                 clearInterval(this.timerID);

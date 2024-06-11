@@ -1,4 +1,4 @@
-import { Creature } from "./creature";
+import { ServerCreature } from "./serverCreature";
 import { Notification } from "./notification";
 
 export class User

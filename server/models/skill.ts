@@ -27,18 +27,6 @@ export class Skill
 
     buildDescription()
     {
-
-        //for cards with unique effects (add a base description)
-        switch(this.name)
-        {
-            case 'Throw Off Balance':
-                this.description = 'If your opponent used at least ' + this.effects.offBalanceReq + ' fatigue this turn, they become Vulnerable.';
-
-            default:
-                this.description = '';
-                break;
-        }
-
         switch(this.type)
         {
             case 'attack':
@@ -97,7 +85,23 @@ export class Skill
 
             default:
                 break;
-            }
+        }
+
+        //for cards with unique effects (add a base description)
+        switch(this.name)
+        {
+            case "Throw Off Balance":
+                this.description += "If your opponent used at least " + this.effects.offBalanceReq + " fatigue this turn, they become Vulnerable.";
+
+            case "Body Slam":
+                this.description = "Deals damage equal to your block.";
+
+            case "Unrelenting Defence":
+                this.description += "Gain the block value of the previous block card played.";
+
+            default:
+                break;
+        }
     }
 
 }

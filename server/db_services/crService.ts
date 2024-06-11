@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, deleteField} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { Skill } from "../models/skill";
-import { Creature } from "../models/creature";
+import { ServerCreature } from "../models/serverCreature";
 import { Trait } from "../models/trait";
 import { Activity } from "../models/activity";
 import { applyTraits } from "../tools/applyTraits";
@@ -12,7 +12,7 @@ const db = getFirestore(fbase);
 
 export class CrService
 {
-  async getCreatureById(id: string, tries = 10): Promise<Creature>
+  async getCreatureById(id: string, tries = 10): Promise<ServerCreature>
   {
     try
     {
@@ -30,10 +30,10 @@ export class CrService
     }
   }
 
-  async getAllCreatures(): Promise<Array<Creature>>
+  async getAllCreatures(): Promise<Array<ServerCreature>>
   {
     const snapshot = await getDocs(collection(db, 'creatures'));
-    const arr: Array<Creature> = [];
+    const arr: Array<ServerCreature> = [];
     snapshot.forEach((doc) =>
     {
       let data = doc.data();
@@ -44,11 +44,14 @@ export class CrService
   }
 
   //DOES NOT UPDATE: currentAct, ownedBy, type
-  async updateCreature(crID: string, cr: Creature)
+  async updateCreature(crID: string, cr: ServerCreature)
   {
     let skillsConverted = [];
-    if (cr.skills) { cr.skills.forEach((s) =>{ delete s.usedByID; });}
-    skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj);});
+    if (cr.skills)
+    {
+      cr.skills.forEach((s) =>{ delete s.usedByID; });
+      skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj);});
+    }
 
     let traitsConverted = [];
     if (cr.traits) traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj);});
@@ -95,7 +98,7 @@ export class CrService
     });
   }
 
-  async addWin(cr: Creature)
+  async addWin(cr: ServerCreature)
   {
     await updateDoc(doc(db, "creatures", cr.crID),
     {
@@ -128,24 +131,20 @@ export class CrService
   async addSkillPick(crID: string, arr: Array<Skill>)
   {
     let temp = (await this.getCreatureById(crID)).skillPicks;
-    if (!temp) temp = {};
-    arr = arr.map((obj)=> {return Object.assign({}, obj)});
-    temp[(new Date().getTime())] = arr;
+    if (!temp) temp = [];
+    temp.push(arr);
 
     await updateDoc(doc(db, "creatures", crID),
     {
-      skillPicks: temp
+      skillPicks: this.convertSkillPicks(temp)
     });
   }
 
-  async replaceSkillPicks(crID: string, skillPicks: Object)
+  async replaceSkillPicks(crID: string, skillPicks: Array<Array<Skill>>)
   {
-    for (let arr in skillPicks)
-    {
-      skillPicks[arr] = skillPicks[arr].map((obj)=> {return Object.assign({}, obj)});
-    }
+    const picks = this.convertSkillPicks(skillPicks);
 
-    if (Object.keys(skillPicks).length === 0)
+    if (Object.keys(picks).length === 0)
     {
       await updateDoc(doc(db, "creatures", crID),
       {
@@ -154,12 +153,12 @@ export class CrService
     }
     else await updateDoc(doc(db, "creatures", crID),
     {
-      skillPicks: skillPicks
+      skillPicks: picks
     });
   }
 
   //convert from firebase model to frontend model, apply traits if requested
-  convertDataToCreature(crID: string, data: any, baseStats = true): Creature
+  convertDataToCreature(crID: string, data: any, baseStats = true): ServerCreature
   {
     let cAct = undefined;
     if (data["currentAct"])
@@ -167,11 +166,27 @@ export class CrService
       cAct = new Activity(data['currentAct'].name, data['currentAct'].description, data['currentAct'].duration, data['currentAct'].props, new Date(data['currentAct'].startDate.toDate()));
     }
 
-    let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
+    let picksConverted = [];
+    for (const p in data["skillPicks"])
+    {
+      picksConverted.push(data["skillPicks"][p]);
+    }
+
+    let cr = new ServerCreature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
       data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],
-      data["skillPicks"], data["lvlup"], data["battlesWon"], cAct);
+      picksConverted, data["lvlup"], data["battlesWon"], cAct);
     if (!baseStats) applyTraits(cr);
     
     return cr;
+  }
+
+  convertSkillPicks(picks: Array<Array<Skill>>): Object
+  {
+    let obj = {};
+    picks.forEach((p, i) =>
+    {
+      obj[i] = (p.map((x) => { return Object.assign({}, x) }));
+    });
+    return obj;
   }
 }

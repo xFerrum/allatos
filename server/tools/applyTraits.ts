@@ -1,6 +1,6 @@
-import { Creature } from "../models/creature";
+import { ServerCreature } from "../models/serverCreature";
 
-export function applyTraits(cr: Creature)
+export function applyTraits(cr: ServerCreature)
 {
     if (cr.traits)
     {
@@ -15,19 +15,19 @@ export function applyTraits(cr: Creature)
 
 const traitFuncs = new Map<string, Function>
 ([
-    ["Strong", (cr: Creature): Creature =>
+    ["Strong", (cr: ServerCreature): ServerCreature =>
         {
             cr.str++;
             return(cr);
         }
     ],
-    ["Muscular", (cr: Creature): Creature =>
+    ["Muscular", (cr: ServerCreature): ServerCreature =>
         {
             cr.str += 2;
             return(cr);
         }
     ],
-    ["Absolutely Jacked", (cr: Creature): Creature =>
+    ["Absolutely Jacked", (cr: ServerCreature): ServerCreature =>
         {
             cr.str += 4;
             return(cr);

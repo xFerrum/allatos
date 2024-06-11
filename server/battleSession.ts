@@ -1,3 +1,4 @@
+import { ServerCreature } from "./models/serverCreature";
 import { Creature } from "./models/creature";
 import { Skill } from "./models/skill";
 import { Status } from "./models/status";
@@ -6,7 +7,7 @@ import { Trait } from "./models/trait";
 export class BattleSession
 {
     roomID!: string;
-    crs: Array<Creature> = [];
+    crs: Array<ServerCreature> = [];
     uids: Array<String> = [];
     io: any;
     sockets: Array<any> = [];
@@ -21,11 +22,11 @@ export class BattleSession
     combatLog = "";
     skillsOrdered: Array<Skill> = [];
 
-    constructor(roomID: string, cr: Creature, io: any, gameOverCb: Function)
+    constructor(roomID: string, cr: ServerCreature, io: any, gameOverCb: Function)
     {
         this.gameOverCb = gameOverCb;
 
-        this.crs[0] = this.readClientCreature(cr);
+        this.crs[0] = cr;
         this.uids[0] = cr.ownedBy;
         this.crs[0].HP = cr.con;
         this.crs[0].fatigue = 0;
@@ -40,9 +41,9 @@ export class BattleSession
         this.io = io;
     }
 
-    addSecondPlayer(cr: Creature)
+    addSecondPlayer(cr: ServerCreature)
     {
-        this.crs[1] = this.readClientCreature(cr);
+        this.crs[1] = cr;
         this.uids[1] = cr.ownedBy;
         this.crs[1].HP = cr.con;
         this.crs[1].fatigue = 0;
@@ -87,7 +88,7 @@ export class BattleSession
         if (owneruid === this.uids[0] && !this.canPicks[0]) return;
         if (owneruid === this.uids[1] && !this.canPicks[1]) return;
 
-        let pickedBy: Creature;
+        let pickedBy: ServerCreature;
         let skill: Skill;
 
         if (this.gameState === 10 || this.gameState === 20)
@@ -159,8 +160,8 @@ export class BattleSession
 
         this.combatLog += this.crs[0].name + " picked skill:\n" + this.skillsUsed[0][0].description + "\n";
         this.combatLog += this.crs[1].name + " picked skill:\n" + this.skillsUsed[1][0].description + "\n";
-        if (!(this.crs[0].turnInfo.fatigued)) this.canPicks[0] = true;
-        if (!(this.crs[1].turnInfo.fatigued)) this.canPicks[1] = true;
+        if (!(this.crs[0].hasStatus("Fatigued"))) this.canPicks[0] = true;
+        if (!(this.crs[1].hasStatus("Fatigued"))) this.canPicks[1] = true;
 
         this.sendLog();
         if(!this.canPicks[0] && !this.canPicks[1])
@@ -266,17 +267,6 @@ export class BattleSession
 
         this.checkIfGameEnd();
 
-        this.resetTurnInfo();
-
-        for (let i = 0; i < 2; i++)
-        {
-            if (this.crs[i].fatigue >= this.crs[i].stamina)
-            {
-                this.crs[i].turnInfo.fatigued = true;
-                this.crs[i].fatigue -= this.crs[i].stamina;
-            }
-        }
-
         this.io.to(this.roomID).emit('turn-ended');
     }
 
@@ -295,8 +285,16 @@ export class BattleSession
                 }
             }
 
+            //count down statuses
             this.crs[actor].statuses.map((s) => s.duration--);
             this.crs[actor].statuses = this.crs[actor].statuses.filter((s) => s.duration > 0);
+
+            //apply end of turn status gains
+            if (this.crs[i].fatigue >= this.crs[i].stamina)
+            {
+                this.crs[i].statuses.push(this.statuses.get("Fatigued"));
+                this.crs[i].fatigue -= this.crs[i].stamina;
+            }
 
             if (this.crs[actor].turnInfo.offBalance)
             {
@@ -312,9 +310,10 @@ export class BattleSession
             if (!this.crs[actor].turnInfo.steadfast) this.removeBlock(this.crs[actor], this.crs[actor].block);
         }
 
+        this.resetTurnInfo();
     }
 
-    addBlock(cr: Creature, amount: number)
+    addBlock(cr: ServerCreature, amount: number)
     {
         cr.block += amount;
         this.combatLog += cr.name + " is blocking " + amount + ".\n"
@@ -323,7 +322,7 @@ export class BattleSession
         this.sendSnapshot();
     }
 
-    removeBlock(cr: Creature, amount: number)
+    removeBlock(cr: ServerCreature, amount: number)
     {
         if (amount > cr.block) amount = cr.block;
         cr.block -= amount;
@@ -332,9 +331,8 @@ export class BattleSession
         this.sendSnapshot();
     }
 
-    hit(actor: Creature, target: Creature, dmg: number)
+    hit(actor: ServerCreature, target: ServerCreature, dmg: number)
     {
-        console.log(target.hasStatus);
         if (target.hasStatus('Vulnerable')) dmg = Math.floor(dmg * 1.25);
 
         if (dmg > target.block)
@@ -358,7 +356,7 @@ export class BattleSession
     }
 
     //discard hand, draw X skills from deck
-    drawHand(cr: Creature)
+    drawHand(cr: ServerCreature)
     {
         //put leftover skills from last turn into deck
         cr.deck.push(...cr.skills);
@@ -366,7 +364,7 @@ export class BattleSession
         this.drawCards(cr, 5);
     }
 
-    drawCards(cr: Creature, n: number)
+    drawCards(cr: ServerCreature, n: number)
     {
         for (let i = 0; i < n; i++)
         {
@@ -412,7 +410,7 @@ export class BattleSession
         this.crs[1].turnInfo = {retaliate: {}};
     }
 
-    playerWon(cr: Creature)
+    playerWon(cr: ServerCreature)
     {
         this.io.to(this.roomID).emit('turn-ended');
         this.sendGameState();
@@ -488,6 +486,9 @@ export class BattleSession
         //for cards with unique effects
         switch(skill.name)
         {
+            case 'Body Slam':
+                skill.effects.dmg = this.crs[actor].block;
+
             case 'Throw Off Balance':
                 this.crs[opponent].turnInfo.offBalance = skill.effects.offBalanceReq;
             
@@ -577,12 +578,6 @@ export class BattleSession
     ([
         [ "Vulnerable", new Status("Vulnerable", "You take 25% more damage from attacks.", 1) ],
         [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
+        [ "Fatigued",  new Status("Fatigued", "You're exhausted and need to rest. You can only play 1 card this turn.", 1) ],
     ]);
-
-    //different model : - ]
-    readClientCreature(cr: any): Creature
-    {
-        cr = new Creature(cr.crID, cr.name, cr.type, cr.str, cr.agi, cr.int, cr.con, cr.ini, cr.ownedBy, cr.skills, cr.traits, cr.stamina, cr.xp, cr.born, cr.level, cr.skillPicks, cr.lvlup, cr.battlesWon, cr?.currentAct);
-        return cr;
-    }
 }

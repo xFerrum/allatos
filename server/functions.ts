@@ -19,16 +19,9 @@ io.on('connection', (socket: any) =>
     socket.on('skill-learn-requested', async (uid: string, crID: string) =>
     {
         let cr = await crService.getCreatureById(crID);
-        if (uid === cr.ownedBy && Object.keys(cr.skillPicks).length !== 0)
-        {        
-            let dates = Object.keys(cr.skillPicks);
-            let earliest = new Date().getTime();
-            for (const d of dates)
-            {
-                if (Number(d) < earliest) earliest = Number(d);
-            }
-            const options = [...cr.skillPicks[earliest]];
-            delete cr.skillPicks[earliest];
+        if (uid === cr.ownedBy && cr.skillPicks.length !== 0)
+        {
+            const options = cr.skillPicks.shift();
             socket.emit('skill-pick-ready', options);
 
             socket.on('skill-option-selected', async (index: number) =>

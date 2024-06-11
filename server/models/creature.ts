@@ -1,8 +1,6 @@
 import { Activity } from "./activity";
 import { Skill } from "./skill";
 import { Trait } from "./trait";
-import { generateSkill } from "../tools/skillGenerator";
-import { Status } from "./status";
 
 export class Creature
 {
@@ -21,7 +19,7 @@ export class Creature
     xp: number;
     level: number;
     born: Date;
-    skillPicks: Object;
+    skillPicks: boolean;
     lvlup: number;
     battlesWon: number;
     currentAct?: Activity;
@@ -34,11 +32,11 @@ export class Creature
     lingering?: any;
     deck?: Array<Skill>;
     grave?: Array<Skill>;
-    statuses?: Array<Status>;
+    statuses?: Array<Trait>; //pseudo traits
 
     constructor(crID: string, name: string, type: string, str: number, agi: number, int: number, con: number, ini: number,
         ownedBy: string, skills: Array<Skill>, traits: Array<Trait>, stamina: number, xp: number, born: Date, level: number,
-        skillPicks: Object, lvlup: number, battlesWon: number, currentAct?: Activity)
+        skillPicks: boolean, lvlup: number, battlesWon: number, currentAct?: Activity)
     {
         this.crID = crID;
         this.name = name;
@@ -59,61 +57,5 @@ export class Creature
         this.level = level;
         this.lvlup = lvlup;
         this.battlesWon = battlesWon;
-    }
-
-    getTraitNames(): Array<string>
-    {
-        let nameArr = [];
-        for (let trait of this.traits) nameArr.push(trait.name);
-        
-        return nameArr;
-    }
-
-    hasStatus(statusName: string): boolean
-    {
-        this.statuses!.forEach((s) =>
-        {
-            if (s.name === statusName) return true;
-        });
-
-        return false;
-    }
-
-    addXP(gained: number)
-    {
-        if (this.xp + gained < 100)
-        {
-            this.xp += gained;
-        }
-        else
-        {
-            this.level++;
-            this.lvlup++;
-            this.xp = 0 + (this.xp + gained - 100);
-
-            let newSkillPick = [];
-            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(0));
-            this.addSkillPick(newSkillPick);
-        }
-    }
-
-    addSkillPick(skillPick: Array<Skill>)
-    {
-        if (!(this.skillPicks)) this.skillPicks = {};
-        this.skillPicks[(new Date().getTime())] = skillPick;
-    }
-
-    addTrait(trait: Trait)
-    {
-        if (!this.traits) this.traits = [];
-        this.traits.push(trait);
-
-    }
-
-    removeTrait(traitName: string)
-    {
-        if (!this.traits) return;
-
-        this.traits = this.traits.filter((t) => t.name !== traitName);
     }
 }

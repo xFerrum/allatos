@@ -1,5 +1,6 @@
 import { BattleSession } from "./battleSession";
 import { Creature } from "./models/creature";
+import { ServerCreature } from "./models/serverCreature";
 import { CrService } from "./db_services/crService";
 
 const crService = new CrService;
@@ -26,9 +27,9 @@ io.on('connection', (socket: any) =>
 
     if (!battlesInProgress.has(roomID)) //if it's the first user joining the room (for the first time)
     {
-      let newBattle = new BattleSession(roomID, cr, io, async (winner: Creature) =>
+      let newBattle = new BattleSession(roomID, convertClientCreature(cr), io, async (winner: Creature) =>
         {
-          crService.addWin(winner);
+          crService.addWin(convertClientCreature(winner));
           battlesInProgress.delete(roomID)
         } );
       newBattle.sockets[0] = socket;
@@ -40,9 +41,7 @@ io.on('connection', (socket: any) =>
       let battle = battlesInProgress.get(roomID);
       battle.sockets[1] = socket;
 
-      battle.addSecondPlayer(cr);
-      const cr1 = battle.crs[0];
-      const cr2 = battle.crs[1];
+      battle.addSecondPlayer(convertClientCreature(cr));
       io.to(roomID).emit('players-ready'); //cr1 = player1's (joined 1st), cr = player2's (joined 2nd)
     }
     else //user is rejoining, check if its p1 or p2
@@ -68,3 +67,8 @@ io.on('connection', (socket: any) =>
     battle.skillPicked(owneruid, index, socket);
   });
 });
+
+function convertClientCreature(cr: Creature): ServerCreature
+{
+  return new ServerCreature(cr.crID, cr.name, cr.type, cr.str, cr.agi, cr.int, cr.con, cr.ini, cr.ownedBy, cr.skills, cr.traits, cr.stamina, cr.xp, cr.born, cr.level, [], cr.lvlup, cr.battlesWon, cr?.currentAct);
+}

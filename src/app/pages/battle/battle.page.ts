@@ -292,14 +292,14 @@ export class BattlePage implements OnInit
       this.updateOp(newStats.opCr, newStats.opSkillsLength);
     }
 
-    if (this.hiddenMyCr.turnInfo.fatigued)
+    if (this.hasStatus(this.hiddenMyCr, "Fatigued"))
     {
       await this.popUpService.effectPopUp(this.myCr.name + " is fatigued and needs to rest!", 'hit-popup');
       await this.delay(showEffectFor);
       await this.popUpService.dismissPopUp();
     }
 
-    if (this.hiddenOpCr.turnInfo.fatigued)
+    if (this.hasStatus(this.hiddenOpCr, "Fatigued"))
     {
       await this.popUpService.effectPopUp(this.opCr.name + " is fatigued and needs to rest!", 'hit-popup');
       await this.delay(showEffectFor);
@@ -347,6 +347,17 @@ export class BattlePage implements OnInit
     await this.delay(showFor);
     await this.popUpService.dismissPopUp();
   } */
+
+    hasStatus(cr: Creature, statusName: string): boolean
+    {
+      let has = false;
+      cr.statuses!.forEach((s) =>
+      {
+        if (s.name === statusName) has = true;
+      });
+
+      return has;
+    }
 
   delay(ms: number)
   {
