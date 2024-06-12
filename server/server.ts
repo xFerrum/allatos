@@ -27,11 +27,11 @@ io.on('connection', (socket: any) =>
 
     if (!battlesInProgress.has(roomID)) //if it's the first user joining the room (for the first time)
     {
-      let newBattle = new BattleSession(roomID, convertClientCreature(cr), io, async (winner: Creature) =>
+      let newBattle = new BattleSession(roomID, convertClientCreature(cr), io, async (winner: ServerCreature) =>
         {
-          crService.addWin(convertClientCreature(winner));
-          battlesInProgress.delete(roomID)
-        } );
+          crService.addWin(winner);
+          battlesInProgress.delete(roomID);
+        });
       newBattle.sockets[0] = socket;
 
       battlesInProgress.set(roomID, newBattle);

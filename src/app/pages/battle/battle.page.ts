@@ -36,8 +36,6 @@ export class BattlePage implements OnInit
   opSkillsLength!: number;
   showRevealedSkill = false;
   showPlayedSkill = false;
-  myBlock = 0;
-  opBlock = 0;
   turnInfo = "";
   traitShowing = false;
   traitToShow!: Trait;
@@ -217,15 +215,6 @@ export class BattlePage implements OnInit
     this.opCr = opCr;
   }
 
-  updateBlock(amount: number, crID: string)
-  {
-    if (crID === this.myCrID)
-    {
-      this.myBlock += amount;
-    }
-    else this.opBlock += amount;
-  }
-
   useSkill(index: number)
   {
     this.socket.emit('play-skill', this.userService.getLoggedInID(), index);
@@ -258,7 +247,6 @@ export class BattlePage implements OnInit
 
   /*---------------------------------------------------------------ANIMATION STUFF---------------------------------------------------------------*/
 
-  //TODO: make played cards appear next to op or my side of the board
   async EOTAnimations()
   {
     this.animating = true;
@@ -277,14 +265,6 @@ export class BattlePage implements OnInit
       {
         await this.cardAnimation(a, showCardFor, "attacks");
         await this.delay(inBetween);
-      }
-      else if (a.type === 'gain-block')
-      {
-        this.updateBlock(a.block, a.actorID);
-      }
-      else if (a.type === 'remove-block')
-      {
-        this.updateBlock(a.block, a.actorID);
       }
 
       const newStats = this.snapshotChain.shift();

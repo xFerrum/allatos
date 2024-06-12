@@ -185,36 +185,36 @@
         </ion-row>
 
         <ion-row class="buts">
-          <ion-button type="submit" expand="block" class="but" id="open-skills" (click)="openSkills(creature)">open skills</ion-button>
+          <ion-button type="submit" expand="block" class="but" (click)="openSkills(creature)">open skills</ion-button>
           <ion-button type="submit" expand="block" class="but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
           <ion-button type="submit" expand="block" class="but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
         </ion-row>
-
-        <ion-modal trigger="open-skills" class="skills-window">
-          <ng-template>
-
-            <ion-header>
-              <ion-toolbar>
-                <ion-buttons slot="start">
-                  <ion-button (click)="closeSkills()">close</ion-button>
-                </ion-buttons>
-                <ion-title>{{creature.name}}'s skills</ion-title>
-              </ion-toolbar>
-            </ion-header>
-  
-            <ion-content>
-              <ion-grid>
-                <ion-row class="cards-container">
-                  <ion-col *ngFor="let skill of creature.skills; index as i" size="auto" class="card-container">
-                    <app-skillcard [skill]="skill" [index]="i"></app-skillcard>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-content>
-
-          </ng-template>
-        </ion-modal>
       </ion-grid>
+
+      <ion-modal [isOpen]="deckShowing" (didDismiss)="deckShowing = false" class="skills-window">
+        <ng-template>
+
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="closeSkills()">close</ion-button>
+              </ion-buttons>
+              <ion-title>Skills</ion-title>
+            </ion-toolbar>
+          </ion-header>
+
+          <ion-content>
+            <ion-grid>
+              <ion-row class="cards-container">
+                <ion-col *ngFor="let skill of deckToShow; index as i" size="auto" class="card-container">
+                  <app-skillcard [skill]="skill" [index]="i"></app-skillcard>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-content>
+
+        </ng-template>
+      </ion-modal>
 
       <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false" class="trait-popover">
         <ng-template>

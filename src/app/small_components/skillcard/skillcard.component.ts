@@ -22,11 +22,12 @@ export class SkillcardComponent  implements OnInit
 
   constructor(public creatureService: CreatureService)
   {
-
   }
 
   ngOnInit()
   {
+    //TODO: separate 
+
     if (this.skill.type === 'attack')
       {
         this.bgColor = 'rgb(224, 127, 127)';

@@ -19,9 +19,23 @@
     margin: 15px;
 }
 
+.later-but
+{
+    position: absolute;
+    align-self: flex-start;
+    bottom: 0;
+    margin: 15px;
+}
+
 .cards-container
 {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.card-container
+{
+    padding: 0;
+    margin: 0px;
 }

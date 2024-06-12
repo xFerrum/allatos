@@ -47,4 +47,9 @@ export class SkillPickComponent
     this.socket.emit('skill-pick-skipped');
     this.confirmFunc();
   }
+
+  pickLater()
+  {
+    this.confirmFunc();
+  }
 }

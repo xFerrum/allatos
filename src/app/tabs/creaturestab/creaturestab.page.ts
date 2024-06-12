@@ -38,10 +38,14 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   traitToShow!: Trait;
   socket: any;
   waitingForLearn = false;
+  deckToShow!: Array<Skill>;
+  deckShowing = false;
 
   constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService)
   {}
 
+  //TODO: adventure only finishes if you "OK" it (this eliminates rare data loss in case of 2 creature updates happening at the same time)
+  //TODO: move deck modal from inline to ctrler
   async ngOnInit(): Promise<void>
   {
     await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()!));
@@ -114,9 +118,11 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     this.traitShowing = true;
   }
 
+  //TODO: deck component, use it in skillpick window too with a button
   openSkills(cr: Creature)
   {
-    cr.skills = cr.skills.sort((a, b) =>
+    this.deckToShow = cr.skills;
+    this.deckToShow.sort((a, b) =>
     {
       if (a.name < b.name)
       {
@@ -124,6 +130,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
       }
       else return 1;
     });
+    this.deckShowing = true;
   }
 
   closeSkills()

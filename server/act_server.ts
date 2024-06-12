@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc} from 'firebase/firestore/lite';
+import { getFirestore} from 'firebase/firestore/lite';
 import { firebaseConfig } from "../src/app/fbaseconfig";
 import { CrService } from "./db_services/crService";
 import { Activity } from "./models/activity";

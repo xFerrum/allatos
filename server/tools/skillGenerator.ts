@@ -44,12 +44,12 @@ Method of generation:
 */
 
 let selfTarget: boolean;
-let effects = {};
+let effects: any;
 let fatCost = 0;
 let name: string;
 let description = '';
 let skills = [];
-let rarity: number;
+let rarity = 0; //right now this property is meaningless
 
 //TODO: separate functions for adding each effect, these could be used for modifying skills too (after theyve already been generated)
 export function generateSkill(c: boolean, r: boolean, l: boolean, type = 'random'): Skill
@@ -68,7 +68,7 @@ export function generateSkill(c: boolean, r: boolean, l: boolean, type = 'random
     {
         case 'attack':
             effects['dmg'] = 7; 
-            fatCost = 10;
+            fatCost = 11;
             selfTarget = false;
 
             loadAttacks(c, r, l);
@@ -103,7 +103,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
 {
     if (c)
     {
-        //+8-10 dmg
+        //+8-10 dmg 
         skills.push(() =>
         {
             name = "Strike";
@@ -145,7 +145,29 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
             fatCost -= 9 - x;
             effects['combo'] = {dmg: x + 3};
         });
+
+        //+3-5 dmg, apply weakened
+        skills.push(() =>
+        {
+            name = "Debilitate";
     
+            const x = rndInt(3, 5);
+            fatCost += x - 3;
+            effects['dmg'] += x;
+            effects["Weakened"] = 1;
+        });
+    }
+
+    if (r)
+    {
+        //deal damage equal to block
+        skills.push(() =>
+        {
+            name = "Body Slam";
+    
+            effects['dmg'] = 0;
+        });
+
         //combo: +15-18 heavy
         skills.push(() =>
         {
@@ -155,29 +177,27 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
             fatCost -= 12 - x;
             effects['combo'] = {heavy: x + 4};
         });
-    }
 
-    if (r)
-    {
+        //+5-7 dmg, if opponent is at or over stam limit, +50% dmg
         skills.push(() =>
         {
-            //deal damage equal to block
-            name = "Body Slam";
+            name = "Punishing Blow";
     
-            fatCost += 2;
-            effects['dmg'] = 0;
+            const x = rndInt(5, 7);
+            fatCost += x - 3;
+            effects['dmg'] += x;
         });
     }
 
     if (l)
     {
-        //+25-31 dmg
+        //+25-30 dmg
         skills.push(() =>
         {
             name = "Brutal Swing";
 
             fatCost += 30;
-            effects['dmg'] += rndInt(25, 31);
+            effects['dmg'] += rndInt(25, 30);
         });
     }
 }
@@ -236,10 +256,19 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
         {
             name = "Throw Off Balance";
     
-            fatCost += 3;
             const x = rndInt(0, 6);
+            fatCost += 7 - x;
             effects['block'] += rndInt(0, 2) + 2;
             effects['offBalanceReq'] = 18 + x;
+        });
+
+        //+3-5 block, your opponent's first attack this turn uses double fatigue
+        skills.push(() =>
+        {
+            name = "Take The High Ground";
+    
+            const x = rndInt(0, 2);
+            effects['block'] += x + 3;
         });
     }
 
@@ -274,7 +303,12 @@ function loadTricks(c: boolean, r: boolean, l: boolean)
 
     if (l)
     {
-        
+        //can't die this turn
+        skills.push(() =>
+        {
+            name = "";
+            description = "";
+        });
     }
 
 }

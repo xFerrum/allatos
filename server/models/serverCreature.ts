@@ -80,6 +80,26 @@ export class ServerCreature
         return has;
     }
 
+    addStatus(name: string, duration: number)
+    {
+        if (this.hasStatus(name))
+        {
+            this.statuses.forEach((status) =>
+            {
+                if (status.name === name)
+                {
+                    status.duration += duration; 
+                }
+            });
+        }
+        else
+        {
+            let newStatus = {...this.statusMap.get(name)};
+            newStatus.duration = duration;
+            this.statuses.push(newStatus);
+        }
+    }
+
     addXP(gained: number)
     {
         if (this.xp + gained < 100)
@@ -93,7 +113,7 @@ export class ServerCreature
             this.xp = 0 + (this.xp + gained - 100);
 
             let newSkillPick = [];
-            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(true, true, false));
+            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(true, false, false));
             this.addSkillPick(newSkillPick);
         }
     }
@@ -118,4 +138,12 @@ export class ServerCreature
 
         this.traits = this.traits.filter((t) => t.name !== traitName);
     }
+
+    statusMap = new Map<string, Status>
+    ([
+        [ "Weakened", new Status("Weakened", "You deal 25% less damage with attacks.", 1) ],
+        [ "Vulnerable", new Status("Vulnerable", "You take 25% more damage from attacks.", 1) ],
+        [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
+        [ "Fatigued",  new Status("Fatigued", "You're exhausted and need to rest. You can only play 1 card this turn and you became Vulnerable.", 1) ],
+    ]);
 }

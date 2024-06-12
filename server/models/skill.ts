@@ -32,29 +32,54 @@ export class Skill
             case 'attack':
 
                 for (let effect in this.effects)
+                {
+                    switch(effect)
                     {
-                        switch(effect)
-                        {
-                            case 'dmg':
-                                this.description += "Deal " + this.effects.dmg + " damage.\n";
-                                break;
-    
-                            case 'shred':
-                                this.description += "Shred " + this.effects.shred + " block.\n";
-                                break;
-    
-                            case 'heavy':
-                                this.description += "Heavy: " + this.effects.heavy + "\n";
-                                break;
-
-                            case 'combo':
-                                this.description += "Combo: ";
-                                if ('dmg' in this.effects.combo) this.description += "+" + this.effects.combo.dmg + " damage. ";
-                                if ('heavy' in this.effects.combo) this.description += "+" + this.effects.combo.heavy + " heavy. ";
-                                this.description += "\n";
+                        case 'dmg':
+                            this.description += "Deal " + this.effects.dmg + " damage.\n";
                             break;
-                        }
+
+                        case 'shred':
+                            this.description += "Shred " + this.effects.shred + " block.\n";
+                            break;
+
+                        case 'heavy':
+                            this.description += "Heavy: " + this.effects.heavy + "\n";
+                            break;
+
+                        case 'combo':
+                            this.description += "Combo: ";
+                            if ('dmg' in this.effects.combo) this.description += "+" + this.effects.combo.dmg + " damage. ";
+                            if ('heavy' in this.effects.combo) this.description += "+" + this.effects.combo.heavy + " heavy. ";
+                            this.description += "\n";
+                            break;
+                    
+                        case "Weakened":
+                            this.description += "Apply " + this.effects["Weakened"] + " Weakened.\n";
+                            break;
+
+                        case "Vulnerable":
+                            this.description += "Apply " + this.effects["Vulnerable"] + " Vulnerable.\n";
+                            break;
+
+                        default:
+                            break;
                     }
+                }
+                
+                for (let status in this.effects.statuses)
+                {
+                    switch(status)
+                    {
+                        case "Weakened":
+                            this.description += "Apply " + this.effects.statuses["Weakened"] + " Weakened.\n";
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                }
                 break;
 
             case 'block':
@@ -79,6 +104,9 @@ export class Skill
                             if ('dmg' in this.effects.retaliate) this.description += "Deal " + this.effects.retaliate.dmg + " damage. ";
                             this.description += "\n";
                             break;
+
+                        default:
+                            break;
                     }
                 }
                 break;
@@ -91,13 +119,24 @@ export class Skill
         switch(this.name)
         {
             case "Throw Off Balance":
-                this.description += "If your opponent used at least " + this.effects.offBalanceReq + " fatigue this turn, they become Vulnerable.";
+                this.description += "If opponent used at least " + this.effects.offBalanceReq + " stamina this turn, they become Vulnerable.";
+                break;
 
             case "Body Slam":
                 this.description = "Deals damage equal to your block.";
+                break;
 
             case "Unrelenting Defence":
                 this.description += "Gain the block value of the previous block card played.";
+                break;
+
+            case "Take The High Ground":
+                this.description += "Double the stamina cost of your opponent's next attack.";
+                break;
+
+            case "Punishing Blow":
+                this.description += "If opponent is over fatigue limit, this deals +50% base damage.";
+                break;
 
             default:
                 break;

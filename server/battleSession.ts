@@ -135,13 +135,13 @@ export class BattleSession
         const randomNumber = iniTotal * Math.random();
         if (randomNumber > this.crs[0].ini)
         {
-            this.crs[1].statuses.push(this.statuses.get("First"));
+            this.crs[1].addStatus("First", 1);
             this.playerOneFirst = false;
             this.combatLog += this.crs[1].name + " won the initiative roll. (";
         }
         else
         {
-            this.crs[0].statuses.push(this.statuses.get("First"));
+            this.crs[0].addStatus("First", 1);
             this.playerOneFirst = true;
             this.combatLog += this.crs[0].name + " won the initiative roll. (";
         }
@@ -286,14 +286,15 @@ export class BattleSession
             }
 
             //count down statuses
-            this.crs[actor].statuses.map((s) => s.duration--);
+            this.crs[actor].statuses.map((s) => {s.duration--});
+            console.log(this.crs[actor].statuses);
             this.crs[actor].statuses = this.crs[actor].statuses.filter((s) => s.duration > 0);
 
             //apply end of turn status gains
             if (this.crs[i].fatigue >= this.crs[i].stamina)
             {
-                this.crs[i].statuses.push(this.statuses.get("Fatigued"));
-                this.crs[i].statuses.push(this.statuses.get("Vulnerable"));
+                this.crs[i].addStatus("Fatigued", 1);
+                this.crs[i].addStatus("Vulnerable", 1);
                 this.crs[i].fatigue -= this.crs[i].stamina;
             }
 
@@ -304,8 +305,7 @@ export class BattleSession
                 {
                     fatSum += s.fatCost;
                 });
-                
-                if (this.crs[actor].turnInfo.offBalance >= fatSum) this.crs[actor].statuses.push(this.statuses.get("Vulnerable"));
+                if (this.crs[actor].turnInfo.offBalance >= fatSum) this.crs[actor].addStatus("Vulnerable", 1);
             }
 
             if (!this.crs[actor].turnInfo.steadfast) this.removeBlock(this.crs[actor], this.crs[actor].block);
@@ -332,10 +332,14 @@ export class BattleSession
         this.sendSnapshot();
     }
 
-    hit(actor: ServerCreature, target: ServerCreature, dmg: number)
+    hit(actor: ServerCreature, target: ServerCreature, dmg: number, skill?: Skill)
     {
-        if (target.hasStatus('Vulnerable')) dmg = Math.floor(dmg * 1.25);
+        if (skill) dmg = skill.effects.dmg;
 
+        if (actor.hasStatus("Weakened")) dmg *= 0.75;
+        if (target.hasStatus("Vulnerable")) dmg *= 1.25;
+
+        dmg = Math.floor(dmg);
         if (dmg > target.block)
         {
             //hit
@@ -350,6 +354,19 @@ export class BattleSession
             dmg = 0;
         }
         target.HP -= dmg;
+
+        //apply statuses from skill
+        if (skill)
+        {
+            if ("Weakened" in skill.effects)
+            {
+                target.addStatus("Weakened", skill.effects["Weakened"]);
+            }
+            if ("Vulnerable" in skill.effects)
+            {
+                target.addStatus("Vulnerable", skill.effects["Vulnerable"]);
+            }
+        }
 
         this.combatLog += target.name + " got hit for " + dmg + " damage.\n"
         this.io.to(this.roomID).emit('action-happened', {type: 'hit', dmg: dmg, targetID: target.crID});
@@ -436,6 +453,7 @@ export class BattleSession
         this.sockets[1].emit('game-state-sent', this.crs[1], this.canPicks[1], decoy1, cr1SkillsLength, this.gameState);
     }
 
+    //send 1 for every action-happened
     sendSnapshot()
     {
         const cr1SkillsLength = this.crs[0].skills.length;
@@ -482,22 +500,31 @@ export class BattleSession
         this.io.to(this.roomID).emit('action-happened', skill);
         this.sendSnapshot();
 
-        this.crs[actor].fatigue += skill.fatCost;
-
         //for cards with unique effects
         switch(skill.name)
         {
-            case 'Body Slam':
+            case "Body Slam":
                 skill.effects.dmg = this.crs[actor].block;
+                break;
 
-            case 'Throw Off Balance':
+            case "Throw Off Balance":
                 this.crs[opponent].turnInfo.offBalance = skill.effects.offBalanceReq;
-            
-            case 'Unrelenting Defence':
+                break;
+
+            case "Unrelenting Defence":
                 if (this.crs[actor].turnInfo?.lastSkill && 'block' === this.crs[actor].turnInfo.lastSkill.type)
                 {
                     this.addBlock(this.crs[actor], this.crs[actor].turnInfo.lastSkill.effects.block)
                 }
+                break;
+
+            case "Take The High Ground":
+                this.crs[opponent].turnInfo.highGroundDebuff = true;
+                break;
+
+            case "Punishing Blow":
+                if (this.crs[opponent].fatigue >= this.crs[opponent].stamina) skill.effects.dmg *= 1.5;
+                break;
 
             default:
                 break;
@@ -508,7 +535,11 @@ export class BattleSession
             case 'attack':
                 this.crs[actor].turnInfo.attacked = true;
 
-                //combo check
+                if (this.crs[actor].turnInfo.highGroundDebuff)
+                {
+                    skill.fatCost *= 2;
+                    this.crs[actor].turnInfo.highGroundDebuff = false;
+                }
                 if (this.crs[actor].turnInfo?.lastSkill && 'combo' in this.crs[actor].turnInfo.lastSkill.effects)
                 {
                     for (let eff in this.crs[actor].turnInfo.lastSkill.effects.combo)
@@ -523,18 +554,16 @@ export class BattleSession
                         }
                     }
                 }
-
                 if ('shred' in skill.effects)
                 {
                     this.removeBlock(this.crs[opponent], skill.effects.shred);
-
                 }
                 if ('heavy' in skill.effects)
                 {
                     this.crs[opponent].fatigue += skill.effects.heavy;
                 }
 
-                this.hit(this.crs[actor], this.crs[opponent], skill.effects.dmg);
+                this.hit(this.crs[actor], this.crs[opponent], skill.effects.dmg,skill);
                 break;
             
                 
@@ -569,16 +598,12 @@ export class BattleSession
                 break;
         }
 
+        this.crs[actor].fatigue += skill.fatCost;
         this.crs[actor].turnInfo.lastSkill = skill;
         this.crs[actor].grave.push(skill);
 
+        this.io.to(this.roomID).emit('action-happened', {type: ''});
+        this.sendSnapshot();
         this.sendLog();
     }
-
-    statuses = new Map<string, Status>
-    ([
-        [ "Vulnerable", new Status("Vulnerable", "You take 25% more damage from attacks.", 1) ],
-        [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
-        [ "Fatigued",  new Status("Fatigued", "You're exhausted and need to rest. You can only play 1 card this turn and you became Vulnerable.", 1) ],
-    ]);
 }

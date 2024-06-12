@@ -1,4 +1,4 @@
-$cardwidth: 160px;
+$cardwidth: 170px;
 
 ion-card
 {
@@ -57,8 +57,8 @@ ion-card-header
     height: 25px;
     align-items: center;
     justify-content: center;
-    margin-top: 5px;
-    margin-bottom: 8px;
+    margin-top: 1px;
+    margin-bottom: 6px;
     margin-left: 1px;
     margin-right: 1px;
 }
@@ -82,20 +82,22 @@ ion-card-subtitle
 
 p
 {
+    text-align: center;
     padding-top: $cardwidth * 0.015;
     padding-bottom: $cardwidth * 0.015;
     white-space: pre-wrap;
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 ion-card-content
 {
+    align-content: center;
     font-family: 'Mouse';
     padding: 4px;
     padding-bottom: 0;
     padding-top: 0;
-    height: 130px;
+    height: 105px;
     color: rgb(0, 0, 0);
     margin: 4px;
     margin-top: 0;
