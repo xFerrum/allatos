@@ -238,7 +238,7 @@ $font1: 'Mouse';
 
 .statuses-card
 {
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgba(0, 0, 0, 0.2);
     position: fixed;
     right: 60%;
     max-width: 30%;
@@ -273,4 +273,15 @@ $font1: 'Mouse';
     height: 35px;
     padding: 2px;
     cursor: pointer;
+}
+
+.status-duration
+{
+    position: absolute;
+    font-size: 16px;
+    font-family: 'Mouse';
+    color: black;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+    right: 0;
+    bottom: 0;
 }

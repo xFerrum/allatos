@@ -44,7 +44,8 @@
             <ion-card-content class="statuses-card-content">
               <ion-row class="statuses-container">
                 <ion-col *ngFor="let status of opCr.statuses" size="auto" class="status-container">
-                  <img class="status-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="statusClicked($event, status)"/>
+                  <img class="status-icon" src="{{'assets/icons/statuses/'+ status.name +'.svg'}}" (click)="statusClicked($event, status)"/>
+                  <p class="status-duration">{{ status.duration }}</p>
                 </ion-col>
               </ion-row>
             </ion-card-content>
@@ -103,7 +104,8 @@
               <ion-card-content class="statuses-card-content">
                 <ion-row class="statuses-container">
                   <ion-col *ngFor="let status of myCr.statuses" size="auto" class="status-container">
-                    <img class="status-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="statusClicked($event, status)"/>
+                    <img class="status-icon" src="{{'assets/icons/statuses/'+ status.name +'.svg'}}" (click)="statusClicked($event, status)"/>
+                    <p class="status-duration">{{ status.duration }}</p>
                   </ion-col>
                 </ion-row>
               </ion-card-content>
