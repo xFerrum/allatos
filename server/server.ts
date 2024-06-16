@@ -29,7 +29,7 @@ io.on('connection', (socket: any) =>
     {
       let newBattle = new BattleSession(roomID, convertClientCreature(cr), io, async (winner: ServerCreature) =>
         {
-          crService.addWin(winner);
+          await crService.addWin(winner);
           battlesInProgress.delete(roomID);
         });
       newBattle.sockets[0] = socket;

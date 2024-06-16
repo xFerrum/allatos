@@ -79,8 +79,19 @@ export class ServerCreature
   
         return has;
     }
+    
+    getStatus(statusName: string): Status | null
+    {
+        let status = null;
+        this.statuses!.forEach((s) =>
+        {
+          if (s.name === statusName) status = s;
+        });
+  
+        return status;
+    }
 
-    addStatus(name: string, duration: number)
+    addStatus(name: string, counter: number)
     {
         if (this.hasStatus(name))
         {
@@ -88,14 +99,14 @@ export class ServerCreature
             {
                 if (status.name === name)
                 {
-                    status.duration += duration; 
+                    status.counter += counter; 
                 }
             });
         }
         else
         {
-            let newStatus = {...this.statusMap.get(name)};
-            newStatus.duration = duration;
+            let newStatus: Status = {...this.statusMap.get(name)};
+            newStatus.counter = counter;
             this.statuses.push(newStatus);
         }
     }
@@ -113,7 +124,7 @@ export class ServerCreature
             this.xp = 0 + (this.xp + gained - 100);
 
             let newSkillPick = [];
-            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(true, false, false));
+            for (let i = 0; i < 3; i++) newSkillPick.push(generateSkill(true, true, false));
             this.addSkillPick(newSkillPick);
         }
     }
@@ -142,8 +153,11 @@ export class ServerCreature
     statusMap = new Map<string, Status>
     ([
         [ "Weakened", new Status("Weakened", "You deal 25% less damage with attacks.", 1) ],
+        [ "Pumped", new Status("Pumped", "You deal 25% more damage with attacks.", 1) ],
         [ "Vulnerable", new Status("Vulnerable", "You take 25% more damage from attacks.", 1) ],
         [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
         [ "Fatigued",  new Status("Fatigued", "You're exhausted and need to rest. You can only play 1 card this turn and you became Vulnerable.", 1) ],
+
+        [ "Bolstered", new Status("Bolstered", "You gain more block from from cards.", 1, false) ],
     ]);
 }

@@ -286,9 +286,8 @@ export class BattleSession
             }
 
             //count down statuses
-            this.crs[actor].statuses.map((s) => {s.duration--});
-            console.log(this.crs[actor].statuses);
-            this.crs[actor].statuses = this.crs[actor].statuses.filter((s) => s.duration > 0);
+            this.crs[actor].statuses.map((s) => {if (s.countsDown) s.counter--});
+            this.crs[actor].statuses = this.crs[actor].statuses.filter((s) => s.counter > 0);
 
             //apply end of turn status gains
             if (this.crs[i].fatigue >= this.crs[i].stamina)
@@ -309,17 +308,44 @@ export class BattleSession
             }
 
             if (!this.crs[actor].turnInfo.steadfast) this.removeBlock(this.crs[actor], this.crs[actor].block);
+
+            actor = this.playerOneFirst ? 1 : 0;
+            opp = this.playerOneFirst ? 0 : 1;
         }
 
         this.resetTurnInfo();
     }
 
-    addBlock(cr: ServerCreature, amount: number)
+    addBlock(actor: ServerCreature, amount: number, skill?: Skill)
     {
-        cr.block += amount;
-        this.combatLog += cr.name + " is blocking " + amount + ".\n"
+        if (actor.hasStatus("Bolstered")) amount += actor.getStatus("Bolstered").counter;
 
-        this.io.to(this.roomID).emit('action-happened', {type: 'gain-block', block: amount, actorID: cr.crID});
+        let opp = actor === this.crs[0] ? this.crs[1] : this.crs[0];
+        actor.block += amount;
+        this.combatLog += actor.name + " is blocking " + amount + ".\n"
+
+        //apply statuses from skill
+        if (skill)
+        {
+            if ("Weakened" in skill.effects)
+            {
+                skill.effects["Weakened"][1] ? actor.addStatus("Weakened", skill.effects["Weakened"][0]) : opp.addStatus("Weakened", skill.effects["Weakened"][0]);
+            }
+            if ("Vulnerable" in skill.effects)
+            {
+                skill.effects["Vulnerable"][1] ? actor.addStatus("Vulnerable", skill.effects["Vulnerable"][0]) : opp.addStatus("Vulnerable", skill.effects["Vulnerable"][0]);
+            }
+            if ("Pumped" in skill.effects)
+            {
+                skill.effects["Pumped"][1] ? actor.addStatus("Pumped", skill.effects["Pumped"][0]) : opp.addStatus("Pumped", skill.effects["Pumped"][0]);
+            }
+            if ("Bolstered" in skill.effects)
+            {
+                skill.effects["Bolstered"][1] ? actor.addStatus("Bolstered", skill.effects["Bolstered"][0]) : opp.addStatus("Bolstered", skill.effects["Bolstered"][0]);
+            }
+        }
+
+        this.io.to(this.roomID).emit('action-happened', {type: 'gain-block', block: amount, actorID: actor.crID});
         this.sendSnapshot();
     }
 
@@ -334,12 +360,12 @@ export class BattleSession
 
     hit(actor: ServerCreature, target: ServerCreature, dmg: number, skill?: Skill)
     {
-        if (skill) dmg = skill.effects.dmg;
-
         if (actor.hasStatus("Weakened")) dmg *= 0.75;
+        if (actor.hasStatus("Pumped")) dmg *= 1.25;
         if (target.hasStatus("Vulnerable")) dmg *= 1.25;
 
         dmg = Math.floor(dmg);
+
         if (dmg > target.block)
         {
             //hit
@@ -360,11 +386,15 @@ export class BattleSession
         {
             if ("Weakened" in skill.effects)
             {
-                target.addStatus("Weakened", skill.effects["Weakened"]);
+                skill.effects["Weakened"][1] ? actor.addStatus("Weakened", skill.effects["Weakened"][0]) : target.addStatus("Weakened", skill.effects["Weakened"][0]);
             }
             if ("Vulnerable" in skill.effects)
             {
-                target.addStatus("Vulnerable", skill.effects["Vulnerable"]);
+                skill.effects["Vulnerable"][1] ? actor.addStatus("Vulnerable", skill.effects["Vulnerable"][0]) : target.addStatus("Vulnerable", skill.effects["Vulnerable"][0]);
+            }
+            if ("Pumped" in skill.effects)
+            {
+                skill.effects["Pumped"][1] ? actor.addStatus("Pumped", skill.effects["Pumped"][0]) : target.addStatus("Pumped", skill.effects["Pumped"][0]);
             }
         }
 
@@ -514,7 +544,7 @@ export class BattleSession
             case "Unrelenting Defence":
                 if (this.crs[actor].turnInfo?.lastSkill && 'block' === this.crs[actor].turnInfo.lastSkill.type)
                 {
-                    this.addBlock(this.crs[actor], this.crs[actor].turnInfo.lastSkill.effects.block)
+                    skill.effects.block = this.crs[actor].turnInfo.lastSkill.effects.block;
                 }
                 break;
 
@@ -563,7 +593,7 @@ export class BattleSession
                     this.crs[opponent].fatigue += skill.effects.heavy;
                 }
 
-                this.hit(this.crs[actor], this.crs[opponent], skill.effects.dmg,skill);
+                this.hit(this.crs[actor], this.crs[opponent], skill.effects.dmg, skill);
                 break;
             
                 
@@ -572,7 +602,7 @@ export class BattleSession
                 {
                     if (this.crs[actor].turnInfo.lastSkill?.type === 'block')
                     {
-                        this.addBlock(this.crs[actor], skill.effects.stance);
+                        skill.effects.block += skill.effects.stance;
                     }
                 }
                 if ('retaliate' in skill.effects)
@@ -594,7 +624,7 @@ export class BattleSession
                     this.crs[actor].turnInfo.steadfast = true;
                 }
 
-                this.addBlock(this.crs[actor], skill.effects.block);
+                this.addBlock(this.crs[actor], skill.effects.block, skill);
                 break;
         }
 

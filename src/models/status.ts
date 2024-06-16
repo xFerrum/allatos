@@ -2,12 +2,14 @@ export class Status
 {
     name: string;
     description: string;
-    duration: number;
+    counter: number;
+    countsDown = true;
 
-    constructor(name: string, description: string, duration: number)
+    constructor(name: string, description: string, counter: number, countsDown?: boolean)
     {
         this.name = name;
         this.description = description;
-        this.duration = duration;
+        this.counter = counter;
+        if (countsDown) this.countsDown = countsDown;
     }
 }

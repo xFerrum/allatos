@@ -154,7 +154,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
             const x = rndInt(3, 5);
             fatCost += x - 3;
             effects['dmg'] += x;
-            effects["Weakened"] = 1;
+            effects["Weakened"] = [1, false];
         });
     }
 
@@ -165,7 +165,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
         {
             name = "Body Slam";
     
-            effects['dmg'] = 0;
+            delete effects.dmg;
         });
 
         //combo: +15-18 heavy
@@ -198,6 +198,15 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
 
             fatCost += 30;
             effects['dmg'] += rndInt(25, 30);
+        });
+
+        //+25-30 dmg
+        skills.push(() =>
+        {
+            name = "Brutal Swing";
+
+            fatCost += 30;
+            delete effects.dmg;
         });
     }
 }
@@ -247,6 +256,17 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
             effects['steadfast'] = true;
             effects['block'] += x + 2;
         });
+
+        //+0-1 block, apply pumped to self
+        skills.push(() =>
+        {
+            name = "Warm Up";
+    
+            const x = rndInt(0, 1);
+            fatCost += 5 + x;
+            effects["Pumped"] = [1, true];
+            effects['block'] += x;
+        });
     }
 
     if (r)
@@ -270,6 +290,18 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
             const x = rndInt(0, 2);
             effects['block'] += x + 3;
         });
+
+        //+1-2 block, apply 2 bolstered to self
+        skills.push(() =>
+        {
+            name = "Bolster Defences";
+    
+            const x = rndInt(1, 2);
+            fatCost += 9 + x;
+            effects['block'] += x;
+            effects['Bolstered'] = [2, true];
+        });
+        
     }
 
     if (l)
@@ -278,6 +310,14 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
         skills.push(() =>
         {
             name = "Unrelenting Defence";
+    
+            effects['steadfast'] = true;
+        });
+
+        //
+        skills.push(() =>
+        {
+            name = "Last Resort";
     
             effects['steadfast'] = true;
         });

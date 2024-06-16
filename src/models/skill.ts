@@ -54,31 +54,37 @@ export class Skill
                             this.description += "\n";
                             break;
                     
+
                         case "Weakened":
-                            this.description += "Apply " + this.effects["Weakened"] + " Weakened.\n";
+                            this.description += "Apply " + this.effects["Weakened"][0] + " Weakened";
+                            if (this.effects["Weakened"][1])
+                            {
+                                this.description += " to self.\n";
+                            }
+                            else this.description += ".\n";
                             break;
 
                         case "Vulnerable":
-                            this.description += "Apply " + this.effects["Vulnerable"] + " Vulnerable.\n";
+                            this.description += "Apply " + this.effects["Vulnerable"][0] + " Vulnerable";
+                            if (this.effects["Vulnerable"][1])
+                            {
+                                this.description += " to self.\n";
+                            }
+                            else this.description += ".\n";
+                            break;
+
+                        case "Pumped":
+                            this.description += "Apply " + this.effects["Pumped"][0] + " Pumped";
+                            if (this.effects["Pumped"][1])
+                            {
+                                this.description += " to self.\n";
+                            }
+                            else this.description += ".\n";
                             break;
 
                         default:
                             break;
                     }
-                }
-                
-                for (let status in this.effects.statuses)
-                {
-                    switch(status)
-                    {
-                        case "Weakened":
-                            this.description += "Apply " + this.effects.statuses["Weakened"] + " Weakened.\n";
-                            break;
-
-                        default:
-                            break;
-                    }
-
                 }
                 break;
 
@@ -103,6 +109,43 @@ export class Skill
                             this.description += "Retaliate: ";
                             if ('dmg' in this.effects.retaliate) this.description += "Deal " + this.effects.retaliate.dmg + " damage. ";
                             this.description += "\n";
+                            break;
+                        
+
+                        case "Weakened":
+                            this.description += "Apply " + this.effects["Weakened"][0] + " Weakened";
+                            if (this.effects["Weakened"][1])
+                            {
+                                this.description += " to self.\n";
+                            }
+                            else this.description += ".\n";
+                            break;
+
+                        case "Vulnerable":
+                            this.description += "Apply " + this.effects["Vulnerable"][0] + " Vulnerable";
+                            if (this.effects["Vulnerable"][1])
+                            {
+                                this.description += " to self.\n";
+                            }
+                            else this.description += ".\n";
+                            break;
+
+                        case "Pumped":
+                            this.description += "Apply " + this.effects["Pumped"][0] + " Pumped";
+                            if (this.effects["Pumped"][1])
+                            {
+                                this.description += " to self.\n";
+                            }
+                            else this.description += ".\n";
+                            break;
+
+                        case "Bolstered":
+                            this.description += "Apply " + this.effects["Bolstered"][0] + " Bolstered";
+                            if (this.effects["Bolstered"][1])
+                            {
+                                this.description += " to self.\n";
+                            }
+                            else this.description += ".\n";
                             break;
 
                         default:
