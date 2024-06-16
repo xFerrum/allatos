@@ -162,7 +162,13 @@ export class CrService
     let cAct = undefined;
     if (data["currentAct"])
     {
-      cAct = new Activity(data['currentAct'].name, data['currentAct'].description, data['currentAct'].duration, data['currentAct'].props, new Date(data['currentAct'].startDate.toDate()));
+      cAct = new Activity(data["currentAct"].name, data["currentAct"].description, data["currentAct"].duration, data["currentAct"].props, new Date(data["currentAct"].startDate.toDate()));
+    }
+
+    let skillsConverted = [];
+    if (data["skills"])
+    {
+      data["skills"].forEach(s => {s.effects = this.objToMap(s.effects); });
     }
 
     let picksConverted = [];
@@ -172,7 +178,7 @@ export class CrService
     }
 
     let cr = new ServerCreature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
-      data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],
+      data["ownedBy"], skillsConverted, data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],
       picksConverted, data["lvlup"], data["battlesWon"], cAct);
     if (!baseStats) applyTraits(cr);
     
@@ -200,7 +206,6 @@ export class CrService
 
   mapToObj(map: Map<string, any>): any
   {
-    console.log(map);
     for (let [key, value] of map)
     {
       if (value instanceof Map)
@@ -210,5 +215,18 @@ export class CrService
     }
 
     return Object.fromEntries(map.entries());
+  }
+
+  objToMap(obj: Object): Map<string, any>
+  {
+    for (let prop in obj)
+    {
+      if (obj[prop] instanceof Object)
+      {
+        obj[prop] = this.objToMap(obj[prop]);
+      }
+    }
+
+    return new Map(Object.entries(obj));
   }
 }
