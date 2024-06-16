@@ -1,7 +1,7 @@
 import { Activity } from "./activity";
 import { Skill } from "./skill";
 import { Trait } from "./trait";
-import { generateSkill } from "../tools/skillGenerator";
+import { generateSkill } from "../skills/skillGenerator";
 import { Status } from "./status";
 
 export class ServerCreature

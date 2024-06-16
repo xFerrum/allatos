@@ -46,17 +46,15 @@ export class CrService
   //DOES NOT UPDATE: currentAct, ownedBy, type
   async updateCreature(crID: string, cr: ServerCreature)
   {
-    let skillsConverted = [];
+    let skillsConverted: Array<any> = [];
     if (cr.skills)
     {
-      cr.skills.forEach((s) =>{ delete s.usedByID; });
-      skillsConverted = cr.skills.map((obj)=> {return Object.assign({}, obj);});
+      cr.skills.forEach((s) => skillsConverted.push(this.convertSkill(s)));
     }
 
     let traitsConverted = [];
     if (cr.traits) traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj);});
 
-    if (cr.skillPicks) await this.replaceSkillPicks(cr.crID, cr.skillPicks);
 
     await updateDoc(doc(db, "creatures", crID),
     {
@@ -68,6 +66,7 @@ export class CrService
       level: cr.level,
       name: cr.name,
       skills: skillsConverted,
+      skillPicks: this.convertSkillPicks(cr.skillPicks),
       stamina: cr.stamina,
       str: cr.str,
       traits: traitsConverted,
@@ -76,13 +75,13 @@ export class CrService
     });
   }
 
-  async learnSkill(crID: string, skill: Skill)
+  async learnSkill(crID: string, skill: any)
   {
     let temp = (await this.getCreatureById(crID)).skills;
     if (!temp) temp = [];
     temp.push(skill);
-    delete skill.usedByID;
-    const converted = temp.map((obj)=> {return Object.assign({}, obj);});
+
+    const converted = temp.map((s)=> {return this.convertSkill(s);});
     
     await updateDoc(doc(db, "creatures", crID),
     {
@@ -142,9 +141,9 @@ export class CrService
 
   async replaceSkillPicks(crID: string, skillPicks: Array<Array<Skill>>)
   {
-    const picks = this.convertSkillPicks(skillPicks);
+    this.convertSkillPicks(skillPicks);
 
-    if (Object.keys(picks).length === 0)
+    if (Object.keys(skillPicks).length === 0)
     {
       await updateDoc(doc(db, "creatures", crID),
       {
@@ -153,7 +152,7 @@ export class CrService
     }
     else await updateDoc(doc(db, "creatures", crID),
     {
-      skillPicks: picks
+      skillPicks: skillPicks
     });
   }
 
@@ -180,13 +179,36 @@ export class CrService
     return cr;
   }
 
-  convertSkillPicks(picks: Array<Array<Skill>>): Object
+  convertSkill(skill: any): any
+  {
+    if (!(skill instanceof Skill)) return skill;
+
+    delete skill.usedByID;
+    skill.effects = this.mapToObj(skill.effects);
+    return Object.assign({}, skill);
+  }
+
+  convertSkillPicks(skillPicks: Array<Array<any>>)
   {
     let obj = {};
-    picks.forEach((p, i) =>
+    skillPicks.forEach((p, i) =>
     {
-      obj[i] = (p.map((x) => { return Object.assign({}, x) }));
+      obj[i] = (p.map((x) => { return Object.assign({}, this.convertSkill(x)) }));
     });
     return obj;
+  }
+
+  mapToObj(map: Map<string, any>): any
+  {
+    console.log(map);
+    for (let [key, value] of map)
+    {
+      if (value instanceof Map)
+      {
+        map.set(key, this.mapToObj(value));
+      }
+    }
+
+    return Object.fromEntries(map.entries());
   }
 }

@@ -122,14 +122,18 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   openSkills(cr: Creature)
   {
     this.deckToShow = cr.skills;
-    this.deckToShow = this.deckToShow.sort((a, b) =>
+    if (this.deckToShow)
     {
-      if (a.name < b.name)
+      this.deckToShow = this.deckToShow.sort((a, b) =>
       {
-        return -1;
-      }
-      else return 1;
-    });
+        if (a.name < b.name)
+        {
+          return -1;
+        }
+        else return 1;
+      });
+    }
+
     this.deckShowing = true;
   }
 

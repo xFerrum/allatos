@@ -277,11 +277,11 @@ export class BattleSession
 
         for (let i = 0; i < 2; i++)
         {
-            if (this.crs[actor].turnInfo.retaliate && !(this.crs[actor].turnInfo.gotHit) && this.crs[opp].turnInfo.attacked)
+            if (this.crs[actor].turnInfo.has('retaliate') && !(this.crs[actor].turnInfo.get('gotHit')) && this.crs[opp].turnInfo.get('attacked'))
             {
-                if ('dmg' in this.crs[actor].turnInfo.retaliate)
+                if (this.crs[actor].turnInfo.get('retaliate').has('dmg'))
                 {
-                    this.hit(this.crs[actor], this.crs[opp], this.crs[actor].turnInfo.retaliate.dmg);
+                    this.hit(this.crs[actor], this.crs[opp], this.crs[actor].turnInfo.get('retaliate').get('dmg'));
                 }
             }
 
@@ -297,17 +297,17 @@ export class BattleSession
                 this.crs[i].fatigue -= this.crs[i].stamina;
             }
 
-            if (this.crs[actor].turnInfo.offBalance)
+            if (this.crs[actor].turnInfo.has('offBalance'))
             {
                 let fatSum = 0;
                 this.skillsUsed[actor].forEach((s: Skill) =>
                 {
                     fatSum += s.fatCost;
                 });
-                if (this.crs[actor].turnInfo.offBalance >= fatSum) this.crs[actor].addStatus("Vulnerable", 1);
+                if (this.crs[actor].turnInfo.get('offBalance') >= fatSum) this.crs[actor].addStatus("Vulnerable", 1);
             }
 
-            if (!this.crs[actor].turnInfo.steadfast) this.removeBlock(this.crs[actor], this.crs[actor].block);
+            if (!this.crs[actor].turnInfo.has('steadfast')) this.removeBlock(this.crs[actor], this.crs[actor].block);
 
             actor = this.playerOneFirst ? 1 : 0;
             opp = this.playerOneFirst ? 0 : 1;
@@ -325,25 +325,7 @@ export class BattleSession
         this.combatLog += actor.name + " is blocking " + amount + ".\n"
 
         //apply statuses from skill
-        if (skill)
-        {
-            if ("Weakened" in skill.effects)
-            {
-                skill.effects["Weakened"][1] ? actor.addStatus("Weakened", skill.effects["Weakened"][0]) : opp.addStatus("Weakened", skill.effects["Weakened"][0]);
-            }
-            if ("Vulnerable" in skill.effects)
-            {
-                skill.effects["Vulnerable"][1] ? actor.addStatus("Vulnerable", skill.effects["Vulnerable"][0]) : opp.addStatus("Vulnerable", skill.effects["Vulnerable"][0]);
-            }
-            if ("Pumped" in skill.effects)
-            {
-                skill.effects["Pumped"][1] ? actor.addStatus("Pumped", skill.effects["Pumped"][0]) : opp.addStatus("Pumped", skill.effects["Pumped"][0]);
-            }
-            if ("Bolstered" in skill.effects)
-            {
-                skill.effects["Bolstered"][1] ? actor.addStatus("Bolstered", skill.effects["Bolstered"][0]) : opp.addStatus("Bolstered", skill.effects["Bolstered"][0]);
-            }
-        }
+        if (skill) this.applyStatuses(skill, actor, opp);
 
         this.io.to(this.roomID).emit('action-happened', {type: 'gain-block', block: amount, actorID: actor.crID});
         this.sendSnapshot();
@@ -382,21 +364,7 @@ export class BattleSession
         target.HP -= dmg;
 
         //apply statuses from skill
-        if (skill)
-        {
-            if ("Weakened" in skill.effects)
-            {
-                skill.effects["Weakened"][1] ? actor.addStatus("Weakened", skill.effects["Weakened"][0]) : target.addStatus("Weakened", skill.effects["Weakened"][0]);
-            }
-            if ("Vulnerable" in skill.effects)
-            {
-                skill.effects["Vulnerable"][1] ? actor.addStatus("Vulnerable", skill.effects["Vulnerable"][0]) : target.addStatus("Vulnerable", skill.effects["Vulnerable"][0]);
-            }
-            if ("Pumped" in skill.effects)
-            {
-                skill.effects["Pumped"][1] ? actor.addStatus("Pumped", skill.effects["Pumped"][0]) : target.addStatus("Pumped", skill.effects["Pumped"][0]);
-            }
-        }
+        if (skill) this.applyStatuses(skill, actor, target);
 
         this.combatLog += target.name + " got hit for " + dmg + " damage.\n"
         this.io.to(this.roomID).emit('action-happened', {type: 'hit', dmg: dmg, targetID: target.crID});
@@ -454,8 +422,8 @@ export class BattleSession
 
     resetTurnInfo()
     {
-        this.crs[0].turnInfo = {retaliate: {}};
-        this.crs[1].turnInfo = {retaliate: {}};
+        this.crs[0].turnInfo = new Map<string, any>([]);
+        this.crs[1].turnInfo = new Map<string, any>([]);
     }
 
     playerWon(cr: ServerCreature)
@@ -534,26 +502,26 @@ export class BattleSession
         switch(skill.name)
         {
             case "Body Slam":
-                skill.effects.dmg = this.crs[actor].block;
+                skill.effects.set('dmg', this.crs[actor].block);
                 break;
 
             case "Throw Off Balance":
-                this.crs[opponent].turnInfo.offBalance = skill.effects.offBalanceReq;
+                this.crs[opponent].turnInfo.set('offBalance', skill.effects.get('offBalanceReq'));
                 break;
 
             case "Unrelenting Defence":
-                if (this.crs[actor].turnInfo?.lastSkill && 'block' === this.crs[actor].turnInfo.lastSkill.type)
+                if (this.crs[actor].turnInfo.has('lastSkill') && 'block' === this.crs[actor].turnInfo.get('lastSkill').type && this.crs[actor].turnInfo.get('lastSkill').effects.has('block'))
                 {
-                    skill.effects.block = this.crs[actor].turnInfo.lastSkill.effects.block;
+                    skill.effects.set('block', this.crs[actor].turnInfo.get('lastSkill').effects.get('block'));
                 }
                 break;
 
             case "Take The High Ground":
-                this.crs[opponent].turnInfo.highGroundDebuff = true;
+                this.crs[opponent].turnInfo.set('highGroundDebuff', true);
                 break;
 
             case "Punishing Blow":
-                if (this.crs[opponent].fatigue >= this.crs[opponent].stamina) skill.effects.dmg *= 1.5;
+                if (this.crs[opponent].fatigue >= this.crs[opponent].stamina) skill.effects.set('dmg', skill.effects.get('dmg') * 1.5);
                 break;
 
             default:
@@ -563,77 +531,105 @@ export class BattleSession
         switch(skill.type)
         {
             case 'attack':
-                this.crs[actor].turnInfo.attacked = true;
+                this.crs[actor].turnInfo.set('attacked', true);
 
-                if (this.crs[actor].turnInfo.highGroundDebuff)
+                if (this.crs[actor].turnInfo.get('highGroundDebuff'))
                 {
                     skill.fatCost *= 2;
-                    this.crs[actor].turnInfo.highGroundDebuff = false;
+                    this.crs[actor].turnInfo.set('highGroundDebuff', false);
                 }
-                if (this.crs[actor].turnInfo?.lastSkill && 'combo' in this.crs[actor].turnInfo.lastSkill.effects)
+                if (this.crs[actor].turnInfo.has('lastSkill') && 'combo' in this.crs[actor].turnInfo.get('lastSkill').effects)
                 {
-                    for (let eff in this.crs[actor].turnInfo.lastSkill.effects.combo)
+                    for (let [effect, value] of this.crs[actor].turnInfo.lastSkill.effects.get('combo'))
                     {
-                        if (eff in skill.effects)
+                        if (skill.effects.has(effect))
                         {
-                            skill.effects[eff] += this.crs[actor].turnInfo.lastSkill.effects.combo[eff];
+                            skill.effects.set(effect, skill.effects.get(effect) + value);
                         }
                         else
                         {
-                            skill.effects[eff] = this.crs[actor].turnInfo.lastSkill.effects.combo[eff];
+                            skill.effects.set(effect, value);
                         }
                     }
                 }
                 if ('shred' in skill.effects)
                 {
-                    this.removeBlock(this.crs[opponent], skill.effects.shred);
+                    this.removeBlock(this.crs[opponent], skill.effects.get('shred'));
                 }
                 if ('heavy' in skill.effects)
                 {
-                    this.crs[opponent].fatigue += skill.effects.heavy;
+                    this.crs[opponent].fatigue += skill.effects.get('heavy');
                 }
 
-                this.hit(this.crs[actor], this.crs[opponent], skill.effects.dmg, skill);
+                this.hit(this.crs[actor], this.crs[opponent], skill.effects.get('dmg'), skill);
                 break;
             
                 
             case 'block':
-                if ('stance' in skill.effects)
+                if (skill.effects.has('stance') && this.crs[actor].turnInfo.has('lastSkill'))
                 {
-                    if (this.crs[actor].turnInfo.lastSkill?.type === 'block')
+                    for (let [effect, value] of this.crs[actor].turnInfo.get('lastSkill').effects.get('stance'))
                     {
-                        skill.effects.block += skill.effects.stance;
-                    }
-                }
-                if ('retaliate' in skill.effects)
-                {
-                    for (let eff in skill.effects.retaliate)
-                    {
-                        if (eff in this.crs[actor].turnInfo.retaliate)
+                        if (skill.effects.has(effect))
                         {
-                            this.crs[actor].turnInfo.retaliate[eff] += skill.effects.retaliate[eff];    
+                            skill.effects.set(effect, skill.effects.get(effect) + value);
                         }
                         else
                         {
-                            this.crs[actor].turnInfo.retaliate[eff] = skill.effects.retaliate[eff];
+                            skill.effects.set(effect, value);
                         }
                     }
                 }
-                if ('steadfast' in skill.effects)
+                if (skill.effects.has('retaliate'))
                 {
-                    this.crs[actor].turnInfo.steadfast = true;
+                    for (let [effect, value] of skill.effects.get('retaliate'))
+                    {
+                        if (this.crs[actor].turnInfo.get('retaliate').has(effect))
+                        {
+                            this.crs[actor].turnInfo.get('retaliate').set(effect, this.crs[actor].turnInfo.get('retaliate').get(effect) + value);
+                        }
+                        else
+                        {
+                            this.crs[actor].turnInfo.get('retaliate').set(effect, value);
+                        }
+                    }
+                }
+                if (skill.effects.has('steadfast'))
+                {
+                    this.crs[actor].turnInfo.set('steadfast', true);
                 }
 
-                this.addBlock(this.crs[actor], skill.effects.block, skill);
+                this.addBlock(this.crs[actor], skill.effects.get('block'), skill);
                 break;
         }
 
         this.crs[actor].fatigue += skill.fatCost;
-        this.crs[actor].turnInfo.lastSkill = skill;
+        this.crs[actor].turnInfo.set('lastSkill', skill);
         this.crs[actor].grave.push(skill);
 
         this.io.to(this.roomID).emit('action-happened', {type: ''});
         this.sendSnapshot();
         this.sendLog();
+    }
+
+    //apply statuses from skill
+    applyStatuses(skill: Skill, actor: ServerCreature, opp: ServerCreature)
+    {
+        if (skill.effects.has("Weakened"))
+        {
+            skill.effects.get("Weakened")[1] ? actor.addStatus("Weakened", skill.effects.get("Weakened")[0]) : opp.addStatus("Weakened", skill.effects.get("Weakened")[0]);
+        }
+        if (skill.effects.has("Vulnerable"))
+        {
+            skill.effects.get("Vulnerable")[1] ? actor.addStatus("Vulnerable", skill.effects.get("Vulnerable")[0]) : opp.addStatus("Vulnerable", skill.effects.get("Vulnerable")[0]);
+        }
+        (skill.effects.has("Pumped"))
+        {
+            skill.effects.get("Pumped")[1] ? actor.addStatus("Pumped", skill.effects.get("Pumped")[0]) : opp.addStatus("Pumped", skill.effects.get("Pumped")[0]);
+        }
+        (skill.effects.has("Bolstered"))
+        {
+            skill.effects.get("Bolstered")[1] ? actor.addStatus("Bolstered", skill.effects.get("Bolstered")[0]) : opp.addStatus("Bolstered", skill.effects.get("Bolstered")[0]);
+        }
     }
 }

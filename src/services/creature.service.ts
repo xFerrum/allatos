@@ -66,6 +66,13 @@ export class CreatureService
     {
       cAct = new Activity(data['currentAct'].name, data['currentAct'].description, data['currentAct'].duration, new Date(data["currentAct"].startDate.toDate()));
     }
+    if (data["skills"])
+    {
+      for (let s of data["skills"])
+      {
+
+      }
+    }
 
     const hasPicks = data["skillPicks"] ? true : false;
 
@@ -76,4 +83,5 @@ export class CreatureService
     
     return cr;
   }
+
 }

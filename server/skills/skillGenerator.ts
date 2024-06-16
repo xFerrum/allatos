@@ -1,4 +1,4 @@
-import { Skill } from "../../src/models/skill";
+import { Skill } from "../models/skill";
 /*
 NOTES/IDEAS:
 - rarity: 0-3 minor, major, pro, mythical or smth idk WIP
@@ -44,7 +44,7 @@ Method of generation:
 */
 
 let selfTarget: boolean;
-let effects: any;
+let effects: Map<string, any>;
 let fatCost = 0;
 let name: string;
 let description = '';
@@ -54,7 +54,7 @@ let rarity = 0; //right now this property is meaningless
 //TODO: separate functions for adding each effect, these could be used for modifying skills too (after theyve already been generated)
 export function generateSkill(c: boolean, r: boolean, l: boolean, type = 'random'): Skill
 {
-    effects = {};
+    effects = new Map<string, any>;
     fatCost = 0;
     skills = [];
 
@@ -67,7 +67,7 @@ export function generateSkill(c: boolean, r: boolean, l: boolean, type = 'random
     switch(type)
     {
         case 'attack':
-            effects['dmg'] = 7; 
+            effects.set('dmg', 7); 
             fatCost = 11;
             selfTarget = false;
 
@@ -78,7 +78,7 @@ export function generateSkill(c: boolean, r: boolean, l: boolean, type = 'random
 
 
         case 'block':
-            effects['block'] = 5;
+            effects.set('block', 5);
             fatCost = 3;
             selfTarget = true;
 
@@ -110,7 +110,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(4, 6);
             fatCost -= 6 - x;
-            effects['dmg'] += x + 4;
+            effects.set('dmg', effects.get('dmg') + x + 4);
         });
     
         //+4 dmg, +9-11 heavy
@@ -120,8 +120,8 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(4, 6);
             fatCost -= 6 - x;
-            effects['dmg'] += 4;
-            effects['heavy'] = x + 5;
+            effects.set('dmg', effects.get('dmg') + 4);
+            effects.set('heavy', x + 5);
         });
     
         //+4 dmg, +6-9 shred
@@ -131,8 +131,8 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(4, 7);
             fatCost -= 6 - x;
-            effects['dmg'] += 4;
-            effects['shred'] = x + 2;
+            effects.set('dmg', effects.get('dmg') + 4);
+            effects.set('shred', x + 2);
         });
     
         //combo: +9-12 dmg
@@ -143,7 +143,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
             fatCost += 2;
             const x = rndInt(6, 9);
             fatCost -= 9 - x;
-            effects['combo'] = {dmg: x + 3};
+            effects.set('combo', new Map<string, any>([ ['dmg', x + 3] ]));
         });
 
         //+3-5 dmg, apply weakened
@@ -153,8 +153,8 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(3, 5);
             fatCost += x - 3;
-            effects['dmg'] += x;
-            effects["Weakened"] = [1, false];
+            effects.set('dmg', effects.get('dmg') + x);
+            effects.set("Weakened", [1, false]);
         });
     }
 
@@ -165,7 +165,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
         {
             name = "Body Slam";
     
-            delete effects.dmg;
+            effects.delete('dmg');
         });
 
         //combo: +15-18 heavy
@@ -175,7 +175,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(11, 14);
             fatCost -= 12 - x;
-            effects['combo'] = {heavy: x + 4};
+            effects.set('combo', new Map<string, any>([ ['heavy', x + 4] ]));
         });
 
         //+5-7 dmg, if opponent is at or over stam limit, +50% dmg
@@ -185,7 +185,7 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(5, 7);
             fatCost += x - 3;
-            effects['dmg'] += x;
+            effects.set('dmg', effects.get('dmg') + x);
         });
     }
 
@@ -197,16 +197,15 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
             name = "Brutal Swing";
 
             fatCost += 30;
-            effects['dmg'] += rndInt(25, 30);
+            effects.set('dmg', effects.get('dmg') + rndInt(25, 30));
         });
 
-        //+25-30 dmg
+        //
         skills.push(() =>
         {
-            name = "Brutal Swing";
+            name = "";
 
-            fatCost += 30;
-            delete effects.dmg;
+
         });
     }
 }
@@ -222,7 +221,7 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(3, 5);
             fatCost -= 5 - x;
-            effects['block'] += x + 2;
+            effects.set('block', effects.get('block') + x + 2);
         });
     
         //stance: 7-9 block
@@ -232,7 +231,7 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(4, 6);
             fatCost -= 5 - x;
-            effects['stance'] = x + 3;
+            effects.set('stance', new Map<string, any>([ ['block', x + 3] ]));
         });
     
         //+2-4 block, retaliate: 6-8 dmg
@@ -242,8 +241,8 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(2, 4);
             fatCost -= 4 - x;
-            effects['block'] += x;
-            effects['retaliate'] = {dmg: (rndInt(4, 6) + 2)}; 
+            effects.set('block', effects.get('block') + x);
+            effects.set('retaliate', new Map<string, any>([ ['dmg', x + 2] ]));
         });
     
         //+3-4 block, steadfast
@@ -253,8 +252,8 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(1, 2);
             fatCost += x;
-            effects['steadfast'] = true;
-            effects['block'] += x + 2;
+            effects.set('steadfast', true);
+            effects.set('block', effects.get('block') + x + 2);
         });
 
         //+0-1 block, apply pumped to self
@@ -264,8 +263,8 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(0, 1);
             fatCost += 5 + x;
-            effects["Pumped"] = [1, true];
-            effects['block'] += x;
+            effects.set("Pumped", [1, true]);
+            effects.set('block', effects.get('block') + x);
         });
     }
 
@@ -278,8 +277,8 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(0, 6);
             fatCost += 7 - x;
-            effects['block'] += rndInt(0, 2) + 2;
-            effects['offBalanceReq'] = 18 + x;
+            effects.set('block', effects.get('block') + rndInt(0, 2) + 2);
+            effects.set('offBalanceReq', 18 + x);
         });
 
         //+3-5 block, your opponent's first attack this turn uses double fatigue
@@ -288,7 +287,7 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
             name = "Take The High Ground";
     
             const x = rndInt(0, 2);
-            effects['block'] += x + 3;
+            effects.set('block', effects.get('block') + x + 3);
         });
 
         //+1-2 block, apply 2 bolstered to self
@@ -298,8 +297,8 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
     
             const x = rndInt(1, 2);
             fatCost += 9 + x;
-            effects['block'] += x;
-            effects['Bolstered'] = [2, true];
+            effects.set('block', effects.get('block') + x);
+            effects.set("Bolstered", [2, true]);
         });
         
     }
@@ -311,7 +310,7 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
         {
             name = "Unrelenting Defence";
     
-            effects['steadfast'] = true;
+            effects.set('steadfast', true);
         });
 
         //
@@ -319,7 +318,6 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
         {
             name = "Last Resort";
     
-            effects['steadfast'] = true;
         });
     }
 }

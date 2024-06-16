@@ -3,13 +3,13 @@ export class Skill
     type: string;
     description = '';
     selfTarget: boolean; 
-    effects: any = [];
+    effects: Map<string, any>;
     fatCost: number;
     rarity: number;
     name: string;
     usedByID = '';
     
-    constructor(type: string, selfTarget: boolean, effects: Object, fatCost: number, rarity: number, name: string, description?: string)
+    constructor(type: string, selfTarget: boolean, effects: Map<string, any>, fatCost: number, rarity: number, name: string, description?: string)
     {
         this.type = type;
         this.selfTarget = selfTarget;
@@ -31,33 +31,33 @@ export class Skill
         {
             case 'attack':
 
-                for (let effect in this.effects)
+                for (let [effect, value] of this.effects)
                 {
                     switch(effect)
                     {
                         case 'dmg':
-                            this.description += "Deal " + this.effects.dmg + " damage.\n";
+                            this.description += "Deal " + value + " damage.\n";
                             break;
 
                         case 'shred':
-                            this.description += "Shred " + this.effects.shred + " block.\n";
+                            this.description += "Shred " + value + " block.\n";
                             break;
 
                         case 'heavy':
-                            this.description += "Heavy: " + this.effects.heavy + "\n";
+                            this.description += "Heavy: " + value + "\n";
                             break;
 
                         case 'combo':
                             this.description += "Combo: ";
-                            if ('dmg' in this.effects.combo) this.description += "+" + this.effects.combo.dmg + " damage. ";
-                            if ('heavy' in this.effects.combo) this.description += "+" + this.effects.combo.heavy + " heavy. ";
+                            if (value.has('dmg')) this.description += "+" + value.get('dmg') + " damage. ";
+                            if (value.has('heavy')) this.description += "+" + value.get('heavy') + " heavy. ";
                             this.description += "\n";
                             break;
                     
 
                         case "Weakened":
-                            this.description += "Apply " + this.effects["Weakened"][0] + " Weakened";
-                            if (this.effects["Weakened"][1])
+                            this.description += "Apply " + value[0] + " Weakened";
+                            if (value[1])
                             {
                                 this.description += " to self.\n";
                             }
@@ -65,8 +65,8 @@ export class Skill
                             break;
 
                         case "Vulnerable":
-                            this.description += "Apply " + this.effects["Vulnerable"][0] + " Vulnerable";
-                            if (this.effects["Vulnerable"][1])
+                            this.description += "Apply " + value[0] + " Vulnerable";
+                            if (value[1])
                             {
                                 this.description += " to self.\n";
                             }
@@ -74,8 +74,8 @@ export class Skill
                             break;
 
                         case "Pumped":
-                            this.description += "Apply " + this.effects["Pumped"][0] + " Pumped";
-                            if (this.effects["Pumped"][1])
+                            this.description += "Apply " + value[0] + " Pumped";
+                            if (value[1])
                             {
                                 this.description += " to self.\n";
                             }
@@ -89,16 +89,18 @@ export class Skill
                 break;
 
             case 'block':
-                for (let effect in this.effects)
+                for (let [effect, value] of this.effects)
                 {
                     switch(effect)
                     {
                         case 'block':
-                            this.description += "Block " + this.effects.block + " damage.\n";
+                            this.description += "Block " + value + " damage.\n";
                             break;
 
                         case 'stance':
-                            this.description += "Stance: " + this.effects.stance + "\n";
+                            this.description += "Stance: ";
+                            if (value.has('block')) this.description += "+" + value.get('block') + " block. ";
+                            this.description += "\n";
                             break;
 
                         case 'steadfast':
@@ -107,14 +109,14 @@ export class Skill
 
                         case 'retaliate':
                             this.description += "Retaliate: ";
-                            if ('dmg' in this.effects.retaliate) this.description += "Deal " + this.effects.retaliate.dmg + " damage. ";
+                            if (value.has('dmg')) this.description += "Deal " + value.get('dmg') + " damage. ";
                             this.description += "\n";
                             break;
                         
 
                         case "Weakened":
-                            this.description += "Apply " + this.effects["Weakened"][0] + " Weakened";
-                            if (this.effects["Weakened"][1])
+                            this.description += "Apply " + value[0] + " Weakened";
+                            if (value[1])
                             {
                                 this.description += " to self.\n";
                             }
@@ -122,8 +124,8 @@ export class Skill
                             break;
 
                         case "Vulnerable":
-                            this.description += "Apply " + this.effects["Vulnerable"][0] + " Vulnerable";
-                            if (this.effects["Vulnerable"][1])
+                            this.description += "Apply " + value[0] + " Vulnerable";
+                            if (value[1])
                             {
                                 this.description += " to self.\n";
                             }
@@ -131,8 +133,8 @@ export class Skill
                             break;
 
                         case "Pumped":
-                            this.description += "Apply " + this.effects["Pumped"][0] + " Pumped";
-                            if (this.effects["Pumped"][1])
+                            this.description += "Apply " + value[0] + " Pumped";
+                            if (value[1])
                             {
                                 this.description += " to self.\n";
                             }
@@ -140,8 +142,8 @@ export class Skill
                             break;
 
                         case "Bolstered":
-                            this.description += "Apply " + this.effects["Bolstered"][0] + " Bolstered";
-                            if (this.effects["Bolstered"][1])
+                            this.description += "Apply " + value[0] + " Bolstered";
+                            if (value[1])
                             {
                                 this.description += " to self.\n";
                             }
@@ -162,7 +164,7 @@ export class Skill
         switch(this.name)
         {
             case "Throw Off Balance":
-                this.description += "If opponent used at least " + this.effects.offBalanceReq + " stamina this turn, they become Vulnerable.";
+                this.description += "If opponent used at least " + this.effects.get('offBalanceReq') + " stamina this turn, they become Vulnerable.";
                 break;
 
             case "Body Slam":

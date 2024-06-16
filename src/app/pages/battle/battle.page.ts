@@ -50,7 +50,7 @@ export class BattlePage implements OnInit
   snapshotChain: any[] = [];
   hitFor!: number;
   animating = false;
-  skillToDisplay = new Skill('', false, {}, 0, 0, '');
+  skillToDisplay = new Skill('', false, new Map<string, any>, 0, 0, '');
   who = "actor";
   what = "action";
 

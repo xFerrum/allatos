@@ -1,7 +1,7 @@
 import { Creature } from "../src/models/creature";
 import { Skill } from "../src/models/skill";
 import { CrService } from "./db_services/crService";
-import { generateSkill } from "./tools/skillGenerator";
+import { generateSkill } from "./skills/skillGenerator";
 
 const io = require('socket.io')(3005,
 {
