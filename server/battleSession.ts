@@ -498,7 +498,7 @@ export class BattleSession
         this.io.to(this.roomID).emit('action-happened', skill);
         this.sendSnapshot();
 
-        //for cards with unique effects
+        //for cards with unique effects (before everything else)
         switch(skill.name)
         {
             case "Body Slam":
@@ -603,6 +603,18 @@ export class BattleSession
                 break;
         }
 
+        //for cards with unique effects (after everything else)
+        switch(skill.name)
+        {
+            case "Shake It Off":
+                this.crs[actor].statuses.map((s) => {if (s.countsDown) s.counter--});
+                this.crs[actor].statuses = this.crs[actor].statuses.filter((s) => s.counter > 0);
+                break;
+
+            default:
+                break;
+        }
+
         this.crs[actor].fatigue += skill.fatCost;
         this.crs[actor].turnInfo.set('lastSkill', skill);
         this.crs[actor].grave.push(skill);
@@ -623,11 +635,11 @@ export class BattleSession
         {
             skill.effects.get("Vulnerable")[1] ? actor.addStatus("Vulnerable", skill.effects.get("Vulnerable")[0]) : opp.addStatus("Vulnerable", skill.effects.get("Vulnerable")[0]);
         }
-        (skill.effects.has("Pumped"))
+        if (skill.effects.has("Pumped"))
         {
             skill.effects.get("Pumped")[1] ? actor.addStatus("Pumped", skill.effects.get("Pumped")[0]) : opp.addStatus("Pumped", skill.effects.get("Pumped")[0]);
         }
-        (skill.effects.has("Bolstered"))
+        if (skill.effects.has("Bolstered"))
         {
             skill.effects.get("Bolstered")[1] ? actor.addStatus("Bolstered", skill.effects.get("Bolstered")[0]) : opp.addStatus("Bolstered", skill.effects.get("Bolstered")[0]);
         }

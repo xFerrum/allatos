@@ -1,6 +1,6 @@
 import { ServerCreature } from "../models/serverCreature";
 import { Notification } from "../models/notification";
-import { generateSkill } from "../skills/skillGenerator";
+import { generateSkill } from "./skillGenerator";
 import { Activity } from "../models/activity";
 import { GenericService } from "../db_services/genericService";
 

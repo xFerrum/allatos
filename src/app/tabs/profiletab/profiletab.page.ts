@@ -36,7 +36,8 @@ export class ProfilePage implements OnInit {
     {
       this.router.navigate(['']);
     }
-    
+    window.location.reload();
+    localStorage.clear();
     await this.popUpService.dismissPopUp();
   }
 

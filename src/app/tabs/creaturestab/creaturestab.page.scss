@@ -409,6 +409,17 @@ $containerbg: linear-gradient(to bottom right, rgba(90, 150, 179, 0.75), rgba(40
     }
 }
 
+.no-creatures
+{
+    color: black;
+    font-family: $font1;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
 ion-content
 {
     background-color: white;

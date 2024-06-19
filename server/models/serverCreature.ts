@@ -1,7 +1,7 @@
 import { Activity } from "./activity";
 import { Skill } from "./skill";
 import { Trait } from "./trait";
-import { generateSkill } from "../skills/skillGenerator";
+import { generateSkill } from "../tools/skillGenerator";
 import { Status } from "./status";
 
 export class ServerCreature
@@ -158,6 +158,7 @@ export class ServerCreature
         [ "First", new Status("First", "You won the initiative roll, and you will be fist to act.", 1) ],
         [ "Fatigued",  new Status("Fatigued", "You're exhausted and need to rest. You can only play 1 card this turn and you became Vulnerable.", 1) ],
 
-        [ "Bolstered", new Status("Bolstered", "You gain more block from from cards.", 1, false) ],
+        [ "Bolstered", new Status("Bolstered", "You gain more block from cards.", 1, false) ],
+        [ "Strengthened", new Status("Strengthened", "You deal more damage with attacks.", 1, false) ],
     ]);
 }

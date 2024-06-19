@@ -183,6 +183,10 @@ export class Skill
                 this.description += "If opponent is over fatigue limit, this deals +50% base damage.";
                 break;
 
+            case "Shake It Off":
+                this.description = "Count down your status effects by 1.";
+                break;
+
             default:
                 break;
         }

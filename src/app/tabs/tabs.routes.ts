@@ -17,9 +17,9 @@ export const routes: Routes = [
           import('./profiletab/profiletab.page').then((m) => m.ProfilePage),
       },
       {
-        path: 'tab3',
+        path: 'arena',
         loadComponent: () =>
-          import('./tab3/tab3.page').then((m) => m.Tab3Page),
+          import('./arenatab/arenatab.page').then((m) => m.ArenaPage),
       },
       {
         path: '',

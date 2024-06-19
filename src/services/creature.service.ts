@@ -18,7 +18,8 @@ const db = getFirestore(fbase);
 
 export class CreatureService
 {
-  crUnsub: any;
+  crUnsubs: Array<Function> = [];
+  ownedCrsUnsub!: Function;
 
   constructor() {}
 
@@ -42,18 +43,33 @@ export class CreatureService
 
   async initCreatures(localArr: Array<Creature>, user: User)
   {
+    localArr.length = 0;
+    this.crUnsubs.forEach((uns) => uns());
+    if (this.ownedCrsUnsub) this.ownedCrsUnsub();
+    this.ownedCrsUnsub = onSnapshot(doc(db, "users", user.uid), (doc) =>
+    {
+      if (user.ownedCreatures.length !== doc.data()!["ownedCreatures"].length)
+      {
+        user.ownedCreatures = doc.data()!["ownedCreatures"];
+        this.initCreatures(localArr, user);
+      }
+    });
+
     //add to array and set listeners for creature data changes
     for (let i = 0; i < user.ownedCreatures.length; i++)
     {
       const crID = user.ownedCreatures[i];
       localArr.push(await this.getCreatureById(crID));
-      this.crUnsub = onSnapshot(doc(db, "creatures", crID), (doc) =>
+      this.crUnsubs[i] = onSnapshot(doc(db, "creatures", crID), (doc) =>
       {
         if (doc.exists())
         {
           localArr[i] = this.convertDataToCreature(crID, doc.data(), false);
         }
-        else delete localArr[i];
+        else
+        {
+          this.initCreatures(localArr, user);
+        }
       });
     }
   }

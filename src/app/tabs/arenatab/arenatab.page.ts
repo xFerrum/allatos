@@ -9,13 +9,13 @@ import { Creature } from 'src/models/creature';
 import { User } from 'src/models/user';
 
 @Component({
-  selector: 'app-tab3',
-  templateUrl: 'tab3.page.html',
-  styleUrls: ['tab3.page.scss'],
+  selector: 'app-arena',
+  templateUrl: 'arenatab.page.html',
+  styleUrls: ['arenatab.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
-export class Tab3Page implements OnInit
+export class ArenaPage implements OnInit
 {
   roomID!: string;
   chosenCreature!: Creature;
@@ -44,17 +44,18 @@ export class Tab3Page implements OnInit
     this.chosenCreature = ev.target.value;
   }
 
-  //join room with given id
-  joinRoom()
+  queue()
   {
-    this.nav.navigateForward('/battle',
+    if (this.chosenCreature)
     {
-      state:
+      this.nav.navigateForward('/battle',
+      {
+        state:
         {
           roomID: this.roomID,
           creatureID: this.chosenCreature.crID
         }
       });
-
+    }
   }
 }

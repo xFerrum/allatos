@@ -45,7 +45,6 @@ export class UserService
       {
         this.popUpService.clearNotifications();
         if(this.userUnsub) this.userUnsub();
-        if(this.creatureService.crUnsub) this.creatureService.crUnsub();
       }
     });
   }
@@ -59,7 +58,8 @@ export class UserService
       await setDoc(doc(db, "users", userCredential.user.uid),
       {
         email: email,
-        username: username
+        username: username,
+        ownedCreatures: []
       });
       return true;
     })

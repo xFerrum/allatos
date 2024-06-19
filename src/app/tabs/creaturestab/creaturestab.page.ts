@@ -44,11 +44,10 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService)
   {}
 
-  //TODO: adventure only finishes if you "OK" it (this eliminates rare data loss in case of 2 creature updates happening at the same time)
   //TODO: move deck modal from inline to ctrler
   async ngOnInit(): Promise<void>
   {
-    await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()!));
+    await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()));
     this.loadingDone = true;
   }
 
@@ -116,6 +115,17 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     this.traitToShow = {...trait};
     this.popover.event = e;
     this.traitShowing = true;
+  }
+
+  generateCreature()
+  {
+    this.socket = io('http://localhost:3005');
+    this.socket.emit('create-creature', this.userService.getLoggedInID());
+    this.popUpService.loadingPopUp("Creating...");
+    this.socket.on('creature-created', async () =>
+    {
+      this.popUpService.dismissPopUp();
+    });
   }
 
   //TODO: deck component, use it in skillpick window too with a button

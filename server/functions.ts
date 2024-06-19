@@ -1,17 +1,21 @@
 import { Creature } from "../src/models/creature";
 import { Skill } from "../src/models/skill";
 import { CrService } from "./db_services/crService";
-import { generateSkill } from "./skills/skillGenerator";
+import { generateSkill } from "./tools/skillGenerator";
+import { UserService } from "./db_services/userService";
+import { User } from "./models/user";
+import { generateCreature } from "./tools/creatureGenerator";
 
 const io = require('socket.io')(3005,
 {
     cors:
     {
-    origin: ['http://localhost:8100'],
+        origin: ['http://localhost:8100'],
     }
 });
 
 let crService = new CrService;
+let userService = new UserService;
 let userSkillOptions = new Map<string, Skill[]>;
 
 io.on('connection', (socket: any) =>
@@ -68,5 +72,26 @@ io.on('connection', (socket: any) =>
             socket.disconnect();
         }
         else socket.disconnect();
-    })
+    });
+
+    socket.on('create-creature', async (uid: string) =>
+    {
+        let user = await userService.getUser(uid);
+        if (user.ownedCreatures.length === 0)
+        {
+            let newCr = generateCreature();
+            newCr.ownedBy = uid;
+            const result = await crService.addCreature(newCr, uid);
+            if (!result)
+            {
+                console.log("Failed to create creature.");
+            }
+            else
+            {
+                await userService.registerCreature(uid, result);
+                socket.emit('creature-created');
+            }
+        }
+        socket.disconnect();
+    });
 });

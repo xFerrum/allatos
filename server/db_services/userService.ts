@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, updateDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { Injectable, inject } from "@angular/core";
 import { firebaseConfig } from "../../src/app/fbaseconfig";
@@ -16,7 +16,7 @@ export class UserService
 {
   constructor() {}
 
-  async getUser(uid: string, tries = 10): Promise<any>
+  async getUser(uid: string, tries = 10): Promise<User>
   {
     try
     {
@@ -43,6 +43,14 @@ export class UserService
     await updateDoc(doc(db, "users", uid),
     {
       notifications: converted
+    });
+  }
+  
+  async registerCreature(uid: string, crID: string)
+  {
+    await updateDoc(doc(db, "users", uid),
+    {
+      ownedCreatures: arrayUnion(crID),
     });
   }
 

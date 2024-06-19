@@ -1,7 +1,6 @@
 import { Skill } from "../models/skill";
 /*
 NOTES/IDEAS:
-- rarity: 0-3 minor, major, pro, mythical or smth idk WIP
 - attacks stronger than blocks, but fatigue significantly sooner, comboable
 - blocks: less comboable, but can counter opponent's attacks, takes priority to attacks in combat
 - fatigue: skills build up fatigue, have to rest after a certain amount
@@ -140,10 +139,9 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
         {
             name = "Twin Strike";
     
-            fatCost += 2;
-            const x = rndInt(6, 9);
-            fatCost -= 9 - x;
-            effects.set('combo', new Map<string, any>([ ['dmg', x + 3] ]));
+            const x = rndInt(0, 3);
+            fatCost += x + 2;
+            effects.set('combo', new Map<string, any>([ ['dmg', x + 9] ]));
         });
 
         //+3-5 dmg, apply weakened
@@ -151,10 +149,21 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
         {
             name = "Debilitate";
     
-            const x = rndInt(3, 5);
-            fatCost += x - 3;
-            effects.set('dmg', effects.get('dmg') + x);
+            const x = rndInt(0, 2);
+            fatCost += x;
+            effects.set('dmg', effects.get('dmg') + x + 3);
             effects.set("Weakened", [1, false]);
+        });
+
+        //+12-14 dmg, apply 2 Vulnerable to self
+        skills.push(() =>
+        {
+            name = "Reckless Strike";
+    
+            const x = rndInt(0, 2);
+            fatCost += x;
+            effects.set('dmg', effects.get('dmg') + x + 12);
+            effects.set("Vulnerable", [2, true]);
         });
     }
 
@@ -196,8 +205,9 @@ function loadAttacks(c: boolean, r: boolean, l: boolean)
         {
             name = "Brutal Swing";
 
-            fatCost += 30;
-            effects.set('dmg', effects.get('dmg') + rndInt(25, 30));
+            const x = rndInt(0, 5);
+            fatCost += 29 + x;
+            effects.set('dmg', effects.get('dmg') + 25 + x);
         });
 
         //
@@ -301,6 +311,15 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
             effects.set("Bolstered", [2, true]);
         });
         
+        //+0-1 block, countdown 1 on statuses
+        skills.push(() =>
+        {
+            name = "Shake It Off";
+    
+            const x = rndInt(0, 1);
+            fatCost += x;
+            effects.set('block', effects.get('block') + x);
+        });
     }
 
     if (l)
@@ -313,11 +332,16 @@ function loadBlocks(c: boolean, r: boolean, l: boolean)
             effects.set('steadfast', true);
         });
 
-        //
+        //+40-43 block, apply debuffs to self
         skills.push(() =>
         {
             name = "Last Resort";
     
+            const x = rndInt(0, 3);
+            fatCost += x;
+            effects.set('block', effects.get('block') + x + 35);
+            effects.set("Bolstered", [-6, true]);
+            effects.set("Weakened", [3, true]);
         });
     }
 }

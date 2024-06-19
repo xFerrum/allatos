@@ -245,3 +245,14 @@
     margin: 10px;
     --background: #79b4b6;
 }
+
+.tabs-header
+{
+    border: 1px solid black;
+
+    ion-title
+    {
+        font-family: 'Mouse';
+        font-size: 30px;
+    }
+}

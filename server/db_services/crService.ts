@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, deleteField} from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, doc, addDoc, setDoc, getDoc, query, where, arrayUnion, arrayRemove, updateDoc, deleteField} from 'firebase/firestore';
 import { firebaseConfig } from "../../src/app/fbaseconfig";
 import { Skill } from "../models/skill";
 import { ServerCreature } from "../models/serverCreature";
@@ -43,7 +43,7 @@ export class CrService
     return arr;
   }
 
-  //DOES NOT UPDATE: currentAct, ownedBy, type
+  //DOES NOT UPDATE: currentAct, ownedBy, type, battleswon
   async updateCreature(crID: string, cr: ServerCreature)
   {
     let skillsConverted: Array<any> = [];
@@ -55,6 +55,7 @@ export class CrService
     let traitsConverted = [];
     if (cr.traits) traitsConverted = cr.traits.map((obj)=> {return Object.assign({}, obj);});
 
+    let skillPicksConverted = this.convertSkillPicks(cr.skillPicks);
 
     await updateDoc(doc(db, "creatures", crID),
     {
@@ -66,13 +67,38 @@ export class CrService
       level: cr.level,
       name: cr.name,
       skills: skillsConverted,
-      skillPicks: this.convertSkillPicks(cr.skillPicks),
+      skillPicks: Object.keys(skillPicksConverted).length === 0 ? deleteField() : skillPicksConverted,
       stamina: cr.stamina,
       str: cr.str,
       traits: traitsConverted,
       xp: cr.xp,
       lvlup: cr.lvlup,
     });
+  }
+
+  async addCreature(cr: ServerCreature, uid: string): Promise<string>
+  {
+    const docRef = await addDoc(collection(db, "creatures"),
+    {
+      ownedBy: cr.ownedBy,
+      type: cr.type,
+      agi: cr.agi,
+      born: cr.born,
+      con: cr.con,
+      ini: cr.ini,
+      int: cr.int,
+      level: cr.level,
+      name: cr.name,
+      skills: [],
+      stamina: cr.stamina,
+      str: cr.str,
+      traits: [],
+      xp: cr.xp,
+      lvlup: cr.lvlup,
+      battlesWon: 0,
+    });
+
+    return docRef.id;
   }
 
   async learnSkill(crID: string, skill: any)
