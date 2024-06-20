@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="generic-header">
   <ion-toolbar>
     <ion-title>Login</ion-title>
   </ion-toolbar>
@@ -19,12 +19,12 @@
 
     <ion-row>
       <ion-col>
-        <ion-button id="loginBut" type="submit" color="danger" expand="block" (click)="tryLogIn()">Log In</ion-button>
+        <ion-button id="loginBut" type="submit" class="generic-but" expand="block" (click)="tryLogIn()">Log In</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button id="signUpBut" color="danger" expand="block" [routerLink]="['/registration']">Sign up</ion-button>
+        <ion-button id="signUpBut" class="generic-but" expand="block" [routerLink]="['/registration']">Sign up</ion-button>
       </ion-col>
     </ion-row>
 
