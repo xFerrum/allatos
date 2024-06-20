@@ -42,7 +42,7 @@ io.on('connection', (socket: any) =>
             });
         }
         else socket.disconnect();
-    })
+    });
 
     socket.on('attr-plus', async (uid: string, crID: string, which: string) =>
     {

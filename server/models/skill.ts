@@ -27,18 +27,16 @@ export class Skill
 
     buildDescription()
     {
+        this.description = '';
         switch(this.type)
         {
             case 'attack':
+                if (this.effects.has('dmg')) this.description += "Deal " + this.effects.get('dmg') + " damage.\n";
 
                 for (let [effect, value] of this.effects)
                 {
                     switch(effect)
                     {
-                        case 'dmg':
-                            this.description += "Deal " + value + " damage.\n";
-                            break;
-
                         case 'shred':
                             this.description += "Shred " + value + " block.\n";
                             break;
@@ -89,14 +87,12 @@ export class Skill
                 break;
 
             case 'block':
+                if (this.effects.has('block')) this.description += "Gain " + this.effects.get('block') + " block.\n";
+
                 for (let [effect, value] of this.effects)
                 {
                     switch(effect)
                     {
-                        case 'block':
-                            this.description += "Block " + value + " damage.\n";
-                            break;
-
                         case 'stance':
                             this.description += "Stance: ";
                             if (value.has('block')) this.description += "+" + value.get('block') + " block. ";

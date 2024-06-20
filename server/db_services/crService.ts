@@ -49,7 +49,7 @@ export class CrService
     let skillsConverted: Array<any> = [];
     if (cr.skills)
     {
-      cr.skills.forEach((s) => skillsConverted.push(this.convertSkill(s)));
+      cr.skills.forEach((s) => skillsConverted.push(this.skillToObj(s)));
     }
 
     let traitsConverted = [];
@@ -80,7 +80,7 @@ export class CrService
   {
     const docRef = await addDoc(collection(db, "creatures"),
     {
-      ownedBy: cr.ownedBy,
+      ownedBy: uid,
       type: cr.type,
       agi: cr.agi,
       born: cr.born,
@@ -89,7 +89,7 @@ export class CrService
       int: cr.int,
       level: cr.level,
       name: cr.name,
-      skills: [],
+      skills: cr.skills.map((s) => { return this.skillToObj(s) }),
       stamina: cr.stamina,
       str: cr.str,
       traits: [],
@@ -101,13 +101,13 @@ export class CrService
     return docRef.id;
   }
 
-  async learnSkill(crID: string, skill: any)
+  async learnSkill(crID: string, skill: Skill)
   {
     let temp = (await this.getCreatureById(crID)).skills;
     if (!temp) temp = [];
     temp.push(skill);
 
-    const converted = temp.map((s)=> {return this.convertSkill(s);});
+    const converted = temp.map((s)=> {return this.skillToObj(s);});
     
     await updateDoc(doc(db, "creatures", crID),
     {
@@ -165,10 +165,8 @@ export class CrService
     });
   }
 
-  async replaceSkillPicks(crID: string, skillPicks: Array<Array<Skill>>)
+  async replaceSkillPicks(crID: string, skillPicks: Array<any>)
   {
-    this.convertSkillPicks(skillPicks);
-
     if (Object.keys(skillPicks).length === 0)
     {
       await updateDoc(doc(db, "creatures", crID),
@@ -178,7 +176,7 @@ export class CrService
     }
     else await updateDoc(doc(db, "creatures", crID),
     {
-      skillPicks: skillPicks
+      skillPicks: this.convertSkillPicks(skillPicks)
     });
   }
 
@@ -191,16 +189,18 @@ export class CrService
       cAct = new Activity(data["currentAct"].name, data["currentAct"].description, data["currentAct"].duration, data["currentAct"].props, new Date(data["currentAct"].startDate.toDate()));
     }
 
-    let skillsConverted = [];
+    const skillsConverted: Array<Skill> = [];
     if (data["skills"])
     {
-      data["skills"].forEach(s => {s.effects = this.objToMap(s.effects); });
+      data["skills"].forEach((s) => { skillsConverted.push(this.objToSkill(s)) });
     }
 
     let picksConverted = [];
     for (const p in data["skillPicks"])
     {
-      picksConverted.push(data["skillPicks"][p]);
+      const newPick = [];
+      data["skillPicks"][p].forEach((s) => newPick.push(this.objToSkill(s)))
+      picksConverted.push(newPick);
     }
 
     let cr = new ServerCreature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
@@ -211,13 +211,17 @@ export class CrService
     return cr;
   }
 
-  convertSkill(skill: any): any
+  skillToObj(skill: any): any
   {
-    if (!(skill instanceof Skill)) return skill;
-
     delete skill.usedByID;
     skill.effects = this.mapToObj(skill.effects);
     return Object.assign({}, skill);
+  }
+
+  objToSkill(skill: any): Skill
+  {
+    skill.effects = this.objToMap(skill.effects);
+    return new Skill(skill.type, skill.selfTarget, skill.effects, skill.fatCost, skill.rarity, skill.name, skill?.description);
   }
 
   convertSkillPicks(skillPicks: Array<Array<any>>)
@@ -225,8 +229,9 @@ export class CrService
     let obj = {};
     skillPicks.forEach((p, i) =>
     {
-      obj[i] = (p.map((x) => { return Object.assign({}, this.convertSkill(x)) }));
+      obj[i] = (p.map((x) => { return this.skillToObj(x) }));
     });
+
     return obj;
   }
 
@@ -243,8 +248,10 @@ export class CrService
     return Object.fromEntries(map.entries());
   }
 
-  objToMap(obj: Object): Map<string, any>
+  objToMap(obj: any)
   {
+    if (obj instanceof Array) return obj;
+
     for (let prop in obj)
     {
       if (obj[prop] instanceof Object)

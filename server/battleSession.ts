@@ -438,6 +438,7 @@ export class BattleSession
 
     sendGameState()
     {
+        console.log("sent to:", this.sockets[0].id, this.sockets[1].id)
         const cr1SkillsLength = this.crs[0].skills.length;
         const cr2SkillsLength = this.crs[1].skills.length;
         let decoy1 = { ...this.crs[0] };

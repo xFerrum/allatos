@@ -14,6 +14,7 @@ import { PopUpService } from 'src/services/popup.service';
 import { ProgressbarComponent } from 'src/app/small_components/progressbar/progressbar.component';
 import { Trait } from 'src/models/trait';
 import { Status } from 'src/models/status';
+import { BattleService } from 'src/services/battle.service';
 
 @Component({
   selector: 'app-battle',
@@ -27,10 +28,8 @@ export class BattlePage implements OnInit
 {
   @ViewChild('popover') popover!: IonPopover;
   loadingDone = false; //TODO: implement loading spinner while joining
-  myCrID!: string;
   myCr!: Creature;
   opCr!: Creature;
-  roomID!: string;
   socket: any;
   canPick = false;
   opSkillsLength!: number;
@@ -54,42 +53,13 @@ export class BattlePage implements OnInit
   who = "actor";
   what = "action";
 
-//TODO: validate creature id belongs to user
-  //connect to socket, then room with the user's details
-  //in the future the battle matchups will be created on the server side, then it will be stored on firebase (the 2 player ids and the 2 creature ids and room/battle id) this func will use those
-  constructor(public creatureService: CreatureService, public userService: UserService, private route: ActivatedRoute, private router: Router, public animCtrl: AnimationController,
-    public popUpService: PopUpService)
-  {
-    this.route.queryParams.subscribe(_p =>
-    {
-      const navParams = this.router.getCurrentNavigation()!.extras.state;
-      this.myCrID = navParams!['creatureID'];
-      this.roomID = navParams!['roomID'];
-    })
-
-  }
+  constructor(private creatureService: CreatureService, private userService: UserService, private route: ActivatedRoute, private router: Router, private animCtrl: AnimationController,
+              private popUpService: PopUpService, private battleService: BattleService)
+  {}
 
   async ngOnInit()
   {
-  
-    this.myCr = await this.creatureService.getCreatureById(this.myCrID);
-    this.socket = io('http://localhost:3000');
-    //connect to server socket, join room
-    this.socket.on('connect', async () =>
-    {
-      await this.socket.emit('join-room', this.myCr, this.roomID, (joinSuccessful: boolean) => {
-        if (joinSuccessful)
-        {
-          console.log("Joined room " + this.roomID);
-          localStorage.setItem('isInBattle', 'true'); //TODO: navigate user to battle page by default if isInBattle
-        }
-      });
-    });
-
-    this.socket.on('players-ready', () =>
-    {
-      this.socket.emit('game-state-requested');
-    });
+    this.socket = this.battleService.socket;
 
     this.socket.on('player-rejoin', () =>
     {
@@ -98,7 +68,6 @@ export class BattlePage implements OnInit
 
     this.socket.on('game-state-sent', (myCr: Creature, canPick: boolean, opCr: Creature, opSkillsLength: number, gameState: number) =>
     {
-
       if (!this.animating)
       {
         this.updateMe(myCr, canPick);
@@ -201,6 +170,8 @@ export class BattlePage implements OnInit
     {
       this.playerWon = uid;
     });
+
+    this.socket.emit('game-state-requested');
   }
 
   updateMe(cr: Creature, canPick: boolean)
@@ -293,7 +264,7 @@ export class BattlePage implements OnInit
   async cardAnimation(s: Skill, showFor: number, what: string)
   {
     this.what = what;
-    if (s.usedByID === this.myCrID)
+    if (s.usedByID === this.myCr.crID)
     {
       this.who = this.myCr.name;
     }

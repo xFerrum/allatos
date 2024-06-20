@@ -1,4 +1,5 @@
 import { ServerCreature } from "../models/serverCreature";
+import { generateStartingSkills } from "./skillGenerator";
 
 export function generateCreature(): ServerCreature
 {
@@ -9,7 +10,9 @@ export function generateCreature(): ServerCreature
     let randomStam = rndInt(75, 100);
     let randomIni = rndInt(50, 100);
 
-    return new ServerCreature('', names[rndInt(0, names.length - 1)], 'test', randomStr, randomAgi, randomInt, randomCon, randomIni, '', [], [], randomStam, 0, new Date(), 1, [], 0, 0);
+    const startingSkills = generateStartingSkills();
+
+    return new ServerCreature('', names[rndInt(0, names.length - 1)], 'test', randomStr, randomAgi, randomInt, randomCon, randomIni, '', startingSkills, [], randomStam, 0, new Date(), 1, [], 0, 0);
 }
 
 const names =

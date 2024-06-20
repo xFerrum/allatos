@@ -7,6 +7,8 @@ import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { Creature } from 'src/models/creature';
 import { User } from 'src/models/user';
+import { io } from 'socket.io-client';
+import { BattleService } from 'src/services/battle.service';
 
 @Component({
   selector: 'app-arena',
@@ -17,11 +19,11 @@ import { User } from 'src/models/user';
 })
 export class ArenaPage implements OnInit
 {
-  roomID!: string;
   chosenCreature!: Creature;
-  creatures: Creature[] = [];//TODO: only store ids
+  creatures: Creature[] = [];
+  socket: any;
 
-  constructor(public router: Router, public userService: UserService, public creatureService: CreatureService, public nav: NavController)
+  constructor(public router: Router, public userService: UserService, public creatureService: CreatureService, public battleService: BattleService)
   {
 
   }
@@ -48,14 +50,7 @@ export class ArenaPage implements OnInit
   {
     if (this.chosenCreature)
     {
-      this.nav.navigateForward('/battle',
-      {
-        state:
-        {
-          roomID: this.roomID,
-          creatureID: this.chosenCreature.crID
-        }
-      });
+      this.battleService.queueUp(this.chosenCreature);
     }
   }
 }
