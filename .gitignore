@@ -69,3 +69,4 @@ Thumbs.db
 
 # Socket io stuff
 /server/node_modules
+.vercel
