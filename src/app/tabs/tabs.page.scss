@@ -8,6 +8,16 @@
     background: rgba(138, 125, 197, 0.7);
 }
 
+.tab-but:hover
+{
+    font-size: 20px;
+    font-family: 'Mouse';
+    border-radius: 5px;
+    border: 1px solid black;
+    margin: 2px;
+    background: rgba(178, 171, 209, 0.6);
+}
+
 .tab-bar
 {
     border: 1px solid black;

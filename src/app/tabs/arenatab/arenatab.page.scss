@@ -1,5 +1,26 @@
+.queueing
+{
+    display: flex;
+    flex-direction: column;
+}
+
 #search-button
 {
     margin: auto;
-    max-width: 200px;
+    width: 200px;
+}
+
+#queueing-button
+{
+    margin: auto;
+    width: 200px;
+
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+#queue-spinner
+{
+    position: relative;
+    margin: auto;
 }

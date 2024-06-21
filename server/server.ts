@@ -19,15 +19,17 @@ const io = require('socket.io')(3000,
 
 io.on('connection', (socket: any) =>
 {
-  socket.on('queue-up', (uid: string, crID: string) =>
+  socket.on('queue-up', (uid: string, crID: string, successCb: Function) =>
   {
     socket.data.uid = uid;
     socket.data.crID = crID;
     waiting.push(socket);
+    successCb();
   });
 
   socket.on('disconnect', () =>
   {
+    waiting.splice(waiting.indexOf(socket), 1);
     console.log('Socket disconnected: '+ socket.id);
   });
 
@@ -46,7 +48,6 @@ io.on('connection', (socket: any) =>
 //start matching people every 5 seconds
 setInterval(async () =>
 {
-  console.log("interval");
   if (!pairingPeople)
   {
     console.log("try to match")

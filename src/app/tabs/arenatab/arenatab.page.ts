@@ -7,7 +7,6 @@ import { CreatureService } from 'src/services/creature.service';
 import { UserService } from 'src/services/user.service';
 import { Creature } from 'src/models/creature';
 import { User } from 'src/models/user';
-import { io } from 'socket.io-client';
 import { BattleService } from 'src/services/battle.service';
 
 @Component({
@@ -22,6 +21,7 @@ export class ArenaPage implements OnInit
   chosenCreature!: Creature;
   creatures: Creature[] = [];
   socket: any;
+  isQueueing  = false;
 
   constructor(public router: Router, public userService: UserService, public creatureService: CreatureService, public battleService: BattleService)
   {
@@ -39,6 +39,8 @@ export class ArenaPage implements OnInit
         this.creatures.push(await this.creatureService.getCreatureById(crID));
       }
     });
+
+
   }
 
   chooseCreature(ev: any)

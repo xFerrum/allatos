@@ -20,6 +20,11 @@
     </ion-select>
   </ion-item>
 </ion-list>
-<ion-button id="search-button" type="submit" expand="block" class="generic-but" (click)="queue()">Search for a match</ion-button>
+<ion-button *ngIf="!battleService.isQueueing" id="search-button" type="submit" expand="block" class="generic-but" (click)="queue()">Search for a match</ion-button>
+
+<div *ngIf="battleService.isQueueing" class="queueing">
+  <ion-button id="queueing-button" type="submit" expand="block" class="generic-but" aria-disabled="true">Looking for a match</ion-button>
+  <ion-spinner name="dots" id="queue-spinner"></ion-spinner>
+</div>
 
 </ion-content>
