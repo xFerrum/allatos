@@ -36,11 +36,25 @@
           },
           "configurations": {
             "production": {
+              "optimization": {
+              "scripts": false,
+              "styles": {
+                "minify": false,
+                "inlineCritical": false
+                },
+              "fonts": true
+            },
+            "sourceMap": false,
+            "namedChunks": false,
+            "aot": true,
+            "extractLicenses": true,
+            "vendorChunk": false,
+            "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -126,7 +140,10 @@
     }
   },
   "cli": {
-    "schematicCollections": ["@ionic/angular-toolkit"]
+    "schematicCollections": [
+      "@ionic/angular-toolkit"
+    ],
+    "analytics": false
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {
