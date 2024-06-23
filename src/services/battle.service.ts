@@ -20,7 +20,7 @@ export class BattleService
 
     queueUp(cr: Creature)
     {
-        this.socket = io('http://localhost:3000');
+        this.socket = io('http://allatos-services.onrender.com:3000');
         this.socket.on('players-ready', () =>
         {
             this.isQueueing = false;
