@@ -119,7 +119,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   generateCreature()
   {
-    this.socket = io('http://allatos-services.onrender.com:3005');
+    this.socket = io('https://allatos-services.onrender.com:3005');
     this.socket.emit('create-creature', this.userService.getLoggedInID());
     this.popUpService.loadingPopUp("Creating...");
     this.socket.on('creature-created', async () =>
@@ -154,7 +154,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   fireAct(cr: Creature, act: Activity)
   {
-    this.socket = io('http://allatos-services.onrender.com:3010');
+    this.socket = io('https://allatos-services.onrender.com:3010');
     act.startDate = new Date;
     this.socket.emit('start-activity', cr.crID, act);
     this.socket.on('start-activity-failed', () => { /*failed*/ });
@@ -162,7 +162,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   attrPlus(cr: Creature, which: string)
   {
-    this.socket = io('http://allatos-services.onrender.com:3005');
+    this.socket = io('https://allatos-services.onrender.com:3005');
     this.socket.emit('attr-plus', this.userService.getLoggedInID(), cr.crID, which);
 
     //calculated locally instantly so its more fluid
