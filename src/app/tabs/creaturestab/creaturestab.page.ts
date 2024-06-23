@@ -162,7 +162,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   attrPlus(cr: Creature, which: string)
   {
-    this.socket = io('wss://allatos-services.onrender.com:3005');
+    this.socket = io('https://allatos-services.onrender.com:3005');
     this.socket.emit('attr-plus', this.userService.getLoggedInID(), cr.crID, which);
 
     //calculated locally instantly so its more fluid
