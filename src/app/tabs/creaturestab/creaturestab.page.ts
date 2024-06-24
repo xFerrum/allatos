@@ -128,6 +128,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     });
   }
 
+  //bruhvercel
   //TODO: deck component, use it in skillpick window too with a button
   openSkills(cr: Creature)
   {
