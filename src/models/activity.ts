@@ -22,11 +22,12 @@ export class Activity
     //initializes timer$ to be an observable  emitting time left until act completion every second
     startTimer()
     {
+        //for some reason started being delayed??? no idea why (all data is correct, has to be Date.now()) so had to subtract 1000 ms
         clearInterval(this.timerID);
-        this.timer$ = new BehaviorSubject((this.startDate!.getTime() + this.duration) - Date.now());
+        this.timer$ = new BehaviorSubject((this.startDate!.getTime() + this.duration) - Date.now() - 1000);
         this.timerID = setInterval(() =>
         {
-            const nextVal = (this.startDate!.getTime() + this.duration) - Date.now();
+            const nextVal = (this.startDate!.getTime() + this.duration) - Date.now() - 1000;
             if (nextVal <= 0) 
             {
                 clearInterval(this.timerID);
