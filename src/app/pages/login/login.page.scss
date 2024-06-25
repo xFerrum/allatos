@@ -1,6 +1,7 @@
 #loginBut
 {
     margin: auto;
+    margin-top: 10px;
     width: 100px;
 }
 
@@ -8,4 +9,46 @@
 {
     margin: auto;
     width: 100px;
+}
+
+.login-input
+{
+    margin: auto;
+    margin-top: 5px;
+    max-width: 500px;
+    --ion-background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
+.login-label
+{
+    font-family: 'Mouse';
+    font-size: 25px;
+}
+
+#logo
+{
+    margin: auto;
+    margin-bottom: 0;
+}
+
+#logo-container
+{
+    display: flex;
+    flex-direction: column;
+}
+
+#sub-logo
+{
+    font-family: 'Mouse';
+    font-style: italic;
+    margin: auto;
+    margin-top: -30px;
+    margin-bottom: 30px;
+}
+
+ion-content
+{
+    --ion-background-color: rgba(255, 255, 255, 0.10);
 }

@@ -5,15 +5,19 @@
 </ion-header>
 
 <ion-content>
+  <div id="logo-container">
+    <img src="assets/logo.svg" id="logo"/>
+    <div id="sub-logo">(A working title)</div>
+  </div>
 
   <form [formGroup]="form" *ngIf="loadingDone">
 
-    <ion-item lines="full">
-      <ion-label position="floating">Email</ion-label>
+    <ion-item lines="full" class="login-input">
+      <ion-label position="stacked" class="login-label">Email</ion-label>
       <ion-input formControlName="email" type="email" required></ion-input>
     </ion-item>
-    <ion-item lines="full">
-      <ion-label position="floating">Password</ion-label>
+    <ion-item lines="full" class="login-input">
+      <ion-label position="stacked" class="login-label">Password</ion-label>
       <ion-input formControlName="password" type="password" required></ion-input>
     </ion-item>
 
