@@ -20,7 +20,7 @@ export class BattleService
 
     queueUp(cr: Creature)
     {
-        this.socket = io('95.217.8.100:1300');
+        this.socket = io('allatos-server.online:1300');
         this.socket.on('players-ready', () =>
         {
             this.isQueueing = false;
