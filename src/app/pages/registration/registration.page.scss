@@ -29,6 +29,12 @@
     font-size: 25px;
 }
 
+.invalid-input
+{
+    color: rgb(223, 0, 0);
+    border: 1px solid rgb(223, 0, 0);
+}
+
 ion-content
 {
     --ion-background-color: rgba(255, 255, 255, 0.10);

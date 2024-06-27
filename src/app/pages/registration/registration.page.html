@@ -6,21 +6,21 @@
 
 <ion-content>
   <form [formGroup]="form" style="margin-top: 40px;">
-    <ion-item lines="full" class="reg-input">
+    <ion-item lines="full" class="reg-input" [ngClass]="{'invalid-input': !form.controls['username'].valid && form.controls['username'].touched}">
       <ion-label position="stacked" class="reg-label">Username</ion-label>
       <ion-input formControlName="username" type="text" required></ion-input>
     </ion-item>
-    <ion-item lines="full" class="reg-input">
+    <ion-item lines="full" class="reg-input" [ngClass]="{'invalid-input': !form.controls['email'].valid && form.controls['email'].touched}">
       <ion-label position="stacked" class="reg-label">Email</ion-label>
       <ion-input formControlName="email" type="email" required></ion-input>
     </ion-item>
-    <ion-item lines="full" class="reg-input">
+    <ion-item lines="full" class="reg-input" [ngClass]="{'invalid-input': !form.controls['password'].valid && form.controls['password'].touched}">
       <ion-label position="stacked" class="reg-label">Password</ion-label>
       <ion-input formControlName="password" type="password" required></ion-input>
     </ion-item>
     <ion-row>
       <ion-col>
-        <ion-button class="generic-but" id="sign-up-but" expand="block" (click)="trySignUp()">Sign Up</ion-button>
+        <ion-button class="generic-but" id="sign-up-but" expand="block" [disabled]="!form.valid" (click)="trySignUp()">Sign Up</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>

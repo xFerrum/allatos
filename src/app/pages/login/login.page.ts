@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { RouterLinkWithHref } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from 'src/services/user.service';
@@ -19,7 +19,7 @@ export class LoginPage implements OnInit
 {
   loadingDone = false;
   form!: FormGroup;
-  constructor(public formBuilder: FormBuilder, public userService: UserService, public router: Router, public popUpService: PopUpService)
+  constructor(public formBuilder: FormBuilder, public userService: UserService, public router: Router, public popUpService: PopUpService, private toastCtrl: ToastController)
   { 
     this.form = this.formBuilder.group({
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -56,9 +56,22 @@ export class LoginPage implements OnInit
     }
     else
     {
-      console.log('Please provide all the required values!');
+      this.presentToast();
     }
 
     await this.popUpService.dismissPopUp();
   };
+
+  async presentToast()
+  {
+    const toast = await this.toastCtrl.create({
+      message: "Incorrect email address or password",
+      duration: 3000,
+      position: "top",
+      positionAnchor: "header",
+      cssClass: "fail-toast"
+    });
+
+    await toast.present();
+  }
 }
