@@ -154,6 +154,11 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     this.modal.dismiss(null, 'cancel');
   }
 
+  closeGuide()
+  {
+    this.guideShowing = false;
+  }
+
   fireAct(cr: Creature, act: Activity)
   {
     this.socket = io('allatos-server.online:1100');
