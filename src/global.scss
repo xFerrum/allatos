@@ -68,16 +68,60 @@
     ion-title
     {
         font-family: 'Mouse';
+        font-size: 25px;
     }
 
     .button-clear
     {
         font-family: 'Mouse';
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.1);
     }
 
     &::part(content)
-    {    font-family: 'Alba';
+    {
+        width: 1000px;
+    }
+}
 
+.guide-window
+{
+    ion-title
+    {
+        font-size: 25px;
+        height: 50px;
+        font-family: 'Mouse';
+    }
+
+    .guide-content
+    {
+        font-size: 20px;
+        font-family: 'Mouse';
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+
+        li
+        {
+            color: rgb(12, 45, 95);
+            font-size: 23px;
+        }
+
+        p
+        {
+            margin: 2px;
+        }
+    }
+
+    .button-clear
+    {
+        font-family: 'Mouse';
+        font-size: 20px;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &::part(content)
+    {
         width: 1000px;
     }
 }

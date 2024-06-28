@@ -7,233 +7,288 @@
 </ion-header>
 
 <ion-content *ngIf="loadingDone" class="page-content">
-      <ion-grid class="main-container" *ngFor="let creature of creatures">
-        
-        <ion-row class="image-row">
-          <ion-col class="board-container">
-            <img src="assets/nameboard.png" class="name-board">
-            <div class="board-name-container"><p class="board-p">{{creature.name}}</p></div>
-            <div class="board-age-container"><p class="board-p">{{calcAge(creature.born)}} days old</p></div>
-            <div class="board-type-container"><p class="board-p">Type: {{creature.type}}</p></div>
+  <ion-button expand="block" class="generic-but" id="guide-but" (click)="openGuide()">HOW TO PLAY</ion-button>
 
-          </ion-col>
+  <ion-grid class="main-container" *ngFor="let creature of creatures">
+    
+    <ion-row class="image-row">
+      <ion-col class="board-container">
+        <img src="assets/nameboard.png" class="name-board">
+        <div class="board-name-container"><p class="board-p">{{creature.name}}</p></div>
+        <div class="board-age-container"><p class="board-p">{{calcAge(creature.born)}} days old</p></div>
+        <div class="board-type-container"><p class="board-p">Type: {{creature.type}}</p></div>
 
-          <ion-col class="img-col" size="2.5">
-            <img class="creature-img" src="{{'assets/creature_imgs/' + creature.type + '.png'}}">
-          </ion-col>
+      </ion-col>
 
-          <ion-col class="away-col">
-            <div class="away-container">
-              <div *ngIf="creature.currentAct" class="away-text">Currently doing this: {{ creature.currentAct.name }}</div>
-              <div *ngIf="creature.currentAct" class="away-timer">{{ creature.currentAct.timer$ | async | customTime }}</div>
+      <ion-col class="img-col" size="2.5">
+        <img class="creature-img" src="{{'assets/creature_imgs/' + creature.type + '.png'}}">
+      </ion-col>
 
-              <div *ngIf="!(creature.currentAct)" class="away-text">Currently idle.</div>
-            </div>
-          </ion-col>
+      <ion-col class="away-col">
+        <div class="away-container">
+          <div *ngIf="creature.currentAct" class="away-text">Currently doing this: {{ creature.currentAct.name }}</div>
+          <div *ngIf="creature.currentAct" class="away-timer">{{ creature.currentAct.timer$ | async | customTime }}</div>
+
+          <div *ngIf="!(creature.currentAct)" class="away-text">Currently idle.</div>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="stats-container">
+
+      <ion-col class="stats-col">
+        <ion-row class="stats-title">
+          <div>Stats</div>
         </ion-row>
 
-        <ion-row class="stats-container">
-
-          <ion-col class="stats-col">
-            <ion-row class="stats-title">
-              <div>Stats</div>
-            </ion-row>
-
-            <ion-row>
-              <ion-card class="lvl-card">
-                <ion-card-content>
-                  <ion-row class="lvl-card-content">
-                    <ion-col size="auto">
-                      <div>Level {{creature.level}}</div>
-                    </ion-col>
-                    <ion-col style="height: 50px; max-width: 500px; margin: auto;">
-                      <app-progressbar type="xp" [current]="creature.xp" [total]="'100'" style="height: 50px;"></app-progressbar>
-                    </ion-col>
-                  </ion-row>
-                </ion-card-content>
-              </ion-card>
-            </ion-row>
-
-            <ion-row>
-              <ion-col class="attributes-col">
-                <ion-card class="attributes-card">
-                  <ion-card-content>
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>STRENGTH</ion-label>
-                      </ion-col>
-                      
-                      <ion-col class="plus-col">
-                        <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'str')" src="assets/icons/plus.png" />
-                      </ion-col>
-
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.str}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-  
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>AGILITY</ion-label>
-                      </ion-col>
-
-                      <ion-col class="plus-col">
-                        <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'agi')" src="assets/icons/plus.png" />
-                      </ion-col>
-
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.agi}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-  
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>INTELLIGENCE</ion-label>
-                      </ion-col>
-
-                      <ion-col class="plus-col">
-                        <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'int')" src="assets/icons/plus.png" />
-                      </ion-col>
-
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.int}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>CONSTITUTION</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.con}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-  
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>STAMINA</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.stamina}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-  
-                    <ion-row class="attr-row">
-                      <ion-col size="2" class="attr-icon-col">
-                        <img class="attr-icon" src="assets/icons/placeholder.png" />
-                      </ion-col>
-                      <ion-col class="attr-name">
-                        <ion-label>INITIATIVE</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.ini}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-
-              <ion-col class="attributes-col">
-                <ion-card class="attributes-card">
-                  <ion-card-content>
-                    <ion-row class="attr-row">
-                      <ion-col class="attr-name">
-                        <ion-label>Battles won:</ion-label>
-                      </ion-col>
-                      <ion-col class="attr-number">
-                        <ion-label>{{creature.battlesWon}}</ion-label>
-                      </ion-col>
-                    </ion-row>
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-            </ion-row>
-          </ion-col>
-          
-          <ion-col class="stats-filler" size="0"></ion-col>
-
-          <ion-col class="stats-col">
-            <ion-row class="stats-title">
-              <div>Traits</div>
-            </ion-row>
-              <ion-card class="traits-card">
-                <ion-card-content class="traits-card-content">
-                  <ion-row class="traits-container">
-                    <ion-col *ngFor="let trait of creature.traits" size="auto" class="trait-container">
-                      <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
-                    </ion-col>
-                  </ion-row>
-                </ion-card-content>
-              </ion-card>
-          </ion-col>
-
-        </ion-row>
-
-        <ion-row class="buts">
-          <ion-button type="submit" expand="block" class="generic-but" (click)="openSkills(creature)">open skills</ion-button>
-          <ion-button type="submit" expand="block" class="generic-but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
-          <ion-button type="submit" expand="block" class="generic-but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
-        </ion-row>
-      </ion-grid>
-
-      <ion-modal [isOpen]="deckShowing" (didDismiss)="deckShowing = false" class="skills-window">
-        <ng-template>
-
-          <ion-header>
-            <ion-toolbar>
-              <ion-buttons slot="start">
-                <ion-button (click)="closeSkills()">close</ion-button>
-              </ion-buttons>
-              <ion-title>Skills</ion-title>
-            </ion-toolbar>
-          </ion-header>
-
-          <ion-content>
-            <ion-grid>
-              <ion-row class="cards-container">
-                <ion-col *ngFor="let skill of deckToShow; index as i" size="auto" class="card-container">
-                  <app-skillcard [skill]="skill" [index]="i"></app-skillcard>
+        <ion-row>
+          <ion-card class="lvl-card">
+            <ion-card-content>
+              <ion-row class="lvl-card-content">
+                <ion-col size="auto">
+                  <div>Level {{creature.level}}</div>
+                </ion-col>
+                <ion-col style="height: 50px; max-width: 500px; margin: auto;">
+                  <app-progressbar type="xp" [current]="creature.xp" [total]="'100'" style="height: 50px;"></app-progressbar>
                 </ion-col>
               </ion-row>
-            </ion-grid>
-          </ion-content>
+            </ion-card-content>
+          </ion-card>
+        </ion-row>
 
-        </ng-template>
-      </ion-modal>
+        <ion-row>
+          <ion-col class="attributes-col">
+            <ion-card class="attributes-card">
+              <ion-card-content>
+                <ion-row class="attr-row">
+                  <ion-col size="2" class="attr-icon-col">
+                    <img class="attr-icon" src="assets/icons/placeholder.png" />
+                  </ion-col>
+                  <ion-col class="attr-name">
+                    <ion-label>STRENGTH</ion-label>
+                  </ion-col>
+                  
+                  <ion-col class="plus-col">
+                    <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'str')" src="assets/icons/plus.png" />
+                  </ion-col>
 
-      <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false" class="trait-popover">
-        <ng-template>
-          <ion-content>
-            <div class="trait-title">
-              {{traitToShow.name}}
-            </div>
-            <div class="trait-description">
-              {{traitToShow.description}}
-            </div>
-          </ion-content>
-        </ng-template>
-      </ion-popover>
+                  <ion-col class="attr-number">
+                    <ion-label>{{creature.str}}</ion-label>
+                  </ion-col>
+                </ion-row>
 
-      <ion-card *ngIf="creatures.length === 0" class="stats-card" style="width: 600px; margin: auto; margin-top: 15px;">
-        <ion-card-content class="no-creatures">
-              <div style="margin-bottom: 25px;">No creatures yet! Click below to generate one.</div>
-              <ion-button type="submit" expand="block" class="generic-but" (click)="generateCreature()">generate creature</ion-button>
-        </ion-card-content>
-      </ion-card>
+                <ion-row class="attr-row">
+                  <ion-col size="2" class="attr-icon-col">
+                    <img class="attr-icon" src="assets/icons/placeholder.png" />
+                  </ion-col>
+                  <ion-col class="attr-name">
+                    <ion-label>AGILITY</ion-label>
+                  </ion-col>
+
+                  <ion-col class="plus-col">
+                    <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'agi')" src="assets/icons/plus.png" />
+                  </ion-col>
+
+                  <ion-col class="attr-number">
+                    <ion-label>{{creature.agi}}</ion-label>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="attr-row">
+                  <ion-col size="2" class="attr-icon-col">
+                    <img class="attr-icon" src="assets/icons/placeholder.png" />
+                  </ion-col>
+                  <ion-col class="attr-name">
+                    <ion-label>INTELLIGENCE</ion-label>
+                  </ion-col>
+
+                  <ion-col class="plus-col">
+                    <img *ngIf="creature.lvlup > 0" class="plus-icon" (click)="attrPlus(creature, 'int')" src="assets/icons/plus.png" />
+                  </ion-col>
+
+                  <ion-col class="attr-number">
+                    <ion-label>{{creature.int}}</ion-label>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="attr-row">
+                  <ion-col size="2" class="attr-icon-col">
+                    <img class="attr-icon" src="assets/icons/placeholder.png" />
+                  </ion-col>
+                  <ion-col class="attr-name">
+                    <ion-label>CONSTITUTION</ion-label>
+                  </ion-col>
+                  <ion-col class="attr-number">
+                    <ion-label>{{creature.con}}</ion-label>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="attr-row">
+                  <ion-col size="2" class="attr-icon-col">
+                    <img class="attr-icon" src="assets/icons/placeholder.png" />
+                  </ion-col>
+                  <ion-col class="attr-name">
+                    <ion-label>STAMINA</ion-label>
+                  </ion-col>
+                  <ion-col class="attr-number">
+                    <ion-label>{{creature.stamina}}</ion-label>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="attr-row">
+                  <ion-col size="2" class="attr-icon-col">
+                    <img class="attr-icon" src="assets/icons/placeholder.png" />
+                  </ion-col>
+                  <ion-col class="attr-name">
+                    <ion-label>INITIATIVE</ion-label>
+                  </ion-col>
+                  <ion-col class="attr-number">
+                    <ion-label>{{creature.ini}}</ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col class="attributes-col">
+            <ion-card class="attributes-card">
+              <ion-card-content>
+                <ion-row class="attr-row">
+                  <ion-col class="attr-name">
+                    <ion-label>Battles won:</ion-label>
+                  </ion-col>
+                  <ion-col class="attr-number">
+                    <ion-label>{{creature.battlesWon}}</ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      
+      <ion-col class="stats-filler" size="0"></ion-col>
+
+      <ion-col class="stats-col">
+        <ion-row class="stats-title">
+          <div>Traits</div>
+        </ion-row>
+          <ion-card class="traits-card">
+            <ion-card-content class="traits-card-content">
+              <ion-row class="traits-container">
+                <ion-col *ngFor="let trait of creature.traits" size="auto" class="trait-container">
+                  <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+      </ion-col>
+
+    </ion-row>
+
+    <ion-row class="buts">
+      <ion-button type="submit" expand="block" class="generic-but" (click)="openSkills(creature)">open skills</ion-button>
+      <ion-button type="submit" expand="block" class="generic-but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
+      <ion-button type="submit" expand="block" class="generic-but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
+    </ion-row>
+  </ion-grid>
+
+  <ion-modal [isOpen]="deckShowing" (didDismiss)="deckShowing = false" class="skills-window">
+    <ng-template>
+
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="closeSkills()">close</ion-button>
+          </ion-buttons>
+          <ion-title>Skills</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-grid>
+          <ion-row class="cards-container">
+            <ion-col *ngFor="let skill of deckToShow; index as i" size="auto" class="card-container">
+              <app-skillcard [skill]="skill" [index]="i"></app-skillcard>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-content>
+
+    </ng-template>
+  </ion-modal>
+
+  <ion-popover #popover [isOpen]="traitShowing" (didDismiss)="traitShowing = false" class="trait-popover">
+    <ng-template>
+      <ion-content>
+        <div class="trait-title">
+          {{traitToShow.name}}
+        </div>
+        <div class="trait-description">
+          {{traitToShow.description}}
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+
+  <ion-card *ngIf="creatures.length === 0" class="stats-card" style="width: 600px; margin: auto; margin-top: 15px;">
+    <ion-card-content class="no-creatures">
+          <div style="margin-bottom: 25px;">No creatures yet! Click below to generate one.</div>
+          <ion-button type="submit" expand="block" class="generic-but" (click)="generateCreature()">generate creature</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-modal [isOpen]="guideShowing" (didDismiss)="guideShowing = false" class="guide-window">
+    <ng-template>
+
+      <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeSkills()">close</ion-button>
+            </ion-buttons>
+            <ion-title>About the game</ion-title>
+          </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <div class="guide-content">
+          <div>Thanks for trying my game! Please keep in mind that this application is a work in progress, and is currently only meant for demonstration/test purposes.
+            Anyways, these are the things you can do currently:</div>
+          <ul>
+            <li>Adopt a creature</li>
+              <p>- If you don't have one yet, click the button to generate a new creature.</p>
+            <li>Send your pet on activities</li>
+              <p>- Click on "Start activity" to initiate an adventure. Currently there's only one random event for each location, but more will be added in the future.</p>
+            <li>Level them up</li>
+              <p>- After earning enough xp points, your creature automatically levels up. This earns them a skill point which you can spend on
+                Intelligence, Strength or Agility (although the latter 2 have no function yet). A level up also grants the ability to learn a new skill.</p>
+            <li>Learn new skills to build your deck</li>
+              <p>- If you click on "Open skills", you can see your current deck. If granted the opportunity, click on "Learn" to add a semi-random skill to your arsenal.</p>
+            <li>Battle other creatures</li>
+              <p>- When feeling ready (and you have a partner to play with), queue up for a match on the "Arena" tab.</p>
+              <br>
+            <li>Battle gameplay (in a nutshell)</li>
+              <div>
+                  <p>- CONSTITUTION: Starting hp</p>
+                  <p>- STAMINA: Fatigue limit</p>
+                  <p>- INITIATIVE: Chance to go first (it's relative to your opponent's score)</p>
+                  <p>Each turn you and your opponent draw 5 random skills, pick one, show them to the other player, then choose another. After that, the action phase begins,
+                    where you each block, then attack (attack order is determined by whoever rolled higher on the Initiative test). Using skills costs Stamina, if you exceed your limit,
+                    it resets, and you will need to rest for a turn, leaving you exposed to your opponent's attacks.
+                  </p>
+              </div>
+              <li>Skill keywords:</li>
+              <p>* SHRED: remove block from your opponent.</p>
+              <p>* HEAVY: inflict fatigue on your opponent (stamina damage).</p>
+              <p>* COMBO: extra effect on your next attack this turn.</p>
+              <p>* STANCE: extra effect if your previous skill this turn was a block.</p>
+              <p>* RETALIATE: extra effect if you block all of your opponent's attacks this turn (and they did attack).</p>
+              <p>* STEADFAST: keep your remaining blocks for next turn.</p>
+          </ul>
+        </div>
+      </ion-content>
+
+    </ng-template>
+  </ion-modal>
 
 </ion-content>

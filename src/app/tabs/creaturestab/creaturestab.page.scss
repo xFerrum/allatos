@@ -419,3 +419,13 @@ $containerbg: linear-gradient(to bottom right, rgba(90, 150, 179, 0.75), rgba(40
     justify-content: center;
     flex-direction: column;
 }
+
+#guide-but
+{
+    position: fixed;
+    margin-left: 20px;
+    margin-top: 20px;
+    --background: #dfd117;
+    height: 40px;
+    z-index: 200;
+}

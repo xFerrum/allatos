@@ -40,6 +40,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   waitingForLearn = false;
   deckToShow!: Array<Skill>;
   deckShowing = false;
+  guideShowing = false;
 
   constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService)
   {}
@@ -185,5 +186,10 @@ export class CreaturesPage implements OnInit, ViewWillLeave
         break;
     }
     cr.lvlup--;
+  }
+
+  openGuide()
+  {
+    this.guideShowing = true;
   }
 }
