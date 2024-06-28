@@ -59,7 +59,8 @@ export class UserService
       {
         email: email,
         username: username,
-        ownedCreatures: []
+        ownedCreatures: [],
+        notifications: []
       });
       return true;
     })
