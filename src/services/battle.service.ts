@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import { Creature } from "src/models/creature";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,7 @@ export class BattleService
 
     queueUp(cr: Creature)
     {
-        this.socket = io('allatos-server.online:1300');
+        this.socket = io(environment.serverHost + ':1300');
         this.socket.on('players-ready', () =>
         {
             this.isQueueing = false;

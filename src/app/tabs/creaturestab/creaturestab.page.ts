@@ -19,6 +19,7 @@ import { BehaviorSubject, Observer } from 'rxjs';
 import { ActService } from 'src/services/act.service';
 import { IonPopover } from '@ionic/angular/common';
 import { ProgressbarComponent } from 'src/app/small_components/progressbar/progressbar.component';
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: 'app-creatures',
@@ -59,7 +60,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   async learn(cr: Creature)
   {
-    this.socket = io('allatos-server.online:1200');
+    this.socket = io(environment.serverHost + ':1200');
     //validate cr belongs to user (firebase rule)
     this.socket.emit('skill-learn-requested', this.userService.getLoggedInID(), cr.crID);
 
@@ -120,7 +121,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   generateCreature()
   {
-    this.socket = io('allatos-server.online:1200');
+    this.socket = io(environment.serverHost + ':1200');
     this.socket.emit('create-creature', this.userService.getLoggedInID());
     this.popUpService.loadingPopUp("Creating...");
     this.socket.on('creature-created', async () =>
@@ -161,7 +162,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   fireAct(cr: Creature, act: Activity)
   {
-    this.socket = io('allatos-server.online:1100');
+    this.socket = io(environment.serverHost + ':1100');
     act.startDate = new Date;
     this.socket.emit('start-activity', cr.crID, act);
     this.socket.on('start-activity-failed', () => { /*failed*/ });
@@ -169,7 +170,7 @@ export class CreaturesPage implements OnInit, ViewWillLeave
 
   attrPlus(cr: Creature, which: string)
   {
-    this.socket = io('allatos-server.online:1200');
+    this.socket = io(environment.serverHost + ':1200');
     this.socket.emit('attr-plus', this.userService.getLoggedInID(), cr.crID, which);
 
     //calculated locally instantly so its more fluid
