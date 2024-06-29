@@ -245,14 +245,14 @@ export class BattlePage implements OnInit
 
     if (this.hasStatus(this.hiddenMyCr, "Fatigued"))
     {
-      await this.popUpService.effectPopUp(this.myCr.name + " is fatigued and needs to rest!", 'hit-popup');
+      await this.popUpService.effectPopUp(this.myCr.name + " is fatigued and needs to rest!", 'my-popup');
       await this.delay(showEffectFor);
       await this.popUpService.dismissPopUp();
     }
 
     if (this.hasStatus(this.hiddenOpCr, "Fatigued"))
     {
-      await this.popUpService.effectPopUp(this.opCr.name + " is fatigued and needs to rest!", 'hit-popup');
+      await this.popUpService.effectPopUp(this.opCr.name + " is fatigued and needs to rest!", 'opp-popup');
       await this.delay(showEffectFor);
       await this.popUpService.dismissPopUp();
     }
