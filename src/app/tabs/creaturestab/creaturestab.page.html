@@ -187,9 +187,9 @@
     </ion-row>
 
     <ion-row class="buts">
-      <ion-button type="submit" expand="block" class="generic-but" (click)="openSkills(creature)">open skills</ion-button>
-      <ion-button type="submit" expand="block" class="generic-but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
-      <ion-button type="submit" expand="block" class="generic-but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
+      <ion-button expand="block" class="generic-but" (click)="openSkills(creature)">open skills</ion-button>
+      <ion-button expand="block" class="generic-but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
+      <ion-button expand="block" class="generic-but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
     </ion-row>
   </ion-grid>
 
@@ -234,7 +234,7 @@
   <ion-card *ngIf="creatures.length === 0" class="stats-card" style="width: 600px; margin: auto; margin-top: 15px;">
     <ion-card-content class="no-creatures">
           <div style="margin-bottom: 25px;">No creatures yet! Click below to generate one.</div>
-          <ion-button type="submit" expand="block" class="generic-but" (click)="generateCreature()">generate creature</ion-button>
+          <ion-button expand="block" class="generic-but" (click)="generateCreature()">generate creature</ion-button>
     </ion-card-content>
   </ion-card>
 
