@@ -18,6 +18,7 @@ export class SkillcardComponent  implements OnInit
   @Input() pickable = false;
   @Output() highlightEvent = new EventEmitter<number>();
   bgColor!: string;
+  textColor!: string;
   highlighted = false;
 
   constructor(public creatureService: CreatureService)
@@ -26,13 +27,21 @@ export class SkillcardComponent  implements OnInit
 
   ngOnInit()
   {
-    //TODO: separate 
-
     if (this.skill.type === 'attack')
       {
         this.bgColor = 'rgb(224, 127, 127)';
       }
-      else this.bgColor = 'rgb(131, 167, 182);';
+      else this.bgColor = 'rgb(131, 167, 182)';
+
+    if (this.skill.rarity == 0)
+    {
+      this.textColor = 'rgb(220, 220, 220)';
+    }
+    else if (this.skill.rarity == 1)
+    {
+      this.textColor = 'rgb(121, 200, 203)';
+    }
+    else if (this.skill.rarity == 2) this.textColor = 'rgb(255, 182, 0)';
   }
 
   highlightCard()
