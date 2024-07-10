@@ -9,7 +9,7 @@
 <ion-content *ngIf="loadingDone" class="page-content">
   <ion-button expand="block" class="generic-but" id="guide-but" (click)="openGuide()">HOW TO PLAY</ion-button>
 
-  <ion-grid class="main-container" *ngFor="let creature of creatures">
+  <ion-grid class="main-container" *ngFor="let creature of creatures; trackBy:trackCreatures">  
     
     <ion-row class="image-row">
       <ion-col class="board-container">

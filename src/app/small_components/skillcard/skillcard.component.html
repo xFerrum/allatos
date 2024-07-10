@@ -1,4 +1,5 @@
-<ion-card [ngClass]="highlighted ? 'skill-card-highlighted skill-card' : 'skill-card'" style.cursor="{{pickable ? 'pointer' : ''}}" [style.background-color]='bgColor' (click)="highlightCard()">
+<ion-card [ngClass]="highlighted ? 'skill-card-highlighted skill-card' : 'skill-card'" style.cursor="{{pickable ? 'pointer' : ''}}"
+  [style.background-color]='bgColor' (click)="highlightCard()">
   <img src="{{'assets/skills/thumbnails/' + skill.type + '.png'}}" class="thumbnail"/>
   <div class="fat-cost-container">
     <img src="assets/icons/fatigue_cost.png" class="fat-icon"/>
@@ -6,7 +7,7 @@
   </div>
 
   <ion-card-header>
-    <ion-card-title>{{skill.name}}</ion-card-title>
+    <ion-card-title [style.color]='textColor'>{{skill.name}}</ion-card-title>
     <ion-card-subtitle>{{skill.type}}</ion-card-subtitle>
   </ion-card-header>
 

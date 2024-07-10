@@ -199,4 +199,9 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   {
     this.guideShowing = true;
   }
+
+  trackCreatures(index: number, cr: Creature)
+  {
+    return cr.crID;
+  }
 }
