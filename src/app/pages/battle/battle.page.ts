@@ -171,6 +171,11 @@ export class BattlePage implements OnInit
       this.playerWon = uid;
     });
 
+    this.socket.on('crash', async () =>
+    {
+      await this.popUpService.gameOverPopUp('', 'gameover', 'Oops, this match has crashed.');
+    });
+
     this.socket.emit('game-state-requested');
   }
 

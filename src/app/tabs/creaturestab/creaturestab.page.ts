@@ -29,6 +29,7 @@ import { environment } from "src/environments/environment";
   imports: [IonicModule, CommonModule, SkillcardComponent, SkillPickComponent, AdventureComponent, TimerPipe, ProgressbarComponent]
 })
 
+//TODO: make timer characters same width (so adventure clock doesnt jump on each tick)
 export class CreaturesPage implements OnInit, ViewWillLeave
 {
   @ViewChild(IonModal) modal!: IonModal;
