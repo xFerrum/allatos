@@ -188,7 +188,7 @@
 
     <ion-row class="buts">
       <ion-button expand="block" class="generic-but" (click)="openSkills(creature)">open skills</ion-button>
-      <ion-button expand="block" class="generic-but" (click)="learn(creature)" [disabled]="creature.skillPicks ? 'false' : 'true'">learn</ion-button>
+      <ion-button expand="block" class="generic-but" (click)="learn(creature)" [disabled]="creature.skillPicks && !(creature.currentAct) 'false' : 'true'">learn</ion-button>
       <ion-button expand="block" class="generic-but" (click)="startActClicked(creature)" [disabled]="creature.currentAct ? 'true' : 'false'">start activity</ion-button>
     </ion-row>
   </ion-grid>
