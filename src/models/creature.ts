@@ -23,6 +23,8 @@ export class Creature
     skillPicks: boolean;
     lvlup: number;
     battlesWon: number;
+    needsCopy = true;
+    baseSelf: Creature | undefined;
     currentAct?: Activity;
 
     //for battle
@@ -58,5 +60,54 @@ export class Creature
         this.level = level;
         this.lvlup = lvlup;
         this.battlesWon = battlesWon;
+
+        if (this.needsCopy)
+        {
+            this.needsCopy = false;
+            this.baseSelf = Object.assign({}, this);;
+            this.applyTraits();
+        }
+    }
+
+    traitFuncs = new Map<string, Function>
+    ([
+        ["Strong", (cr: Creature): Creature =>
+            {
+                cr.str++;
+                return(cr);
+            }
+        ],
+        ["Muscular", (cr: Creature): Creature =>
+            {
+                cr.str += 2;
+                return(cr);
+            }
+        ],
+        ["Absolutely Jacked", (cr: Creature): Creature =>
+            {
+                cr.str += 4;
+                return(cr);
+            }
+        ],
+        ["Cursed", (cr: Creature): Creature =>
+            {
+                cr.str --;
+                cr.agi --;
+                cr.int--;
+                cr.con -= 5;
+                return(cr);
+            }
+        ],
+    ]);
+
+    applyTraits()
+    {
+        if (this.traits)
+        {
+            for (let t of this.traits)
+            {
+                if (!t.isScaling) this.traitFuncs.get(t.name)!(this);
+            }
+        }
     }
 }

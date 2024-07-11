@@ -69,7 +69,7 @@
                   </ion-col>
                   
                   <ion-col class="plus-col">
-                    <img *ngIf="creature.lvlup > 0 && creature.str < 20" class="plus-icon" (click)="attrPlus(creature, 'str')" src="assets/icons/plus.png" />
+                    <img *ngIf="creature.lvlup > 0 && creature.baseSelf.str < 20" class="plus-icon" (click)="attrPlus(creature, 'str')" src="assets/icons/plus.png" />
                   </ion-col>
 
                   <ion-col class="attr-number">
@@ -86,7 +86,7 @@
                   </ion-col>
 
                   <ion-col class="plus-col">
-                    <img *ngIf="creature.lvlup > 0 && creature.agi < 20" class="plus-icon" (click)="attrPlus(creature, 'agi')" src="assets/icons/plus.png" />
+                    <img *ngIf="creature.lvlup > 0 && creature.baseSelf.agi < 20" class="plus-icon" (click)="attrPlus(creature, 'agi')" src="assets/icons/plus.png" />
                   </ion-col>
 
                   <ion-col class="attr-number">
@@ -103,7 +103,7 @@
                   </ion-col>
 
                   <ion-col class="plus-col">
-                    <img *ngIf="creature.lvlup > 0 && creature.int < 20" class="plus-icon" (click)="attrPlus(creature, 'int')" src="assets/icons/plus.png" />
+                    <img *ngIf="creature.lvlup > 0 && creature.baseSelf.int < 20" class="plus-icon" (click)="attrPlus(creature, 'int')" src="assets/icons/plus.png" />
                   </ion-col>
 
                   <ion-col class="attr-number">

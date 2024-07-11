@@ -7,7 +7,6 @@ import { Creature } from "src/models/creature";
 import { Trait } from "src/models/trait";
 import { Activity } from "src/models/activity";
 import { User } from "src/models/user";
-import { applyTraits } from "./applyTraits";
 
 const fbase = initializeApp(firebaseConfig);
 const db = getFirestore(fbase);
@@ -95,7 +94,6 @@ export class CreatureService
     let cr = new Creature(crID, data["name"], data["type"], data["str"], data["agi"], data["int"], data["con"], data["ini"],
       data["ownedBy"], data["skills"], data["traits"], data["stamina"], data["xp"], new Date(data["born"].seconds*1000), data["level"],
       hasPicks, data["lvlup"], data["battlesWon"], cAct);
-    if (!baseStats) applyTraits(cr);
     
     return cr;
   }
