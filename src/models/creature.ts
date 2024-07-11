@@ -69,6 +69,17 @@ export class Creature
         }
     }
 
+    applyTraits()
+    {
+        if (this.traits)
+        {
+            for (let t of this.traits)
+            {
+                if (!t.isScaling) this.traitFuncs.get(t.name)!(this);
+            }
+        }
+    }
+
     traitFuncs = new Map<string, Function>
     ([
         ["Strong", (cr: Creature): Creature =>
@@ -99,15 +110,4 @@ export class Creature
             }
         ],
     ]);
-
-    applyTraits()
-    {
-        if (this.traits)
-        {
-            for (let t of this.traits)
-            {
-                if (!t.isScaling) this.traitFuncs.get(t.name)!(this);
-            }
-        }
-    }
 }

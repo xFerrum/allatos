@@ -177,7 +177,7 @@
             <ion-card-content class="traits-card-content">
               <ion-row class="traits-container">
                 <ion-col *ngFor="let trait of creature.traits" size="auto" class="trait-container">
-                  <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
+                  <img class="trait-icon" src="{{'assets/icons/traits/'+trait.name+'.png'}}" (click)="traitClicked($event, trait)"/>
                 </ion-col>
               </ion-row>
             </ion-card-content>
