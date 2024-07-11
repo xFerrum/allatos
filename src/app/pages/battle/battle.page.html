@@ -31,10 +31,10 @@
         </ion-row>
 
         <ion-row class="middle-row">
-          <ion-card *ngIf="opCr.traits.length > 0" class="traits-card">
+          <ion-card *ngIf="opBattleTraits.length > 0" class="traits-card">
             <ion-card-content class="traits-card-content">
               <ion-row class="traits-container">
-                <ion-col *ngFor="let trait of opCr.traits" size="auto" class="trait-container">
+                <ion-col *ngFor="let trait of opBattleTraits.traits" size="auto" class="trait-container">
                   <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
                 </ion-col>
               </ion-row>
@@ -91,10 +91,10 @@
                 {{turnInfo}}
               </ion-card-content>
             </ion-card>
-            <ion-card *ngIf="myCr.traits.length > 0" class="traits-card">
+            <ion-card *ngIf="myBattleTraits.length > 0" class="traits-card">
               <ion-card-content class="traits-card-content">
                 <ion-row class="traits-container">
-                  <ion-col *ngFor="let trait of myCr.traits" size="auto" class="trait-container">
+                  <ion-col *ngFor="let trait of myBattleTraits" size="auto" class="trait-container">
                     <img class="trait-icon" src="{{'assets/icons/attributes/placeholder.png'}}" (click)="traitClicked($event, trait)"/>
                   </ion-col>
                 </ion-row>

@@ -49,7 +49,7 @@
                   <div>Level {{creature.level}}</div>
                 </ion-col>
                 <ion-col style="height: 50px; max-width: 500px; margin: auto;">
-                  <app-progressbar type="xp" [current]="creature.xp" [total]="'100'" style="height: 50px;"></app-progressbar>
+                  <app-progressbar type="xp" [current]="creature.xp" [total]="Math.floor(90 + 10* Math.pow(((lvl + 2) / 3), 2))" style="height: 50px;"></app-progressbar>
                 </ion-col>
               </ion-row>
             </ion-card-content>

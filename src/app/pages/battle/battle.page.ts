@@ -41,6 +41,8 @@ export class BattlePage implements OnInit
   playerWon: any;
   hiddenMyCr!: Creature;
   hiddenOpCr!: Creature;
+  myBattleTraits: Array<Trait> = [];
+  opBattleTraits: Array<Trait> = [];
 
   @ViewChild(IonModal) modal!: IonModal;
   
@@ -182,6 +184,7 @@ export class BattlePage implements OnInit
   updateMe(cr: Creature, canPick: boolean)
   {
     this.myCr = cr;
+    this.myBattleTraits = cr.traits.filter((t) => t.isBattle);
     this.canPick = canPick;
   }
 
@@ -189,6 +192,7 @@ export class BattlePage implements OnInit
   {
     this.opSkillsLength = skillsLength;
     this.opCr = opCr;
+    this.opBattleTraits = opCr.traits.filter((t) => t.isBattle);
   }
 
   useSkill(index: number)
