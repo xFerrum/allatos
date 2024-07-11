@@ -113,6 +113,11 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     return Math.floor(((new Date()).getTime() + 10000 - born.getTime())/(1000 * 60 * 60 * 24));
   }
 
+  calcXp(lvl: number): number
+  {
+    return Math.floor(90 + 10* Math.pow(((lvl + 2) / 3), 2));
+  }
+
   traitClicked(e: Event, trait: Trait)
   {
     this.traitToShow = {...trait};
