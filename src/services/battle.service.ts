@@ -5,6 +5,7 @@ import { Creature } from "src/models/creature";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
+import { UserService } from "./user.service";
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class BattleService
     crInBattle!: Creature;
     isQueueing = false;
 
-    constructor(public router: Router) {}
+    constructor(public router: Router, public userService: UserService) {}
 
     queueUp(cr: Creature)
     {
@@ -35,7 +36,7 @@ export class BattleService
             this.isInBattle = false;
         });
 
-        this.socket.emit('queue-up', cr.ownedBy, cr.crID, () => { this.isQueueing = true; } );
+        this.socket.emit('queue-up', this.userService.getLoggedInID(), cr.crID, () => { this.isQueueing = true; } );
 
     }
 
