@@ -50,7 +50,7 @@ export class ArenaPage implements OnInit
 
   queue()
   {
-    if (this.chosenCreature)
+    if (this.chosenCreature && !this.chosenCreature.currentAct)
     {
       this.battleService.queueUp(this.chosenCreature);
     }
