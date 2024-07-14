@@ -104,8 +104,8 @@ export class BattlePage implements OnInit
       else
       {
         this.turnInfo = "Action!";
-        this.hiddenMyCr = myCr;
-        this.hiddenOpCr = opCr;
+        this.hiddenMyCr = Object.assign(Object.create(Object.getPrototypeOf(myCr)), myCr);
+        this.hiddenOpCr = Object.assign(Object.create(Object.getPrototypeOf(opCr)), opCr);
       }
 
       this.loadingDone = true;
