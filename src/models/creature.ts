@@ -80,4 +80,18 @@ export class Creature
             }
         }
     }
+
+    hasStatus(statusName: string): boolean
+    {
+      let has = false;
+      if (this.statuses)
+      {
+        this.statuses.forEach((s) =>
+        {
+            if (s.name === statusName) has = true;
+        });
+      }
+
+      return has;
+    }
 }
