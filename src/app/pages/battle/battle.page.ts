@@ -104,8 +104,8 @@ export class BattlePage implements OnInit
       else
       {
         this.turnInfo = "Action!";
-        this.hiddenMyCr = Object.assign(Object.create(Object.getPrototypeOf(myCr)), myCr);
-        this.hiddenOpCr = Object.assign(Object.create(Object.getPrototypeOf(opCr)), opCr);
+        this.hiddenMyCr = myCr;
+        this.hiddenOpCr = opCr;
       }
 
       this.loadingDone = true;
@@ -252,14 +252,14 @@ export class BattlePage implements OnInit
       this.updateOp(newStats.opCr, newStats.opSkillsLength);
     }
 
-     if (this.hiddenMyCr.hasStatus("Fatigued"))
+    if (this.hasStatus(this.hiddenMyCr, "Fatigued"))
     {
       await this.popUpService.effectPopUp(this.myCr.name + " is fatigued and needs to rest!", 'my-popup');
       await this.delay(showEffectFor);
       await this.popUpService.dismissPopUp();
     }
 
-    if (this.hiddenOpCr.hasStatus("Fatigued"))
+    if (this.hasStatus(this.hiddenOpCr, "Fatigued"))
     {
       await this.popUpService.effectPopUp(this.opCr.name + " is fatigued and needs to rest!", 'opp-popup');
       await this.delay(showEffectFor);
@@ -307,6 +307,17 @@ export class BattlePage implements OnInit
     await this.delay(showFor);
     await this.popUpService.dismissPopUp();
   } */
+
+    hasStatus(cr: Creature, statusName: string): boolean
+    {
+      let has = false;
+      cr.statuses!.forEach((s) =>
+      {
+        if (s.name === statusName) has = true;
+      });
+
+      return has;
+    }
 
   delay(ms: number)
   {
