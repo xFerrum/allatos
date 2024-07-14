@@ -252,7 +252,7 @@ export class BattlePage implements OnInit
       this.updateOp(newStats.opCr, newStats.opSkillsLength);
     }
 
-/*     if (this.hiddenMyCr.hasStatus("Fatigued"))
+     if (this.hiddenMyCr.hasStatus("Fatigued"))
     {
       await this.popUpService.effectPopUp(this.myCr.name + " is fatigued and needs to rest!", 'my-popup');
       await this.delay(showEffectFor);
@@ -264,7 +264,7 @@ export class BattlePage implements OnInit
       await this.popUpService.effectPopUp(this.opCr.name + " is fatigued and needs to rest!", 'opp-popup');
       await this.delay(showEffectFor);
       await this.popUpService.dismissPopUp();
-    } */
+    }
 
     this.animating = false;
     this.socket.emit('game-state-requested');
