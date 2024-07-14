@@ -2,6 +2,7 @@ import { Activity } from "./activity";
 import { Skill } from "./skill";
 import { Trait } from "./trait";
 import { Status } from "./status";
+import { traitFuncs } from "./traits";
 
 export class Creature
 {
@@ -75,39 +76,8 @@ export class Creature
         {
             for (let t of this.traits)
             {
-                if (!t.isScaling) this.traitFuncs.get(t.name)!(this);
+                if (!t.isScaling) traitFuncs.get(t.name)!(this);
             }
         }
     }
-
-    traitFuncs = new Map<string, Function>
-    ([
-        ["Strong", (cr: Creature): Creature =>
-            {
-                cr.str++;
-                return(cr);
-            }
-        ],
-        ["Muscular", (cr: Creature): Creature =>
-            {
-                cr.str += 2;
-                return(cr);
-            }
-        ],
-        ["Absolutely Jacked", (cr: Creature): Creature =>
-            {
-                cr.str += 4;
-                return(cr);
-            }
-        ],
-        ["Cursed", (cr: Creature): Creature =>
-            {
-                cr.str --;
-                cr.agi --;
-                cr.int--;
-                cr.con -= 5;
-                return(cr);
-            }
-        ],
-    ]);
 }

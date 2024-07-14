@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1080" height="1080" viewBox="0 0 1080 1080" xml:space="preserve">
+<desc>Created with Fabric.js 5.2.4</desc>
+<defs>
+</defs>
+<g transform="matrix(1 0 0 1 540 540)" id="01668a1c-2fb2-4218-a36c-b4b29778f743"  >
+<rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="scaling-stroke"  x="-540" y="-540" rx="0" ry="0" width="1080" height="1080" />
+</g>
+<g transform="matrix(1 0 0 1 540 540)" id="1c2b4f81-d8a5-42a6-8e23-6a751c708e18"  >
+</g>
+<g transform="matrix(1 0 0 1 544.17 527.26)"  >
+<path style="stroke: rgb(0,0,0); stroke-width: 2; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(64,64,64); fill-rule: nonzero; opacity: 1;" vector-effect="scaling-stroke"  transform=" translate(-50, -49.77)" d="M 72.81 5.47 L 72 4.77 L 71.36 5.6 C 71.06 6 63.5 15.86 59.6 32.65 C 53.24389026535296 31.59000434291658 46.75610973464703 31.590004342916572 40.39999999999999 32.64999999999999 C 36.5 15.86 28.94 6 28.62 5.6 L 28 4.77 L 27.22 5.47 C 7.56 23.25 7.34 60.43 7.34 62 L 7.34 63.31 C 7.34 80.66 26.47 94.77 50 94.77 C 73.53 94.77 92.66 80.66 92.66 63.31 L 92.66 62 C 92.66 60.43 92.44 23.25 72.81 5.47 Z M 31.47 77.24 C 25.27 77.24 20.229999999999997 69.92999999999999 20.229999999999997 60.949999999999996 C 20.206878697946813 57.9292289950709 20.80953104072612 54.93639617414992 21.999999999999996 52.16 L 29.6 58.699999999999996 C 29.6 59.419999999999995 29.6 60.169999999999995 29.6 60.949999999999996 C 29.6 66.88 30.450000000000003 71.69 31.5 71.69 C 32.55 71.69 33.3 67.39 33.38 61.91 L 41.38 68.75999999999999 C 39.42 73.81 35.71 77.24 31.47 77.24 Z M 68.53 77.24 C 64.29 77.24 60.53 73.80999999999999 58.67 68.75999999999999 L 66.67 61.90999999999999 C 66.75 67.38999999999999 67.56 71.68999999999998 68.55 71.68999999999998 C 69.53999999999999 71.68999999999998 70.45 66.87999999999998 70.45 60.94999999999998 C 70.45 60.16999999999998 70.45 59.41999999999998 70.4 58.69999999999998 L 78 52.16 C 79.1972589884105 54.95184749252959 79.80005309679332 57.96241241801218 79.77 61 C 79.77 69.93 74.73 77.24 68.53 77.24 Z" stroke-linecap="round" />
+</g>
+</svg>
