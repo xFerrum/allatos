@@ -16,30 +16,14 @@ import { BattleService } from 'src/services/battle.service';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
-export class ArenaPage implements OnInit
+export class ArenaPage
 {
   chosenCreature!: Creature;
-  creatures: Creature[] = [];
   socket: any;
   isQueueing  = false;
 
   constructor(public router: Router, public userService: UserService, public creatureService: CreatureService, public battleService: BattleService)
   {
-
-  }
-
-  async ngOnInit(): Promise<void>
-  {
-    //add owned creatures to array (for list)
-    await this.userService.getUser(this.userService.getLoggedInID()!).then(async (user: User) =>
-    {
-      for (let i = 0; i < user.ownedCreatures.length; i++)
-      {
-        const crID = user.ownedCreatures[i];
-        this.creatures.push(await this.creatureService.getCreatureById(crID));
-      }
-    });
-
 
   }
 

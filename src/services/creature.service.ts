@@ -19,6 +19,7 @@ export class CreatureService
 {
   crUnsubs: Array<Function> = [];
   ownedCrsUnsub!: Function;
+  creatures: Array<Creature> = [];
 
   constructor() {}
 
@@ -71,6 +72,8 @@ export class CreatureService
         }
       });
     }
+
+    this.creatures = localArr;
   }
 
   //convert from firebase model to frontend model, apply traits if requested
