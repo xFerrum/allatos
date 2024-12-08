@@ -47,7 +47,6 @@ export class CreaturesPage implements OnInit, ViewWillLeave
   constructor(public creatureService: CreatureService, public userService: UserService, public popUpService: PopUpService, public modalCtrl: ModalController, public actService: ActService)
   {}
 
-  //TODO: move deck modal from inline to ctrler
   async ngOnInit(): Promise<void>
   {
     await this.creatureService.initCreatures(this.creatures, await this.userService.getUser(this.userService.getLoggedInID()));
@@ -136,8 +135,6 @@ export class CreaturesPage implements OnInit, ViewWillLeave
     });
   }
 
-  //bruhvercel
-  //TODO: deck component, use it in skillpick window too with a button
   openSkills(cr: Creature)
   {
     this.deckToShow = cr.skills;

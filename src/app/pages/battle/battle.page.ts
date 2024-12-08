@@ -27,7 +27,7 @@ import { BattleService } from 'src/services/battle.service';
 export class BattlePage implements OnInit
 {
   @ViewChild('popover') popover!: IonPopover;
-  loadingDone = false; //TODO: implement loading spinner while joining
+  loadingDone = false;
   myCr!: Creature;
   opCr!: Creature;
   socket: any;
