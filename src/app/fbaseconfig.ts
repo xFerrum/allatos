@@ -1,6 +1,6 @@
 export const firebaseConfig =
 {
-  apiKey: "AIzaSyDznj0v_MEedP9vHiBHO7b468vlgaTN_48",
+  apiKey: "insert key here",
   authDomain: "allatos.firebaseapp.com",
   projectId: "allatos",
   storageBucket: "allatos.appspot.com",
